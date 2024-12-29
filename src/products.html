@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMB Products</title>
+    <link rel="stylesheet" href="./styles/main.css">
+    <script src="./scripts/configurator.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <header>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                fetch("header.html")
+                    .then(response => response.text())
+                    .then(data => {
+                        document.querySelector("header").innerHTML = data;
+                    });
+            });
+        </script>
+    </header>
+</head>
+<body>
+    <main>
+        <div id="filter-menu">
+            <h3 style="width: 100%; margin-bottom: 10px; color: black;">Filter Products</h3>
+        </div>
+        <div id="configurator"></div>
+    </main>
+    <footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                fetch("footer.html")
+                    .then(response => response.text())
+                    .then(data => {
+                        document.querySelector("footer").innerHTML = data;
+                    });
+            });
+        </script>
+    </footer>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
