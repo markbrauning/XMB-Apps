@@ -7,7 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 720px;
+    min-height: 720px;
     position: relative;
     overflow-y: scroll; /* Vertical scrollbar */
     overflow-x: hidden; /* Prevent horizontal scrollbar */
@@ -250,10 +250,12 @@ footer {
     text-align: center;
     padding: 10px 0;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: auto; /* Push footer to the bottom */
 }
 
 footer p {
     margin: 0;
+    font-size: 0.9rem;
 }
 
 .carousel-container {
