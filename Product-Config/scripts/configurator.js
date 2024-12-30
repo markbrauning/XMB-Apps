@@ -115,6 +115,18 @@ function createFilterMenu(headers, products) {
         return;
     }
 
+     // Add "Clear All Filters" button
+     const clearButton = document.createElement('button');
+     clearButton.textContent = "Clear All Filters";
+     clearButton.classList.add('filterbutton');
+ 
+     clearButton.addEventListener('click', () => {
+         Array.from(dropdowns).forEach(dropdown => dropdown.value = ""); // Reset all dropdowns
+         displayProducts(products); // Reset product display
+         updateFilterOptions(filterableHeaders, products);
+     });
+     filterMenuDiv.appendChild(clearButton);
+     
     // Limit to the first 8 parameters
     const filterableHeaders = headers.slice(0, 8);
 
@@ -142,25 +154,6 @@ function createFilterMenu(headers, products) {
             displayProducts(filteredProducts);
         });
     });
-
-    // Add "Clear All Filters" button
-    const clearButton = document.createElement('button');
-    clearButton.textContent = "Clear All Filters";
-    clearButton.style.marginTop = "10px";
-    clearButton.style.padding = "5px 10px";
-    clearButton.style.border = "none";
-    clearButton.style.backgroundColor = "#0078d7";
-    clearButton.style.color = "white";
-    clearButton.style.borderRadius = "5px";
-    clearButton.style.cursor = "pointer";
-
-    clearButton.addEventListener('click', () => {
-        Array.from(dropdowns).forEach(dropdown => dropdown.value = ""); // Reset all dropdowns
-        displayProducts(products); // Reset product display
-        updateFilterOptions(filterableHeaders, products);
-    });
-
-    filterMenuDiv.appendChild(clearButton);
 }
 
 function getSelectedFilters(headers) {

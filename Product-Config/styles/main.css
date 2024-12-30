@@ -14,7 +14,8 @@ body {
 }
 
 #filter-menu {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(17, 1fr);
     flex-wrap: wrap;
     gap: 10px;
     background-color: #788a8b; /* Updated background color */
@@ -27,7 +28,8 @@ body {
 
 #filter-menu label {
     font-weight: bold;
-    margin-right: 5px;
+    text-align: right;
+    margin-right: 0px;
     color: black; /* Ensure labels have the updated text color */
 }
 
@@ -40,8 +42,25 @@ body {
     color: black; /* Dropdown text color */
 }
 
-#filter-menu button:hover {
-    background-color: #005a9e; /* Darker blue on hover */
+.filterbutton {
+    margin-Top: "10px";
+    background-color: #3c4f5f; /* Button background color */
+    color: white; /* Text color */
+    font-size: 10pt; /* Font size */
+    padding: 5px 10px; /* Padding inside the button */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.filterbutton:hover {
+    background-color: #222f3a; /* Darker background color on hover */
+}
+
+.filterbutton:focus {
+    outline: 2px solid #2b3a46; /* Focus outline for accessibility */
+    outline-offset: 2px; /* Add spacing around the outline */
 }
 
 #configurator {
@@ -112,29 +131,61 @@ header {
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
+    max-height: 50px;
 }
 
 header .container {
     display: flex;
-    justify-content: space-between;
     align-items: center; /* Center align items vertically */
     padding: 10px 10px;
     margin-left: 0;
     padding-left: 0;
     width: 98%;
+    justify-content: space-between; /* Space out elements horizontally */
 }
 
 header h1 {
+    font-family: 'Playfair Display', serif;
     margin: 0;
     font-size: 2.5em;
 }
 
-header h1.site-name {
-    color: #5b96a5; /* Black text */
+header .titlelogo {
+    display: flex;
+    align-items: center;
+    padding-left: 28px;
+    cursor: pointer; /* Changes the mouse pointer to a hand icon */
+}
+
+header .logo {
+    display: inline-block;
+    max-height: 40px;
+    max-width: 225px;
+    vertical-align: middle;
+}
+
+header .site-name {
+    font-size: 18pt;
+    font-weight: 700;
+    letter-spacing: 0px;
+    color: rgba(255, 255, 255, 1);
+    padding-left: 15px;
+}
+
+header .app-name {
+    font-family: 'Playfair Display', serif;
     margin: 0;
-    font-size: 1.5em; /* Smaller font size */
-    text-align: left; /* Justify to the left */
-    padding: 5px 30px; /* Add padding */
+    font-size: 15pt;
+    font-weight: 700;
+    letter-spacing: 0px;
+    color: rgba(255, 255, 255, 1);
+    text-align: right;
+}
+
+.header-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Keep text color consistent */
+    display: block; /* Make the link behave like a block element */
 }
 
 main {
@@ -151,18 +202,4 @@ main h2 {
 main p {
     font-size: 1.2em;
     line-height: 1.6;
-}
-
-footer {
-    background-color: #1a1a1a; /* Dark grey background */
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: auto; /* Push footer to the bottom */
-}
-
-footer p {
-    margin: 0;
-    font-size: 0.9rem;
 }
