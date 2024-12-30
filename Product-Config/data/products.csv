@@ -1,17 +1,12 @@
-Name,Size General,IO Platform,color,Price,Price1,Price2,Price3,Price4,Price5,Price6,Price7
-RIO,Small,ControlLogix,,1,,,,,,,
-RIO,Small,ControlLogix,,2,,,,,,,
-RIO,Small,ControlLogix,,3,,,,,,,
-RIO,Small,ControlLogix,,4,,,,,,,
-RIO,Small,ControlLogix,,5,,,,,,,
-RIO,Small,ControlLogix,,6,,,,,,,
-RIO,Small,ControlLogix,,7,,,,,,,
-RIO,Small,ControlLogix,,8,,,,,,,
-RIO,Small,ControlLogix,,9,,,,,,,
-RIO,Small,ControlLogix,,10,,,,,,,
-RIO,Small,ControlLogix,,11,,,,,,,
-RIO,Small,ControlLogix,,12,,,,,,,
-RIO,Small,ControlLogix,,13,,,,,,,
-RIO,Small,ControlLogix,,14,,,,,,,
-RIO,Small,ControlLogix,,15,,,,,,,
-RIO,Small,ControlLogix,,16,,,,,,,
+Name,Size General,IO Platform,IO slot count,Source Voltage,24VDC dist.,UPS,120VAC dist.,24V power,E-stop,Ethernet
+PLC/RIO,Small,ControlLogix,7,120VAC,10A,none,5 to 10 fuses,5 to 10 fuses,none,none
+PLC/RIO,Medium,ControlLogix,10,120VAC,15A,none,5 to 20 fuses,5 to 20 fuses,none,none
+PLC/RIO,Large,ControlLogix,17,120VAC,20A,24VDC 1000Ah,5 to 40 fuses,5 to 40 fuses,120VAC Standard,up to 32 ports
+RIO,Small,Flex,4,120VAC,10A,none,5 to 10 fuses,5 to 10 fuses,none,none
+RIO,Medium,Flex,16,120VAC,15A,none,5 to 20 fuses,5 to 20 fuses,none,none
+RIO,Large,Flex,32,120VAC,20A,none,5 to 40 fuses,5 to 40 fuses,none,up to 16 ports
+RIO,Large,Flex,48,120VAC,20A,none,5 to 40 fuses,5 to 40 fuses,none,up to 32 ports
+RIO,Small,Point IO,4,120VAC,10A,none,5 to 10 fuses,5 to 10 fuses,none,none
+RIO,Medium,Point IO,16,120VAC,15A,none,5 to 20 fuses,5 to 20 fuses,none,none
+RIO,Large,Point IO,32,120VAC,20A,none,5 to 40 fuses,5 to 40 fuses,none,none
+RIO,Large,Point IO,48,120VAC,20A,none,5 to 40 fuses,5 to 40 fuses,none,up to 32 ports
