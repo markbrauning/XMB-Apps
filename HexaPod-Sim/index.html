@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hexapod Robot Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      background-color: white;
+      display: block;
+      margin: 20px auto;
+    }
+    .controls {
+      margin: 20px;
+    }
+    .controls input {
+      margin: 5px;
+      width: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hexapod Robot Simulator</h1>
+  <canvas id="hexapodCanvas" width="800" height="600"></canvas>
+  <div class="controls">
+    <h3>Set Angles for Limbs</h3>
+    <div id="jointControls"></div>
+    <button onclick="updateHexapod()">Update</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('hexapodCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const limbLength = [50, 40, 30]; // Lengths of each joint segment
+    const limbAngles = Array(6).fill([0, 0, 0]); // Initialize angles for 6 limbs, 3 joints each
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 100; // Radius for the base of the hexapod
+
+    const isoAngle = Math.PI / 6; // Angle for isometric projection
+    const depthScale = 0.5; // Scale factor for depth in isometric view
+
+    function projectIso(x, y, z) {
+      return {
+        x: x - z * Math.cos(isoAngle),
+        y: y - z * Math.sin(isoAngle)
+      };
+    }
+
+    function drawHexapod() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw base
+      ctx.beginPath();
+      const base = projectIso(centerX, centerY, 0);
+      ctx.arc(base.x, base.y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = '#888';
+      ctx.fill();
+
+      // Draw limbs
+      for (let i = 0; i < 6; i++) {
+        const angleOffset = (i * Math.PI) / 3;
+        let x = centerX + Math.cos(angleOffset) * radius;
+        let y = centerY + Math.sin(angleOffset) * radius;
+        let z = 0;
+
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+
+        for (let j = 0; j < 3; j++) {
+          const angle = angleOffset + limbAngles[i][j];
+          const nextX = x + Math.cos(angle) * limbLength[j];
+          const nextY = y + Math.sin(angle) * limbLength[j];
+          const nextZ = z + (j === 2 ? limbLength[j] * depthScale : 0); // Elevate final segment
+
+          const start = projectIso(x, y, z);
+          const end = projectIso(nextX, nextY, nextZ);
+
+          ctx.beginPath();
+          ctx.moveTo(start.x, start.y);
+          ctx.lineTo(end.x, end.y);
+          ctx.stroke();
+
+          x = nextX;
+          y = nextY;
+          z = nextZ;
+        }
+      }
+    }
+
+    function createControls() {
+      const controlContainer = document.getElementById('jointControls');
+
+      for (let i = 0; i < 6; i++) {
+        const limbDiv = document.createElement('div');
+        limbDiv.textContent = `Limb ${i + 1}: `;
+
+        for (let j = 0; j < 3; j++) {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.value = limbAngles[i][j];
+          input.dataset.limb = i;
+          input.dataset.joint = j;
+
+          input.addEventListener('input', (e) => {
+            const limb = parseInt(e.target.dataset.limb, 10);
+            const joint = parseInt(e.target.dataset.joint, 10);
+            limbAngles[limb][joint] = parseFloat(e.target.value) * (Math.PI / 180); // Convert degrees to radians
+          });
+
+          limbDiv.appendChild(input);
+        }
+
+        controlContainer.appendChild(limbDiv);
+      }
+    }
+
+    function updateHexapod() {
+      drawHexapod();
+    }
+
+    createControls();
+    drawHexapod();
+  </script>
+</body>
+</html>
