@@ -215,7 +215,9 @@
           nodesMap[d.TAG] = {
             id: d.TAG,
             color: d["NODE COLOR"] || "orange",
-            size: d["NODE SIZE"] ? +d["NODE SIZE"] : 10
+            size: d["NODE SIZE"] ? +d["NODE SIZE"] : 10,
+            collapsed: false,
+            hidden: false
           };
         }
         // Create SOURCE node if defined; assign default color and size if not provided
@@ -223,7 +225,9 @@
           nodesMap[d.SOURCE] = {
             id: d.SOURCE,
             color: "lightblue",
-            size: 10
+            size: 10,
+            collapsed: false,
+            hidden: false
           };
         }
         // Only add a link if SOURCE is defined
@@ -232,7 +236,9 @@
             source: d.SOURCE,
             target: d.TAG,
             connection: d["CONNECTION COLOR"] || "#999",
-            text: d["CONNECTOR TEXT"] || ""
+            text: d["CONNECTOR TEXT"] || "",
+            collapsed: false,
+            distance: 100
           });
         }
       });
@@ -241,7 +247,7 @@
 
       // Create force simulation
       const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+        .force("link", d3.forceLink(links).id(d => d.id).distance(d => d.collapsed ? 1 : d.distance))
         .force("charge", d3.forceManyBody().strength(-200))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -264,22 +270,47 @@
           .style("font-size", "5px");
 
       // Add nodes
-      const node = svgGroup.append("g")
-          .attr("class", "nodes")
-        .selectAll("circle")
-        .data(nodes)
-        .enter().append("circle")
-          .attr("r", d => d.size)
-          .attr("fill", d => d.color)
-          .call(drag(simulation));
+        const node = svgGroup.append("g")
+            .attr("class", "nodes")
+          .selectAll("circle")
+          .data(nodes)
+          .enter().append("circle")
+            .attr("r", d => d.size)
+            .attr("fill", d => d.color)
+            .call(drag(simulation));
 
-      // Always-visible labels centered in nodes
-      const labels = svgGroup.append("g")
-          .attr("class", "labels")
-        .selectAll("text")
-        .data(nodes)
-        .enter().append("text")
-          .text(d => d.id);
+        // Always-visible labels centered in nodes
+        const labels = svgGroup.append("g")
+            .attr("class", "labels")
+          .selectAll("text")
+          .data(nodes)
+          .enter().append("text")
+            .text(d => d.id);
+
+        // Toggle collapse of leaf nodes on click
+        node.on("click", function(event, d) {
+          d.collapsed = !d.collapsed;
+          links.forEach(l => {
+            if (l.source === d || l.target === d) {
+              const neighbor = l.source === d ? l.target : l.source;
+              const neighborLinks = links.filter(ol => ol.source === neighbor || ol.target === neighbor);
+              if (neighborLinks.length === 1) {
+                if (d.collapsed) {
+                  l.collapsed = true;
+                  neighbor.hidden = true;
+                } else {
+                  l.collapsed = false;
+                  neighbor.hidden = false;
+                }
+              }
+            }
+          });
+          node.style("display", n => n.hidden ? "none" : null);
+          labels.style("display", n => n.hidden ? "none" : null);
+          connectorLabels.style("display", l => l.collapsed ? "none" : null);
+          simulation.force("link").distance(l => l.collapsed ? 1 : l.distance);
+          simulation.alpha(1).restart();
+        });
 
       simulation.on("tick", () => {
         link
