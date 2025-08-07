@@ -5,11 +5,11 @@ body {
     letter-spacing: 0px;
     margin: 0;
     padding: 0;
-    background-color: #afc2eba2;
+    background-color: #1a1a1a;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     color: #ffffff;
+    scroll-behavior: smooth;
 }
 
 header {
@@ -89,6 +89,8 @@ header .app-name {
 main {
     flex: 1;
     padding: 40px 20px;
+    background-color: #afc2eba2;
+    min-height: 500px;
 }
 
 .app-grid {
@@ -121,7 +123,7 @@ main {
 }
 
 footer {
-    background-color: #1a1a1a;
+    width: 100%;
     color: #ffffff;
     text-align: center;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
