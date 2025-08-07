@@ -1,0 +1,98 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: #333;
+}
+
+header {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+header .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.titlelogo {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    max-height: 40px;
+}
+
+.site-name {
+    margin-left: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.app-name {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.header-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.hero {
+    background: linear-gradient(135deg, #2f4f4f, #1a1a1a);
+    color: #ffffff;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.hero h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 500;
+}
+
+main {
+    flex: 1;
+    padding: 40px 20px;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.app-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.app-card h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
