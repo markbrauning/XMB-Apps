@@ -15,10 +15,8 @@
     }
     /* CSV selector in top-right */
     #csvSelectorContainer {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: #fff;
+      background: #000000;
+      width : 200px;
       border: 1px solid #ccc;
       padding: 5px 10px;
       font-size: 12px;
@@ -26,10 +24,8 @@
     }
     /* Filters in top-left */
     #filterContainer {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: #fff;
+      width: 200px;
+      background: #000000;
       border: 1px solid #ccc;
       padding: 5px 10px;
       font-size: 12px;
@@ -41,9 +37,10 @@
     /* Legend styling (bottom right rectangle) */
     #legend {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(244,244,244,0.95);
+      width: 200px;
+      bottom: 0px;
+      left: 0px;
+      background: rgba(58, 64, 88, 0.95);
       border: 1px solid #ccc;
       padding: 10px;
       font-size: 12px;
@@ -107,6 +104,17 @@
   </style>
 </head>
 <body>
+  <header>
+      <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              fetch("../src/header.html")
+                  .then(response => response.text())
+                  .then(data => {
+                      document.querySelector("header").innerHTML = data;
+                  });
+          });
+      </script>
+  </header>
 
   <!-- CSV File Selector (Top Right) -->
   <div id="csvSelectorContainer">
