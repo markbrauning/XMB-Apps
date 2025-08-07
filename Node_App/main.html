@@ -173,14 +173,14 @@
       .attr("width", width)
       .attr("height", height);
 
-    const COLLAPSED_DISTANCE = 10;
+    const COLLAPSED_DISTANCE = 5;
 
     // Group for all visualization elements (for zooming/panning)
     const svgGroup = svg.append("g").attr("class", "everything");
 
     // Define zoom behavior (scale between 50% and 500%)
     const zoom = d3.zoom()
-      .scaleExtent([0.5, 5])
+      .scaleExtent([0.1, 5])
       .on("zoom", (event) => {
         svgGroup.attr("transform", event.transform);
       });
@@ -217,7 +217,7 @@
           nodesMap[d.TAG] = {
             id: d.TAG,
             color: d["NODE COLOR"] || "orange",
-            size: d["NODE SIZE"] ? +d["NODE SIZE"] : 10,
+            size: d["NODE SIZE"] ? +d["NODE SIZE"] : 15,
             collapsed: false,
             hidden: false
           };
@@ -227,7 +227,7 @@
           nodesMap[d.SOURCE] = {
             id: d.SOURCE,
             color: "lightblue",
-            size: 10,
+            size: 15,
             collapsed: false,
             hidden: false
           };
@@ -240,7 +240,7 @@
             connection: d["CONNECTION COLOR"] || "#999",
             text: d["CONNECTOR TEXT"] || "",
             collapsed: false,
-            distance: 100
+            distance: 120
           });
         }
       });
@@ -250,7 +250,7 @@
       // Create force simulation
       const simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(l => l.collapsed ? COLLAPSED_DISTANCE : l.distance))
-        .force("charge", d3.forceManyBody().strength(-200))
+        .force("charge", d3.forceManyBody().strength(-100))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
       // Add links
