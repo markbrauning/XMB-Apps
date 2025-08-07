@@ -1,0 +1,8 @@
+﻿TAG,TYPE,SOURCE,CONNECTION TYPE
+Panel CD,Stage,,
+Control Circuit List [CD],EXTERNAL,Panel CD,blue
+Control Circuit Locations [CD],EXTERNAL,Panel CD,blue
+Control Circuit Detail [CD],EXTERNAL,Panel CD,blue
+Client Specs for Panel Design,EXTERNAL,Panel CD,blue
+Panel Size Constraints,EXTERNAL,Panel CD,blue
+Bid material summary,INTERNAL,Panel CD,red
