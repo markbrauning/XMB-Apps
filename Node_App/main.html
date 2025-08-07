@@ -174,7 +174,7 @@
       .attr("height", height);
 
     // Group for all visualization elements (for zooming/panning)
-    const svgGroup = svg.append("g").attr("class", "everything");
+    const svgGroup = svg.append("g").attr("class", "everything");␊
 
     // Define zoom behavior (scale between 50% and 500%)
     const zoom = d3.zoom()
@@ -183,6 +183,9 @@
         svgGroup.attr("transform", event.transform);
       });
     svg.call(zoom);
+
+    // Store data for user-uploaded CSVs so they can be reselected later
+    const uploadedCSVs = {};
 
     // Function to retrieve the list of available CSV files.
     // Directory listing is not available on this server, so we use a
@@ -332,10 +335,23 @@
         });
     }
 
-    // Function to handle user-uploaded CSV text
-    function loadCSVText(csvText) {
+    // Add a CSV filename to the selector if it's not already present
+    function addCSVOption(filename) {
+      const csvSelector = d3.select("#csvSelector");
+      if (csvSelector.select(`option[value="${filename}"]`).empty()) {
+        csvSelector.append("option")
+          .attr("value", filename)
+          .text(filename);
+      }
+    }
+
+    // Handle raw CSV text from an uploaded file
+    function loadCSVText(csvText, filename) {
       try {
         const data = d3.csvParse(csvText);
+        uploadedCSVs[filename] = data;
+        addCSVOption(filename);
+        d3.select("#csvSelector").property("value", filename);
         renderCSVData(data);
       } catch (error) {
         console.error("Error parsing uploaded CSV file:", error);
@@ -361,7 +377,11 @@
       // When the selection changes, reload the visualization with the chosen CSV file
       csvSelector.on("change", function() {
         const filename = d3.select(this).property("value");
-        loadCSVData(filename);
+        if (uploadedCSVs[filename]) {
+          renderCSVData(uploadedCSVs[filename]);
+        } else {
+          loadCSVData(filename);
+        }
       });
     }).catch(function(error) {
       console.error("Error retrieving CSV file list:", error);
@@ -373,7 +393,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          loadCSVText(e.target.result);
+          loadCSVText(e.target.result, file.name);
         };
         reader.readAsText(file);
       }
