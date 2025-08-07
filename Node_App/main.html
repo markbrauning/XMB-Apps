@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSV Node Network Visualization with Connector Text</title>
+  <!-- Include D3.js -->
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: sans-serif;
+    }
+    /* CSV selector in top-right */
+    #csvSelectorContainer {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      font-size: 12px;
+      z-index: 1000;
+    }
+    /* Legend styling (bottom right rectangle) */
+    #legend {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(244,244,244,0.95);
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 12px;
+      z-index: 1000;
+    }
+    #legend h4 {
+      margin: 5px 0;
+    }
+    #legend table {
+      border-collapse: collapse;
+      margin-bottom: 5px;
+    }
+    #legend th, #legend td {
+      border: none;
+      padding: 2px 5px;
+      text-align: left;
+    }
+    .color-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    .connector-box {
+      width: 20px;
+      height: 4px;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    /* Main SVG */
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .links line {
+      stroke-opacity: 0.6;
+    }
+    .nodes circle {
+      stroke: #fff;
+      stroke-width: 1.5px;
+      cursor: pointer;
+    }
+    /* Node labels centered inside the node */
+    .labels text {
+      pointer-events: none;
+      text-anchor: middle;
+      alignment-baseline: middle;
+      font-size: 10px;
+    }
+    /* Connector labels at half the font size of node text */
+    .connectorLabels text {
+      pointer-events: none;
+      text-anchor: middle;
+      alignment-baseline: middle;
+      font-size: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CSV File Selector (Top Right) -->
+  <div id="csvSelectorContainer">
+    <label for="csvSelector">Select CSV:</label>
+    <select id="csvSelector">
+      <!-- Options will be populated dynamically -->
+    </select>
+  </div>
+
+  <!-- Legend Section (Bottom Right) -->
+  <div id="legend">
+    <div>
+      <h4>Node Colors</h4>
+      <table>
+        <tr>
+          <th>Type</th>
+          <th>Color</th>
+        </tr>
+        <tr>
+          <td>Stage</td>
+          <td><div class="color-box" style="background: grey;"></div></td>
+        </tr>
+        <tr>
+          <td>External Input</td>
+          <td><div class="color-box" style="background: blue;"></div></td>
+        </tr>
+        <tr>
+          <td>Internal Input</td>
+          <td><div class="color-box" style="background: cyan;"></div></td>
+        </tr>
+        <tr>
+          <td>Internal Outputs</td>
+          <td><div class="color-box" style="background: orange;"></div></td>
+        </tr>
+        <tr>
+          <td>External Output</td>
+          <td><div class="color-box" style="background: red;"></div></td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <h4>Connector Colors</h4>
+      <table>
+        <tr>
+          <th>Type</th>
+          <th>Color</th>
+        </tr>
+        <tr>
+          <td>Stage</td>
+          <td><div class="connector-box" style="background: black;"></div></td>
+        </tr>
+        <tr>
+          <td>External Input</td>
+          <td><div class="connector-box" style="background: blue;"></div></td>
+        </tr>
+        <tr>
+          <td>Internal Input</td>
+          <td><div class="connector-box" style="background: cyan;"></div></td>
+        </tr>
+        <tr>
+          <td>Internal Outputs</td>
+          <td><div class="connector-box" style="background: red;"></div></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Main Visualization -->
+  <svg></svg>
+
+  <script>
+    // Set dimensions (SVG takes full window)
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    const svg = d3.select("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    // Group for all visualization elements (for zooming/panning)
+    const svgGroup = svg.append("g").attr("class", "everything");
+
+    // Define zoom behavior (scale between 50% and 500%)
+    const zoom = d3.zoom()
+      .scaleExtent([0.5, 5])
+      .on("zoom", (event) => {
+        svgGroup.attr("transform", event.transform);
+      });
+    svg.call(zoom);
+
+    // Function to compile a list of CSV files from the data folder.
+    // This relies on directory listing being enabled on the server.
+    function getCSVFileList() {
+      return fetch("data/").then(response => response.text()).then(htmlText => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, "text/html");
+        const links = Array.from(doc.querySelectorAll("a"));
+        // Filter links that do not end with "/" and end with ".csv", then remove any folder parts.
+        const csvFiles = links
+          .map(link => link.getAttribute("href"))
+          .filter(href => href && !href.endsWith("/") && href.toLowerCase().endsWith(".csv"))
+          .map(href => href.split("/").pop());
+        return csvFiles;
+      });
+    }
+
+    // Function to load and render CSV data given a filename
+    function loadCSVData(filename) {
+      // Clear previous visualization
+      svgGroup.selectAll("*").remove();
+      
+      d3.csv("data/" + filename).then(function(data) {
+        const nodesMap = {};
+        const links = [];
+
+        data.forEach(function(d) {
+          // Create TAG node with NODE COLOR and NODE SIZE (defaults if missing)
+          if (!nodesMap[d.TAG]) {
+            nodesMap[d.TAG] = {
+              id: d.TAG,
+              color: d["NODE COLOR"] || "orange",
+              size: d["NODE SIZE"] ? +d["NODE SIZE"] : 10
+            };
+          }
+          // Create SOURCE node if defined; assign default color and size if not provided
+          if (d.SOURCE && !nodesMap[d.SOURCE]) {
+            nodesMap[d.SOURCE] = {
+              id: d.SOURCE,
+              color: "lightblue",
+              size: 10
+            };
+          }
+          // Only add a link if SOURCE is defined
+          if (d.SOURCE) {
+            links.push({
+              source: d.SOURCE,
+              target: d.TAG,
+              connection: d["CONNECTION COLOR"] || "#999",
+              text: d["CONNECTOR TEXT"] || ""
+            });
+          }
+        });
+
+        const nodes = Object.values(nodesMap);
+
+        // Create force simulation
+        const simulation = d3.forceSimulation(nodes)
+          .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+          .force("charge", d3.forceManyBody().strength(-200))
+          .force("center", d3.forceCenter(width / 2, height / 2));
+
+        // Add links
+        const link = svgGroup.append("g")
+            .attr("class", "links")
+          .selectAll("line")
+          .data(links)
+          .enter().append("line")
+            .attr("stroke-width", 2)
+            .attr("stroke", d => d.connection);
+
+        // Add connector text labels for each link (half the font size of node text)
+        const connectorLabels = svgGroup.append("g")
+            .attr("class", "connectorLabels")
+          .selectAll("text")
+          .data(links)
+          .enter().append("text")
+            .text(d => d.text)
+            .style("font-size", "5px");
+
+        // Add nodes
+        const node = svgGroup.append("g")
+            .attr("class", "nodes")
+          .selectAll("circle")
+          .data(nodes)
+          .enter().append("circle")
+            .attr("r", d => d.size)
+            .attr("fill", d => d.color)
+            .call(drag(simulation));
+
+        // Always-visible labels centered in nodes
+        const labels = svgGroup.append("g")
+            .attr("class", "labels")
+          .selectAll("text")
+          .data(nodes)
+          .enter().append("text")
+            .text(d => d.id);
+
+        simulation.on("tick", () => {
+          link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+          // Position connector labels at the midpoint of each link
+          connectorLabels
+            .attr("x", d => (d.source.x + d.target.x) / 2)
+            .attr("y", d => (d.source.y + d.target.y) / 2);
+
+          node
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+
+          // Position node labels at the center of each node
+          labels
+            .attr("x", d => d.x)
+            .attr("y", d => d.y);
+        });
+
+        // Drag functions for nodes
+        function drag(simulation) {
+          function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          }
+          function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+          }
+          function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          }
+          return d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended);
+        }
+      }).catch(function(error) {
+        console.error("Error loading CSV file:", error);
+      });
+    }
+
+    // Populate the CSV selector by fetching the list of CSV files from the data folder
+    getCSVFileList().then(function(csvFiles) {
+      const csvSelector = d3.select("#csvSelector");
+      csvSelector.selectAll("option")
+        .data(csvFiles)
+        .enter()
+        .append("option")
+        .attr("value", d => d)
+        .text(d => d);
+      // Load the default CSV file (first in the list)
+      if(csvFiles.length > 0){
+        loadCSVData(csvFiles[0]);
+      } else {
+        console.error("No CSV files found in the data folder.");
+      }
+      
+      // When the selection changes, reload the visualization with the chosen CSV file
+      csvSelector.on("change", function() {
+        const filename = d3.select(this).property("value");
+        loadCSVData(filename);
+      });
+    }).catch(function(error) {
+      console.error("Error retrieving CSV file list:", error);
+    });
+  </script>
+</body>
+</html>
