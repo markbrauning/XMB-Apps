@@ -4,68 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photography Experience</title>
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: sans-serif;
-      margin: 0;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
-      animation: fadeIn 1s ease-in;
-    }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    p {
-      color: #ccc;
-      margin-bottom: 2rem;
-    }
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    }
-    .card {
-      background: #1a1a1a;
-      border-radius: 12px;
-      padding: 1.5rem;
-      cursor: pointer;
-      transition: box-shadow 0.3s;
-    }
-    .card:hover {
-      box-shadow: 0 0 10px rgba(255,255,255,0.2);
-    }
-    .selected {
-      background: #fff;
-      color: #000;
-      text-align: left;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-top: 2rem;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      border: none;
-      background: #000;
-      color: #fff;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-  </style>
+  <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
+  <header>
+      <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              fetch("../src/header.html")
+                  .then(response => response.text())
+                  .then(data => {
+                      document.querySelector("header").innerHTML = data;
+                  });
+          });
+      </script>
+  </header>
+
   <div class="container">
     <h1>Today, you’re here to remember something important.</h1>
     <p>Choose what brought you here and let’s begin the journey.</p>
@@ -89,12 +42,24 @@
       </div>
     </div>
 
-    <div class="selected" id="selectedJourney" style="display:none;">
+    <div class="selected" id="selectedJourney">
       <h3 id="journeyTitle"></h3>
       <p id="journeyDescription"></p>
       <button onclick="alert('Redirecting to tailored experience...')">Start This Journey</button>
     </div>
   </div>
+
+  <footer>
+      <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              fetch("../src/footer.html")
+                  .then(response => response.text())
+                  .then(data => {
+                      document.querySelector("footer").innerHTML = data;
+                  });
+          });
+      </script>
+  </footer>
 
   <script>
     const journeys = [
