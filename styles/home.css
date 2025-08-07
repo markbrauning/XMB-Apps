@@ -1,5 +1,8 @@
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18pt;
+    font-weight: 700;
+    letter-spacing: 0px;
     margin: 0;
     padding: 0;
     background-color: #2f2f2f;
@@ -7,12 +10,6 @@ body {
     flex-direction: column;
     min-height: 100vh;
     color: #ffffff;
-}
-
-.container {
-    max-width: inherit;
-    margin: 0 auto;
-    padding: 0 10px;
 }
 
 header {
