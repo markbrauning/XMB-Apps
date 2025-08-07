@@ -400,6 +400,8 @@
         .text(d => d);
       // Load the default CSV file (first in the list)
       if(csvFiles.length > 0){
+        // Ensure the selector reflects the initially loaded file
+        csvSelector.property("value", csvFiles[0]);
         loadCSVData(csvFiles[0]);
       } else {
         console.error("No CSV files found in the data folder.");
