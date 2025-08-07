@@ -6,22 +6,28 @@ html, body {
   font-family: sans-serif;
 }
 
-/* CSV selector in top-right */
+/* CSV selector */
 #csvSelectorContainer {
-  background: #000000;
+  position: fixed;
   width: 200px;
+  top: 56px;
+  left: 0px;
+  background: rgba(58, 64, 88, 0.95);
   border: 1px solid #ccc;
-  padding: 5px 10px;
+  padding: 10px;
   font-size: 12px;
   z-index: 1000;
 }
 
 /* Filters in top-left */
 #filterContainer {
+  position: fixed;
   width: 200px;
-  background: #000000;
+  top: 117px;
+  left: 0px;
+  background: rgba(58, 64, 88, 0.95);
   border: 1px solid #ccc;
-  padding: 5px 10px;
+  padding: 10px;
   font-size: 12px;
   z-index: 1000;
 }
@@ -34,7 +40,8 @@ html, body {
 #legend {
   position: fixed;
   width: 200px;
-  bottom: 0px;
+  height: 275px;
+  bottom: 92px;
   left: 0px;
   background: rgba(58, 64, 88, 0.95);
   border: 1px solid #ccc;
