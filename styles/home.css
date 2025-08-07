@@ -16,13 +16,15 @@ body {
 }
 
 header {
-    background-color: #1a1a1a;
+    background-color: #000000;
     color: #ffffff;
     padding: 0;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
-    max-height: 50px;
+    max-height: 56px;
+    width: 100%;
+    z-index: 20;
+    transition: opacity .5s, padding-left .125s;
 }
 
 header .container {
