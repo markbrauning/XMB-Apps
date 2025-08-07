@@ -24,6 +24,20 @@
       font-size: 12px;
       z-index: 1000;
     }
+    /* Filters in top-left */
+    #filterContainer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      font-size: 12px;
+      z-index: 1000;
+    }
+    #filterContainer h4 {
+      margin: 5px 0;
+    }
     /* Legend styling (bottom right rectangle) */
     #legend {
       position: fixed;
@@ -101,6 +115,18 @@
       <!-- Options will be populated dynamically -->
     </select>
     <input type="file" id="csvUpload" accept=".csv">
+  </div>
+
+  <!-- Filters Section (Top Left) -->
+  <div id="filterContainer">
+    <div>
+      <h4>Node Filters</h4>
+      <div id="nodeFilters"></div>
+    </div>
+    <div>
+      <h4>Link Filters</h4>
+      <div id="linkFilters"></div>
+    </div>
   </div>
 
   <!-- Legend Section (Bottom Right) -->
@@ -189,6 +215,73 @@
     // Store data for user-uploaded CSVs so they can be reselected later
     const uploadedCSVs = {};
 
+    // Selections and node map used for filtering
+    let node, labels, link, connectorLabels;
+    let currentNodesMap = {};
+
+    // Apply current filter selections to nodes and links
+    function applyFilters() {
+      if (!node) return;
+      const selectedNodeColors = new Set(
+        Array.from(document.querySelectorAll('#nodeFilters input:checked')).map(e => e.value)
+      );
+      const selectedLinkColors = new Set(
+        Array.from(document.querySelectorAll('#linkFilters input:checked')).map(e => e.value)
+      );
+
+      node.style('display', d => (d.hidden || !selectedNodeColors.has(d.color)) ? 'none' : null);
+      labels.style('display', d => (d.hidden || !selectedNodeColors.has(d.color)) ? 'none' : null);
+
+      link.style('display', d => {
+        const src = typeof d.source === 'object' ? d.source : currentNodesMap[d.source];
+        const tgt = typeof d.target === 'object' ? d.target : currentNodesMap[d.target];
+        const visibleNodes = !src.hidden && !tgt.hidden &&
+          selectedNodeColors.has(src.color) && selectedNodeColors.has(tgt.color);
+        return (!visibleNodes || !selectedLinkColors.has(d.connection)) ? 'none' : null;
+      });
+
+      connectorLabels.style('display', d => {
+        const src = typeof d.source === 'object' ? d.source : currentNodesMap[d.source];
+        const tgt = typeof d.target === 'object' ? d.target : currentNodesMap[d.target];
+        const visibleNodes = !src.hidden && !tgt.hidden &&
+          selectedNodeColors.has(src.color) && selectedNodeColors.has(tgt.color);
+        return (d.collapsed || !visibleNodes || !selectedLinkColors.has(d.connection)) ? 'none' : null;
+      });
+    }
+
+    // Build filter checkboxes for nodes and links
+    function buildFilters(nodeColors, linkColors) {
+      const nodeFilterDiv = d3.select('#nodeFilters');
+      nodeFilterDiv.selectAll('*').remove();
+      nodeColors.forEach(color => {
+        const label = nodeFilterDiv.append('label').style('display', 'block');
+        label.append('input')
+          .attr('type', 'checkbox')
+          .attr('value', color)
+          .property('checked', true)
+          .on('change', applyFilters);
+        label.append('span')
+          .attr('class', 'color-box')
+          .style('background', color);
+        label.append('span').text(color);
+      });
+
+      const linkFilterDiv = d3.select('#linkFilters');
+      linkFilterDiv.selectAll('*').remove();
+      linkColors.forEach(color => {
+        const label = linkFilterDiv.append('label').style('display', 'block');
+        label.append('input')
+          .attr('type', 'checkbox')
+          .attr('value', color)
+          .property('checked', true)
+          .on('change', applyFilters);
+        label.append('span')
+          .attr('class', 'connector-box')
+          .style('background', color);
+        label.append('span').text(color);
+      });
+    }
+
     // Function to retrieve the list of available CSV files.
     // Directory listing is not available on this server, so we use a
     // pre-generated JSON manifest that enumerates the files.
@@ -247,6 +340,8 @@
 
       const nodes = Object.values(nodesMap);
 
+      currentNodesMap = nodesMap;
+
       // Create force simulation
       const simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(l => l.collapsed ? COLLAPSED_DISTANCE : l.distance))
@@ -254,7 +349,7 @@
         .force("center", d3.forceCenter(width / 2, height / 2));
 
       // Add links
-      const link = svgGroup.append("g")
+      link = svgGroup.append("g")
           .attr("class", "links")
         .selectAll("line")
         .data(links)
@@ -263,7 +358,7 @@
           .attr("stroke", d => d.connection);
 
       // Add connector text labels for each link (half the font size of node text)
-      const connectorLabels = svgGroup.append("g")
+      connectorLabels = svgGroup.append("g")
           .attr("class", "connectorLabels")
         .selectAll("text")
         .data(links)
@@ -272,7 +367,7 @@
           .style("font-size", "5px");
 
       // Add nodes
-        const node = svgGroup.append("g")
+        node = svgGroup.append("g")
             .attr("class", "nodes")
           .selectAll("circle")
           .data(nodes)
@@ -282,12 +377,18 @@
             .call(drag(simulation));
 
         // Always-visible labels centered in nodes
-        const labels = svgGroup.append("g")
+        labels = svgGroup.append("g")
             .attr("class", "labels")
           .selectAll("text")
           .data(nodes)
           .enter().append("text")
             .text(d => d.id);
+
+        // Build filter controls based on colors present
+        const nodeColors = [...new Set(nodes.map(n => n.color))];
+        const linkColors = [...new Set(links.map(l => l.connection))];
+        buildFilters(nodeColors, linkColors);
+        applyFilters();
 
         // Toggle collapse of leaf nodes on click
         node.on("click", function(event, d) {
@@ -309,9 +410,7 @@
               }
             }
           });
-          node.style("display", n => n.hidden ? "none" : null);
-          labels.style("display", n => n.hidden ? "none" : null);
-          connectorLabels.style("display", l => l.collapsed ? "none" : null);
+          applyFilters();
           simulation.force("link").distance(l =>
             l.collapsed || l.source.collapsed || l.target.collapsed
               ? COLLAPSED_DISTANCE
