@@ -91,6 +91,8 @@ main {
     padding: 40px 20px;
     background-color: #afc2eba2;
     min-height: 500px;
+    position: relative;
+    overflow: hidden;
 }
 
 .app-grid {
