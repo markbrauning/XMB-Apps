@@ -101,6 +101,8 @@ main {
     gap: 20px;
     max-width: 1000px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .app-card {
@@ -160,6 +162,7 @@ footer p {
     pointer-events: none;
     transition: width 0.3s ease;
     animation: fadeOut 3.5s forwards;
+    z-index: 0;
 }
 
 .circle {
@@ -170,4 +173,5 @@ footer p {
     border-radius: 50%;
     pointer-events: none;
     animation: fadeOut 3.5s forwards;
+    z-index: 0;
 }
