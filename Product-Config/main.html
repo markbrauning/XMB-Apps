@@ -1,42 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XMB Products</title>
-    <link rel="stylesheet" href="./styles/main.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="./scripts/configurator.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Configurator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/tabulator-tables@5.6.2/dist/css/tabulator.min.css">
+  <link rel="stylesheet" href="./styles/main.css">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
+  <script src="./scripts/app.js" defer></script>
 </head>
-
 <body>
-    <header>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                fetch("../src/header.html")
-                    .then(response => response.text())
-                    .then(data => {
-                        document.querySelector("header").innerHTML = data;
-                    });
-            });
-        </script>
-    </header>
+  <header>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        fetch("../src/header.html")
+          .then(response => response.text())
+          .then(data => {
+            document.querySelector("header").innerHTML = data;
+          });
+      });
+    </script>
+  </header>
 
-    <main>
-        <div id="filter-menu"></div>
-        <div id="configurator"></div>
-    </main>
+  <section class="section" x-data="productConfig()" x-init="init()">
+    <div class="container">
+      <div id="filter-menu" class="mb-4">
+        <div class="field is-grouped is-flex-wrap-wrap">
+          <template x-for="header in headers.slice(0,8)" :key="header">
+            <div class="control mr-4 mb-2">
+              <label class="label" x-text="header"></label>
+              <div class="select is-small">
+                <select x-model="filters[header]" @change="applyFilters">
+                  <option value="">All</option>
+                  <template x-for="option in filterOptions[header]" :key="option">
+                    <option x-text="option"></option>
+                  </template>
+                </select>
+              </div>
+            </div>
+          </template>
+          <div class="control mb-2">
+            <button class="button is-link is-light" @click="clearFilters">Clear Filters</button>
+          </div>
+        </div>
+      </div>
+      <div id="product-table"></div>
+    </div>
+  </section>
 
-    <footer>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                fetch("../src/footer.html")
-                    .then(response => response.text())
-                    .then(data => {
-                        document.querySelector("footer").innerHTML = data;
-                    });
-            });
-        </script>
-    </footer>
+  <footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        fetch("../src/footer.html")
+          .then(response => response.text())
+          .then(data => {
+            document.querySelector("footer").innerHTML = data;
+          });
+      });
+    </script>
+  </footer>
 </body>
 </html>
