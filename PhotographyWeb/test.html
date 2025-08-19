@@ -98,6 +98,19 @@
     input:focus-visible, select:focus-visible, textarea:focus-visible { outline:none; border-color:var(--accent); box-shadow: 0 0 0 3px rgba(194,164,125,.15); }
     textarea{ min-height:110px; }
 
+    .error-msg {
+      color: #e57373;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1rem 0 0 0;
+      text-align: center;
+      display: block;
+  }
+  .missing-field {
+    border: 2px solid #e57373 !important;
+    box-shadow: 0 0 0 2px #e5737333;
+  }
+
     .row{ display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
     .row-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:.75rem; }
     @media (max-width: 640px) { .row, .row-3 { grid-template-columns: 1fr; } }
@@ -164,7 +177,8 @@
           <div class="slide active" data-step="0">
             <p class="muted">Answer a few quick questions. You’ll see your estimate update on the right after each step. No payment collected here.</p>
             <div class="nav">
-              <button class="btn" id="startBtn" type="button">Let’s begin</button>
+              <button class="btn" id="startBtn" type="button">Continue</button>
+              <button class="btn secondary" id="resetBtn" type="button">Reset Quote</button>
             </div>
           </div>
 
@@ -257,9 +271,11 @@
                 <label for="phone">Phone</label>
                 <input id="phone" name="phone" type="tel" autocomplete="tel" />
               </div>
-              <div>
+            </div>
+            <div class="row">
+              <div style="grid-column: 1 / -1;">
                 <label for="notes">Notes (timeline, vision, must‑haves)</label>
-                <input id="notes" placeholder="Share details you'd like me to know" />
+                <textarea id="notes" placeholder="Share details you'd like me to know"></textarea>
               </div>
             </div>
             <div class="nav">
@@ -278,6 +294,7 @@
             </div>
           </div>
         </div>
+        <div id="errorMsgContainer"></div>
       </div>
     </section>
 
@@ -334,8 +351,8 @@
           { id:"wed3", name:"Wedding — Heirloom", hours:10, price:5500, desc:"All-day story with room for portraits & party.", includes:["Lead photographer","Extended coverage","Keepsake album credit","Online gallery"] }
         ],
         engagement: [
-          { id:"eng1", name:"Engagement — Standard", hours:1.5, price:450, desc:"One location, relaxed prompts.", includes:["Up to 1.5 hrs","Online gallery","Style guidance"] },
-          { id:"eng2", name:"Engagement — Extended", hours:2, price:650, desc:"More time, outfit change, second location.", includes:["Up to 2 hrs","Two locations","Online gallery"] }
+          { id:"eng1", name:"Engagement — Standard", hours:1.5, price: 450, desc:"One location, relaxed prompts.", includes:["Up to 1.5 hrs","Online gallery","Style guidance"] },
+          { id:"eng2", name:"Engagement — Extended", hours:2, price: 650, desc:"More time, outfit change, second location.", includes:["Up to 2 hrs","Two locations","Online gallery"] }
         ],
         family: [
           { id:"fam1", name:"Family — Petite", hours:0.75, price:300, desc:"Short & sweet for quick updates.", includes:["45 minutes","One location","Online gallery"] },
@@ -398,6 +415,35 @@
         }
       });
       localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    }
+
+    // Reset all selections and start from scratch
+    function resetQuote() {
+      localStorage.removeItem(CACHE_KEY);
+      // Clear all form fields
+      els.service.value = '';
+      loadPackages();
+      renderAddons();
+      els.pkg.value = '';
+      els.hours.value = '';
+      els.headcount.value = '';
+      els.extraHours.value = '';
+      els.location.value = '';
+      els.date.value = '';
+      els.name.value = '';
+      els.email.value = '';
+      els.phone.value = '';
+      els.notes.value = '';
+      // Uncheck all add-ons
+      Object.keys(CONFIG.ADDONS).forEach(key => {
+        const input = document.getElementById(key);
+        if (input && input.type === 'checkbox') {
+          input.checked = false;
+        }
+      });
+      go(0);
+      compute();
+      updateNavButtons();
     }
 
     // Restore progress from localStorage
@@ -525,7 +571,6 @@
       lines.push(`Base package: ${fmt(base)}`);
       lines.push(`Hours adjustment: ${fmt(hoursAdj)}`);
       lines.push(`Add-ons: ${fmt(addons)}`);
-      lines.push(`Travel: ${fmt(travel)}`);
       lines.push(`Estimated total: ${fmt(base + hoursAdj + addons + travel)}`);
       return lines.join('\n');
     }
@@ -700,7 +745,7 @@
       document.querySelectorAll('.slide').forEach((slide, idx) => {
         const nextBtn = slide.querySelector('[data-nav="next"]');
         if (nextBtn) {
-          nextBtn.disabled = !validateStep(idx);
+          nextBtn.disabled = false; // Always enabled
         }
       });
     }
@@ -722,15 +767,66 @@
       saveProgress();
     }, true);
 
+    // Helper to show/hide error message below slides
+    function showErrorMsg(step) {
+      const container = document.getElementById('errorMsgContainer');
+      if (!container) return;
+      container.innerHTML = '<span class="error-msg">Missing required fields</span>';
+
+      // Highlight missing fields for current step
+      // Remove previous highlights
+      document.querySelectorAll('.missing-field').forEach(el => {
+        el.classList.remove('missing-field');
+      });
+      switch (step) {
+        case 1:
+          if (!els.service.value) els.service.classList.add('missing-field');
+          break;
+        case 2:
+          if (!els.pkg.value) els.pkg.classList.add('missing-field');
+          break;
+        case 4:
+          if (!els.location.value.trim()) els.location.classList.add('missing-field');
+          if (!els.date.value) els.date.classList.add('missing-field');
+          break;
+        case 5:
+          if (!els.name.value.trim()) els.name.classList.add('missing-field');
+          if (!els.email.value.trim()) els.email.classList.add('missing-field');
+          break;
+      }
+    }
+    function clearErrorMsg() {
+      const container = document.getElementById('errorMsgContainer');
+      if (container) container.innerHTML = '';
+      // Remove missing field highlights
+      document.querySelectorAll('.missing-field').forEach(el => {
+        el.classList.remove('missing-field');
+      });
+    }
+
     document.addEventListener('click', (e) => {
       const nav = e.target.closest('[data-nav]');
-      if (nav && !nav.disabled) {
+      if (nav && nav.getAttribute('data-nav') === 'next') {
+        if (!validateStep(current)) {
+          showErrorMsg(current);
+          return;
+        } else {
+          clearErrorMsg();
+          go(current + 1);
+          updateNavButtons();
+          return;
+        }
+      }
+      if (nav) {
+        clearErrorMsg();
         const dir = nav.getAttribute('data-nav');
         go(dir === 'next' ? current + 1 : current - 1);
         updateNavButtons();
       }
     });
-    els.startBtn?.addEventListener('click', () => { go(1); updateNavButtons(); });
+  els.startBtn?.addEventListener('click', () => { go(1); updateNavButtons(); });
+
+  document.getElementById('resetBtn')?.addEventListener('click', resetQuote);
 
     // Initial state
     restoreProgress();
