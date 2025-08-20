@@ -807,10 +807,9 @@
     document.addEventListener('click', (e) => {
       if (e.target.id === 'btnCompose') {
         if (!els.leadEmail.value) { alert('Please enter an email address.'); return; }
-        const to = CONFIG.EMAIL_TO || '';
-        const subject = encodeURIComponent('New Photography Inquiry');
-        const body = encodeURIComponent(summaryText());
-        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+        // Save summary to localStorage and redirect to index.html
+        localStorage.setItem('photoSummary', summaryText());
+        window.location.href = 'index.html';
       }
     });
 
