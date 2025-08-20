@@ -186,6 +186,11 @@
             <label for="service">What are we celebrating?</label>
             <select id="service" aria-label="Service type">
               <option value="">Select…</option>
+              <option value="wedding">Wedding</option>
+              <option value="engagement">Engagement</option>
+              <option value="family">Family</option>
+              <option value="senior">Senior</option>
+              <option value="events">Events</option>
             </select>
             <div class="nav">
               <button class="btn secondary" data-nav="prev" type="button">Back</button>
@@ -199,6 +204,7 @@
             <div class="row mt-2">
               <div>
                 <label for="hours">Hours of coverage</label>
+                <!-- Read-only / fixed to package hours -->
                 <input type="number" id="hours" min="1" step="1" inputmode="numeric" readonly disabled aria-readonly="true" />
                 <div class="hint">Package hours are fixed. Add extra time on the next step.</div>
               </div>
@@ -220,11 +226,6 @@
               <div>
                 <label for="extraHours">Extra hours</label>
                 <input type="number" id="extraHours" min="0" step="1" value="0" inputmode="numeric" />
-              </div>
-              <div>
-                <label for="additionalShoots">Additional shooters</label>
-                <input type="number" id="additionalShoots" min="0" step="1" value="0" inputmode="numeric" />
-                <div class="hint">Each additional shooter is charged per hour of coverage.</div>
               </div>
             </div>
             <div class="nav">
@@ -255,18 +256,18 @@
             <p class="section-title">How can I reach you?</p>
             <div class="row">
               <div>
-                <label for="leadName">Full name</label>
-                <input id="leadName" name="leadName" autocomplete="name" required />
+                <label for="name">Full name</label>
+                <input id="name" name="name" autocomplete="name" required />
               </div>
               <div>
-                <label for="leadEmail">Email</label>
-                <input id="leadEmail" name="leadEmail" type="email" autocomplete="email" required />
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required />
               </div>
             </div>
             <div class="row">
               <div>
-                <label for="leadPhone">Phone</label>
-                <input id="leadPhone" name="leadPhone" type="tel" autocomplete="tel" />
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" />
               </div>
             </div>
             <div class="row">
@@ -299,31 +300,23 @@
       <div class="card">
         <h2 class="section-title">Estimate</h2>
         <div id="estimateBox">
-          <!-- 1. Base Package -->
           <div class="sum-line"><span>Base package</span><span class="price" id="sumBase">$0</span></div>
-          <div class="hr" role="separator" aria-hidden="true"></div>
+          <div class="sum-line"><span>Hours adjustment</span><span class="price" id="sumHours">$0</span></div>
+          <div class="sum-line"><span>Add‑ons</span><span class="price" id="sumAddons">$0</span></div>
 
-          <!-- 2. Extra Hours + Additional Shooters -->
-          <div class="sum-line"><span>Extra hours</span><span class="price" id="sumExtraHours">$0</span></div>
-          <div class="sum-line"><span id="sumShootersLabel">Additional shooters</span><span class="price" id="sumShooters">$0</span></div>
-          <div class="hr" role="separator" aria-hidden="true"></div>
-
-          <!-- 3. Add-ons -->
-          <div class="sum-line">Add-ons</div>
           <div id="addonItems" class="mt-2" aria-live="polite"></div>
-
-          <!-- 4. Total -->
+          
           <div class="hr" role="separator" aria-hidden="true"></div>
           <div class="sum-line total"><span>Estimated total</span><span class="price" id="sumTotal">$0</span></div>
 
-          <!-- 5. Package details -->
+          <!-- Package details injected here -->
           <div id="pkgDetails" class="pkg-details hidden" aria-live="polite"></div>
-          <p class="muted mt-3">Travel cost are not included in this estimate. Driving mileage starts after 100 miles from RCC Photography's Sioux Falls Office.</p>
-          <p class="muted mt-3">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
-          <p id="retainerNote" class="muted hidden mt-2"> <span class="badge">Wedding</span></p>
-          <div class="hr" role="separator" aria-hidden="true"></div>
 
-          <!-- 6. Copy Summary Button -->
+          <p class="muted mt-2">Travel cost are not included in this estimate. Driving mileage starts after 100 miles from RCC Photography's Sioux Falls Office.</p>
+          <p id="retainerNote" class="muted hidden mt-2">
+            <span class="badge">Wedding</span></p>
+          <p class="muted mt-3">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
+          <div class="hr" role="separator" aria-hidden="true"></div>
           <button class="btn ghost" id="btnCopy" type="button" style="width:100%">Copy Summary</button>
         </div>
       </div>
@@ -332,35 +325,46 @@
 
   <script>
     const CONFIG = {
-      EMAIL_TO: "markbrauning@gmail.com",
+      EMAIL_TO: "",
       MILEAGE_RATE: 0.67,
-      SERVICE_TYPE: [
-          { id: "wedding", name: "Wedding", desc: "Full wedding day coverage and packages", hourlyRate: 250, hourlyRateShooter: 100 },
-          { id: "engagement", name: "Engagement", desc: "Engagement sessions and packages", hourlyRate: 200, hourlyRateShooter: 100 },
-          { id: "family", name: "Family", desc: "Family portraits and sessions", hourlyRate: 175, hourlyRateShooter: 100 },
-          { id: "senior", name: "Senior", desc: "Senior portraits and packages", hourlyRate: 175, hourlyRateShooter: 100 },
-          { id: "events", name: "Events", desc: "Event photography and coverage", hourlyRate: 225, hourlyRateShooter: 100 }
+      HOURLY_RATE_OVERRIDES: { wedding: 250, engagement: 200, family: 175, senior: 175, events: 225 },
+      ADDONS: {
+        secondShooter: { label: "Second shooter", price: 400 },
+        thirdShooter: { label: "Third shooter", price: 350 },
+        rush: { label: "Rush editing", price: 300 },
+        extraHour: { label: "Extra hours", price: 200 },
+        album: { label: "Album", price: 350 }
+      },
+      SERVICE_ADDONS: {
+        wedding: ["secondShooter", "thirdShooter", "rush", "extraHour", "album"],
+        engagement: ["rush", "extraHour", "album"],
+        family: ["rush", "extraHour", "album"],
+        senior: ["rush", "extraHour", "album"],
+        events: ["secondShooter", "thirdShooter", "rush", "extraHour"]
+      },
+      PACKAGES: {
+        wedding: [
+          { id:"wed1", name:"Wedding — Classic", hours:6, price:3600, desc:"Coverage for key moments and a full gallery.", includes:["Lead photographer","Timeline consult","Online gallery"] },
+          { id:"wed2", name:"Wedding — Signature", hours:8, price:4400, desc:"Most popular: extra coverage for prep and reception.", includes:["Lead photographer","Second shooter (optional add-on)","Sneak peeks within 72h","Online gallery"] },
+          { id:"wed3", name:"Wedding — Heirloom", hours:10, price:5500, desc:"All-day story with room for portraits & party.", includes:["Lead photographer","Extended coverage","Keepsake album credit","Online gallery"] }
         ],
-      SHOW_HEADCOUNT_FOR: ['events', 'wedding', 'family'],
-      ADDONS: [
-          { id: "rush", name: "Rush editing", price: 20, priceperhr: 10, priceperphoto: 0, pricemin: 0, pricemax: 0, 
-            services: ["wedding", "engagement", "family", "senior", "events"] },
-          { id: "album", name: "Album", price: 350, priceperhr: 0, priceperphoto: 0, pricemin: 0, pricemax: 0,
-            services: ["wedding"] }
+        engagement: [
+          { id:"eng1", name:"Engagement — Standard", hours:1.5, price: 450, desc:"One location, relaxed prompts.", includes:["Up to 1.5 hrs","Online gallery","Style guidance"] },
+          { id:"eng2", name:"Engagement — Extended", hours:2, price: 650, desc:"More time, outfit change, second location.", includes:["Up to 2 hrs","Two locations","Online gallery"] }
         ],
-      PACKAGE: [
-        { id:"wed1", type:"wedding", name:"Wedding — Classic", hours:6, price:3600, desc:"Coverage for key moments and a full gallery.", includes:["Lead photographer","Timeline consult","Online gallery"], photocount: 100 },
-        { id:"wed2", type:"wedding", name:"Wedding — Signature", hours:8, price:4400, desc:"Most popular: extra coverage for prep and reception.", includes:["Lead photographer","Second shooter (optional add-on)","Sneak peeks within 72h","Online gallery"], photocount: 100 },
-        { id:"wed3", type:"wedding", name:"Wedding — Heirloom", hours:10, price:5500, desc:"All-day story with room for portraits & party.", includes:["Lead photographer","Extended coverage","Keepsake album credit","Online gallery"], photocount: 100 },
-        { id:"eng1", type:"engagement", name:"Engagement — Standard", hours:1.5, price: 450, desc:"One location, relaxed prompts.", includes:["Up to 1.5 hrs","Online gallery","Style guidance"], photocount: 100 },
-        { id:"eng2", type:"engagement", name:"Engagement — Extended", hours:2, price: 650, desc:"More time, outfit change, second location.", includes:["Up to 2 hrs","Two locations","Online gallery"], photocount: 100 },
-        { id:"fam1", type:"family", name:"Family — Petite", hours:0.75, price:300, desc:"Short & sweet for quick updates.", includes:["45 minutes","One location","Online gallery"], photocount: 100 },
-        { id:"fam2", type:"family", name:"Family — Standard", hours:1, price:450, desc:"Room for candid + posed combos.", includes:["60 minutes","Online gallery","Print shop access"], photocount: 100 },
-        { id:"sen1", type:"senior", name:"Senior — Standard", hours:1, price:400, desc:"Classic portraits and a few candid looks.", includes:["60 minutes","1–2 outfits","Online gallery"], photocount: 100 },
-        { id:"sen2", type:"senior", name:"Senior — Deluxe", hours:2, price:650, desc:"Multiple looks and locations.", includes:["120 minutes","2–3 outfits","Two locations","Online gallery"], photocount: 100 },
-        { id:"evt1", type:"events", name:"Event — Half Day", hours:4, price:1200, desc:"Great for short events.", includes:["Up to 4 hours","Online gallery"], photocount: 100 },
-        { id:"evt2", type:"events", name:"Event — Full Day", hours:8, price:2200, desc:"For conferences and full-day coverage.", includes:["Up to 8 hours","Online gallery"], photocount: 100 }
-      ]
+        family: [
+          { id:"fam1", name:"Family — Petite", hours:0.75, price:300, desc:"Short & sweet for quick updates.", includes:["45 minutes","One location","Online gallery"] },
+          { id:"fam2", name:"Family — Standard", hours:1, price:450, desc:"Room for candid + posed combos.", includes:["60 minutes","Online gallery","Print shop access"] }
+        ],
+        senior: [
+          { id:"sen1", name:"Senior — Standard", hours:1, price:400, desc:"Classic portraits and a few candid looks.", includes:["60 minutes","1–2 outfits","Online gallery"] },
+          { id:"sen2", name:"Senior — Deluxe", hours:2, price:650, desc:"Multiple looks and locations.", includes:["120 minutes","2–3 outfits","Two locations","Online gallery"] }
+        ],
+        events: [
+          { id:"evt1", name:"Event — Half Day", hours:4, price:1200, desc:"Great for short events.", includes:["Up to 4 hours","Online gallery"] },
+          { id:"evt2", name:"Event — Full Day", hours:8, price:2200, desc:"For conferences and full-day coverage.", includes:["Up to 8 hours","Online gallery"] }
+        ]
+      }
     };
 
     const $ = sel => document.querySelector(sel);
@@ -369,55 +373,17 @@
     const num = v => isNaN(+v) ? 0 : +v;
 
     const els = {
-      // Elements
-      slides: $('#slides'),
-      stepper: $('#stepper'),
-      startBtn: $('#startBtn'),
-      nextBtn: document.querySelector('.btn[data-nav="next"]'),
-      prevBtn: document.querySelector('.btn[data-nav="prev"]'),
-      btnCompose: $('#btnCompose'),
-      btnCopy: $('#btnCopy'),
-      resetBtn: $('#resetBtn'),
-      errorMsgContainer: $('#errorMsgContainer'),
-
-      // Form fields Step 1
-      service: $('#service'),
-
-      // Form fields Step 2
-      pkg: $('#package'),
-      hours: $('#hours'),
-      headcount: $('#headcount'),
-      headcountWrap: $('#headcountWrap'),
-      
-      // Form fields Step 3
-      addonItems: $('#addonItems'),
-      addonsWrap: document.getElementById('addonsWrap'),
-      extraHours: $('#extraHours'),
-      additionalShoots: $('#additionalShoots'),
-      
-      // Form fields Step 4
-      location: $('#location'),
-      date: $('#date'),
-
-      // Form fields Step 5
-      leadName: $('#leadName'),
-      leadEmail: $('#leadEmail'),
-      leadPhone: $('#leadPhone'),
-      notes: $('#notes'),
-
-      // Form fields Step 6
-      reviewBox: $('#reviewBox'),
-
-      // Estimate totals
-      sumBase: $('#sumBase'),
-      sumExtraHours: $('#sumExtraHours'),
-      sumShooters: $('#sumShooters'),
-      sumAddons: $('#sumAddons'),
-      sumTotal: $('#sumTotal'),
-
-      // Package details
-      pkgDetails: $('#pkgDetails'),
-      retainerNote: $('#retainerNote')
+      slides: $('#slides'), stepper: $('#stepper'),
+      service: $('#service'), pkg: $('#package'), hours: $('#hours'), headcount: $('#headcount'), headcountWrap: $('#headcountWrap'),
+      secondShooter: $('#secondShooter'), thirdShooter: $('#thirdShooter'), rush: $('#rush'),
+      extraHours: $('#extraHours'), albums: $('#albums'), prints: $('#prints'),
+      location: $('#location'), date: $('#date'),
+      name: $('#name'), email: $('#email'), phone: $('#phone'), notes: $('#notes'),
+      sumBase: $('#sumBase'), sumHours: $('#sumHours'), sumAddons: $('#sumAddons'), sumTotal: $('#sumTotal'),
+      retainerNote: $('#retainerNote'), reviewBox: $('#reviewBox'),
+      btnCopy: $('#btnCopy'), btnCompose: $('#btnCompose'), startBtn: $('#startBtn'),
+      addonItems: $('#addonItems'), pkgDetails: $('#pkgDetails'),
+      addonsWrap: document.getElementById('addonsWrap')
     };
 
     // Cache keys
@@ -433,17 +399,17 @@
         extraHours: els.extraHours.value,
         location: els.location.value,
         date: els.date.value,
-        leadName: els.leadName.value,
-        leadEmail: els.leadEmail.value,
-        leadPhone: els.leadPhone.value,
+        name: els.name.value,
+        email: els.email.value,
+        phone: els.phone.value,
         notes: els.notes.value,
         addons: {}
       };
       // Save add-on checkboxes
-      CONFIG.ADDONS.forEach(addon => {
-        const input = document.getElementById(addon.id);
+      Object.keys(CONFIG.ADDONS).forEach(key => {
+        const input = document.getElementById(key);
         if (input && input.type === 'checkbox') {
-          data.addons[addon.id] = input.checked;
+          data.addons[key] = input.checked;
         }
       });
       localStorage.setItem(CACHE_KEY, JSON.stringify(data));
@@ -452,23 +418,27 @@
     // Reset all selections and start from scratch
     function resetQuote() {
       localStorage.removeItem(CACHE_KEY);
+      // Clear all form fields
+      els.service.value = '';
+      loadPackages();
+      renderAddons();
+      els.pkg.value = '';
+      els.hours.value = '';
+      els.headcount.value = '';
+      els.extraHours.value = '';
+      els.location.value = '';
+      els.date.value = '';
+      els.name.value = '';
+      els.email.value = '';
+      els.phone.value = '';
+      els.notes.value = '';
       // Uncheck all add-ons
-      CONFIG.ADDONS.forEach(addon => {
-        const input = document.getElementById(addon.id);
+      Object.keys(CONFIG.ADDONS).forEach(key => {
+        const input = document.getElementById(key);
         if (input && input.type === 'checkbox') {
           input.checked = false;
         }
       });
-      // Clear all form fields
-      els.notes.value = '';
-      els.date.value = '';
-      els.location.value = '';
-      els.additionalShoots.value = '0';
-      els.extraHours.value = '0';
-      els.headcount.value = '';
-      els.pkg.value = '';
-      els.service.value = '';
-
       go(0);
       compute();
       updateNavButtons();
@@ -479,22 +449,21 @@
       const raw = localStorage.getItem(CACHE_KEY);
       if (!raw) return;
       try {
-        // Restore all form fields
         const data = JSON.parse(raw);
         if (data.service) els.service.value = data.service;
         loadPackages();
+        renderAddons();
         if (data.pkg) els.pkg.value = data.pkg;
         if (data.hours) els.hours.value = data.hours;
         if (data.headcount) els.headcount.value = data.headcount;
         if (data.extraHours) els.extraHours.value = data.extraHours;
         if (data.location) els.location.value = data.location;
         if (data.date) els.date.value = data.date;
-        if (data.leadName) els.leadName.value = data.leadName;
-        if (data.leadEmail) els.leadEmail.value = data.leadEmail;
-        if (data.leadPhone) els.leadPhone.value = data.leadPhone;
+        if (data.name) els.name.value = data.name;
+        if (data.email) els.email.value = data.email;
+        if (data.phone) els.phone.value = data.phone;
         if (data.notes) els.notes.value = data.notes;
         // Restore add-on checkboxes
-        renderAddons();
         if (data.addons) {
           Object.keys(data.addons).forEach(key => {
             const input = document.getElementById(key);
@@ -505,51 +474,116 @@
         }
         compute();
         updateNavButtons();
-      } catch(e) {
-      }
+      } catch(e) { /* ignore */ }
     }
+    const SHOW_HEADCOUNT_FOR = new Set(['events','wedding','family']);
 
-    let currentStep = 0;
+    let current = 0;
     const lastStep = 6;
-    
-    // Drawing the stepper dots
+
     function renderStepper() {
       els.stepper.innerHTML = '';
       for (let i = 0; i <= lastStep; i++) {
         const d = document.createElement('div');
-        d.className = 'dot' + (i <= currentStep ? ' on' : '');
+        d.className = 'dot' + (i <= current ? ' on' : '');
         els.stepper.appendChild(d);
       }
       const lbl = document.createElement('span');
       lbl.className = 'step-label';
-      lbl.textContent = `Step ${Math.min(currentStep, lastStep)}/${lastStep}`;
+      lbl.textContent = `Step ${Math.min(current, lastStep)}/${lastStep}`;
       els.stepper.appendChild(lbl);
     }
 
-    // Go to a step
     function go(step) {
       clearErrorMsg();
-      currentStep = Math.max(0, Math.min(step, lastStep));
+      current = Math.max(0, Math.min(step, lastStep));
       $$('.slide').forEach(s => s.classList.remove('active'));
-      const nextStep = document.querySelector(`.slide[data-step="${currentStep}"]`);
-      if (nextStep) nextStep.classList.add('active');
+      const next = document.querySelector(`.slide[data-step="${current}"]`);
+      if (next) next.classList.add('active');
       renderStepper();
-      if (currentStep === 6) {
+      if (current === 6) {
         els.reviewBox.textContent = summaryText();
       }
+    }
+    // Generate summary of selections for review box
+    function summaryText() {
+      const svc = els.service.value;
+      const pkgId = els.pkg.value;
+      const pkgList = CONFIG.PACKAGES[svc] || [];
+      const pkg = pkgList.find(p => p.id === pkgId);
+      const base = pkg ? num(pkg.price) : 0;
+      const baseHours = pkg ? num(pkg.hours) : 0;
+      const extraHours = Math.max(0, num(els.extraHours.value));
+      const hourly = CONFIG.HOURLY_RATE_OVERRIDES[svc] ?? 200;
+      const hoursAdj = extraHours * hourly;
+      let addons = 0;
+      let addonItems = [];
+      const allowedAddons = CONFIG.SERVICE_ADDONS[svc] || [];
+      const shooterHours = baseHours + extraHours;
+      allowedAddons.forEach(key => {
+        const addon = CONFIG.ADDONS[key];
+        const input = document.getElementById(key);
+        if (!addon || !input) return;
+        if (key === "secondShooter" && input.checked) {
+          const secondShooterCost = Math.max(100, shooterHours * 100);
+          addons += secondShooterCost;
+          addonItems.push(`${addon.label} (${shooterHours} hr${shooterHours !== 1 ? 's' : ''}): ${fmt(secondShooterCost)}`);
+        } else if (key === "thirdShooter" && input.checked) {
+          const thirdShooterCost = Math.max(100, shooterHours * 100);
+          addons += thirdShooterCost;
+          addonItems.push(`${addon.label} (${shooterHours} hr${shooterHours !== 1 ? 's' : ''}): ${fmt(thirdShooterCost)}`);
+        } else if (key === "rush" && input.checked) {
+          const rushCost = Math.max(75, Math.round(base * 0.10));
+          addons += rushCost;
+          addonItems.push(`${addon.label}: ${fmt(rushCost)}`);
+        } else if (key === "album" && input.checked) {
+          addons += addon.price;
+          addonItems.push(`${addon.label}: ${fmt(addon.price)}`);
+        }
+      });
+      if (allowedAddons.includes("extraHour") && extraHours > 0) {
+        addons += extraHours * CONFIG.ADDONS.extraHour.price;
+        addonItems.push(`Extra hours (${extraHours}): ${fmt(extraHours * CONFIG.ADDONS.extraHour.price)}`);
+      }
+      // Compose summary text
+      let lines = [];
+      lines.push(`Service: ${svc ? svc.charAt(0).toUpperCase() + svc.slice(1) : ''}`);
+      if (pkg) {
+        lines.push(`Package: ${pkg.name} (${fmt(pkg.price)})`);
+        lines.push(`Hours: ${pkg.hours}${extraHours > 0 ? ` + ${extraHours} extra` : ''}`);
+      }
+      if (SHOW_HEADCOUNT_FOR.has(svc) && els.headcount.value) {
+        lines.push(`Headcount: ${els.headcount.value}`);
+      }
+      if (addonItems.length > 0) {
+        lines.push('Add-ons:');
+        addonItems.forEach(item => lines.push(`  - ${item}`));
+      }
+      lines.push(`Location: ${els.location.value}`);
+      lines.push(`Date: ${els.date.value}`);
+      lines.push(`Name: ${els.name.value}`);
+      lines.push(`Email: ${els.email.value}`);
+      if (els.phone.value) lines.push(`Phone: ${els.phone.value}`);
+      if (els.notes.value) lines.push(`Notes: ${els.notes.value}`);
+      lines.push('---');
+      lines.push(`Base package: ${fmt(base)}`);
+      lines.push(`Hours adjustment: ${fmt(hoursAdj)}`);
+      lines.push(`Add-ons: ${fmt(addons)}`);
+      lines.push(`Estimated total: ${fmt(base + hoursAdj + addons)}`);
+      return lines.join('\n');
     }
 
     function toggleHeadcount() {
       const svc = els.service.value;
       if (!els.headcountWrap) return;
-      els.headcountWrap.classList.toggle('hidden', !(CONFIG.SHOW_HEADCOUNT_FOR && CONFIG.SHOW_HEADCOUNT_FOR.includes(svc)));
-      if (!(CONFIG.SHOW_HEADCOUNT_FOR && CONFIG.SHOW_HEADCOUNT_FOR.includes(svc))) els.headcount.value = '';
+      els.headcountWrap.classList.toggle('hidden', !SHOW_HEADCOUNT_FOR.has(svc));
+      if (!SHOW_HEADCOUNT_FOR.has(svc)) els.headcount.value = '';
     }
 
     function loadPackages() {
-      toggleHeadcount();
       const svc = els.service.value;
-      const pkglist = CONFIG.PACKAGE.filter(p => p.type === svc);
+      toggleHeadcount();
+      const list = CONFIG.PACKAGES[svc] || [];
       els.pkg.innerHTML = '';
       els.pkg.disabled = false;
       const blankOpt = document.createElement('option');
@@ -558,7 +592,7 @@
       blankOpt.disabled = false;
       blankOpt.selected = true;
       els.pkg.appendChild(blankOpt);
-      pkglist.forEach(p => {
+      list.forEach(p => {
         const o = document.createElement('option');
         o.value = p.id;
         o.textContent = `${p.name} — ${p.hours} hr${p.hours !== 1 ? 's' : ''}`;
@@ -584,25 +618,34 @@
 
     function renderAddons() {
       const svc = els.service.value;
+      const allowed = CONFIG.SERVICE_ADDONS[svc] || [];
       if (!els.addonsWrap) return;
       els.addonsWrap.innerHTML = '';
-      CONFIG.ADDONS.forEach(addon => {
-        if (!addon.services || !addon.services.includes(svc)) return;
+      allowed.forEach(key => {
+        if (key === "extraHour") return; // handled separately
+        const addon = CONFIG.ADDONS[key];
+        if (!addon) return;
         const label = document.createElement('label');
         label.className = 'pill';
-        label.innerHTML = `<input type="checkbox" id="${addon.id}"> <span>${addon.name}</span>`;
+        label.innerHTML = `<input type="checkbox" id="${key}"> <span>${addon.label}</span>`;
         els.addonsWrap.appendChild(label);
       });
+      // Album add-on for services that allow it
+      if (allowed.includes("album") && !document.getElementById("album")) {
+        const addon = CONFIG.ADDONS["album"];
+        const label = document.createElement('label');
+        label.className = 'pill';
+        label.innerHTML = `<input type="checkbox" id="album"> <span>${addon.label}</span>`;
+        els.addonsWrap.appendChild(label);
+      }
     }
 
     function compute() {
-
-      // Load package details and hours
       const svc = els.service.value;
-      const pkglist = CONFIG.PACKAGE.filter(p => p.type === svc);
+      const list = CONFIG.PACKAGES[svc] || [];
       let pkg = null;
       if (els.pkg.selectedIndex > 0) {
-        pkg = pkglist[els.pkg.selectedIndex - 1];
+        pkg = list[els.pkg.selectedIndex - 1];
       }
       if (pkg) {
         renderPackageDetails(pkg);
@@ -613,46 +656,55 @@
       }
 
       // Pricing calculations
-      const basePrice = pkg ? num(pkg.price) : 0;
+      const base = pkg ? num(pkg.price) : 0;
       const baseHours = pkg ? num(pkg.hours) : 0;
       const extraHours = Math.max(0, num(els.extraHours.value));
-      const svcObj = CONFIG.SERVICE_TYPE.find(s => s.id === svc);
-      const hourly = svcObj?.hourlyRate ?? 200;
-      const hoursExtraBase = extraHours * hourly;
-      const totalhours = baseHours + extraHours;
-      if (els.sumBase) els.sumBase.textContent = fmt(basePrice);
-      if (els.sumExtraHours) els.sumExtraHours.textContent = fmt(hoursExtraBase);
+      const hourly = CONFIG.HOURLY_RATE_OVERRIDES[svc] ?? 200;
+      const hoursAdj = extraHours * hourly;
 
-
-      // Additional Shooters calculation
-      let shootersTotal = 0;
-      let shooterHours = baseHours + extraHours;
-      let shooterCostPerHr = svcObj?.hourlyRateShooter ?? 100;
-      let additionalShooters = Math.max(0, num(els.additionalShoots.value));
-      shootersTotal = additionalShooters > 0 ? shooterHours * shooterCostPerHr * additionalShooters : 0;
-      if (typeof els.sumShooters !== 'undefined' && els.sumShooters) {
-        els.sumShooters.textContent = fmt(shootersTotal);
-        const shootersLabel = document.getElementById('sumShootersLabel');
-        if (shootersLabel) {
-          shootersLabel.textContent = `Additional shooters${additionalShooters > 0 ? ` (${additionalShooters} × ${shooterHours} hr${shooterHours !== 1 ? 's' : ''})` : ''}`;
-        }
-      }
-      
-      // Only include add-ons that are available for the selected service
-      let addonsTotal = 0;
+      // Add-ons
+      let addons = 0;
       let addonItems = [];
-      CONFIG.ADDONS.forEach(addon => {
-        if (!addon.services || !addon.services.includes(svc)) return;
-        const input = document.getElementById(addon.id);
-        if (!input || !input.checked) return;
-        // Calculate add-on price: fixed + per-photo + per-hour
-        let addonPrice = 0;
-        addonPrice += addon.price || 0;
-        addonPrice += (pkg?.photocount || 0) * (addon.priceperphoto || 0);
-        addonPrice += (totalhours || 0) * (addon.priceperhr || 0);
-        addonsTotal += addonPrice;
-        addonItems.push({ name: addon.name, price: addonPrice });
+      let otherShooterCostPerHr = 100;
+      let otherShooterCostMin = 100;
+      const allowedAddons = CONFIG.SERVICE_ADDONS[svc] || [];
+      // For shooters, use baseHours for calculation
+      const shooterHours = baseHours + extraHours;
+      allowedAddons.forEach(key => {
+        const addon = CONFIG.ADDONS[key];
+        const input = document.getElementById(key);
+        if (!addon || !input) return;
+        if (key === "secondShooter" && input.checked) {
+          const secondShooterCost = Math.max(otherShooterCostMin, shooterHours * otherShooterCostPerHr);
+          addons += secondShooterCost;
+          addonItems.push({ name: `${addon.label} (${shooterHours} hr${shooterHours !== 1 ? 's' : ''})`, price: secondShooterCost });
+        } else if (key === "thirdShooter" && input.checked) {
+          const thirdShooterCost = Math.max(otherShooterCostMin, shooterHours * otherShooterCostPerHr);
+          addons += thirdShooterCost;
+          addonItems.push({ name: `${addon.label} (${shooterHours} hr${shooterHours !== 1 ? 's' : ''})`, price: thirdShooterCost });
+        } else if (key === "rush" && input.checked) {
+          const rushCost = Math.max(75, Math.round(base * 0.10));
+          addons += rushCost;
+          addonItems.push({ name: addon.label, price: rushCost });
+        } else if (key === "album" && input.checked) {
+          addons += addon.price;
+          addonItems.push({ name: addon.label, price: addon.price });
+        }
       });
+      // Extra hours is always a number input, not a checkbox
+      if (allowedAddons.includes("extraHour") && extraHours > 0) {
+        addons += extraHours * CONFIG.ADDONS.extraHour.price;
+        addonItems.push({ name: `Extra hours (${extraHours})`, price: extraHours * CONFIG.ADDONS.extraHour.price });
+      }
+
+      // Update DOM
+  els.sumBase.textContent = fmt(base);
+  els.sumHours.textContent = fmt(hoursAdj);
+  els.sumAddons.textContent = fmt(addons);
+  // Defensive: ensure all values are numbers
+  const total = num(base) + num(hoursAdj) + num(addons);
+  els.sumTotal.textContent = fmt(total);
+
       // Add-on items list
       if (els.addonItems) {
         if (addonItems.length > 0) {
@@ -661,28 +713,9 @@
           els.addonItems.innerHTML = '';
         }
       }
-      if (els.sumAddons) els.sumAddons.textContent = fmt(addonsTotal);
-
-      // Update total estimate
-      const estimateTotal = num(basePrice) + num(hoursExtraBase) + num(shootersTotal) + num(addonsTotal);
-      if (els.sumTotal) els.sumTotal.textContent = fmt(estimateTotal);
     }
 
-    // Generate summary of selections for review box
-    function summaryText() {
-       // Compose summary text
-      let lines = [];
-      lines.push(`Service Type: `);
-      lines.push(`Base Package: `);
-      lines.push(`Base Package Hours: `);
-      lines.push(`Extra hours: `);
-      lines.push(`Additional shooters: `);
-      lines.push(`Add-ons:`);
-      lines.push(`Estimated total:`);
-      return lines.join('\n');
-    }
-
-    // Validation logic for each step. Checks if required fields are filled before allowing navigation.
+    // Validation logic for each step
     function validateStep(step) {
       switch (step) {
         case 1:
@@ -693,7 +726,7 @@
         case 4:
           return els.location.value.trim() !== '' && els.date.value !== '';
         case 5:
-          return els.leadName.value.trim() !== '' && els.leadEmail.value.trim() !== '';
+          return els.name.value.trim() !== '' && els.email.value.trim() !== '';
         default:
           return true;
       }
@@ -708,12 +741,17 @@
       });
     }
 
-    // Event listeners for navigation and form changes
+    document.addEventListener('input', () => {
+      compute();
+      updateNavButtons();
+      saveProgress();
+    }, true);
+
     document.addEventListener('change', (e) => {
-      // Handle service selection change
       if (e.target === els.service) {
         loadPackages();
         renderAddons();
+        go(2);
       }
       compute();
       updateNavButtons();
@@ -743,8 +781,8 @@
           if (!els.date.value) els.date.classList.add('missing-field');
           break;
         case 5:
-          if (!els.leadName.value.trim()) els.leadName.classList.add('missing-field');
-          if (!els.leadEmail.value.trim()) els.leadEmail.classList.add('missing-field');
+          if (!els.name.value.trim()) els.name.classList.add('missing-field');
+          if (!els.email.value.trim()) els.email.classList.add('missing-field');
           break;
       }
     }
@@ -760,53 +798,54 @@
     document.addEventListener('click', (e) => {
       const nav = e.target.closest('[data-nav]');
       if (nav && nav.getAttribute('data-nav') === 'next') {
-        if (!validateStep(currentStep)) {
-          showErrorMsg(currentStep);
+        if (!validateStep(current)) {
+          showErrorMsg(current);
           return;
         } else {
-          go(currentStep + 1);
+          go(current + 1);
           updateNavButtons();
           return;
         }
       }
       if (nav) {
         const dir = nav.getAttribute('data-nav');
-        go(dir === 'next' ? currentStep + 1 : currentStep - 1);
+        go(dir === 'next' ? current + 1 : current - 1);
         updateNavButtons();
       }
     });
+  els.startBtn?.addEventListener('click', () => { go(1); updateNavButtons(); });
 
-    // Start button to begin the journey
-    els.startBtn?.addEventListener('click', () => { go(1); updateNavButtons(); });
+  document.getElementById('resetBtn')?.addEventListener('click', resetQuote);
 
-    // Reset button to clear all selections
-    document.getElementById('resetBtn')?.addEventListener('click', resetQuote);
+    // Initial state
+    restoreProgress();
+    updateNavButtons();
 
-    // Populate service dropdown from CONFIG.SERVICE_TYPE
-    function populateServiceDropdown() {
-      const select = document.getElementById('service');
-      if (!select) return;
-      // Remove all except first option
-      select.innerHTML = '<option value="">Select…</option>';
-      CONFIG.SERVICE_TYPE.forEach(svc => {
-        const opt = document.createElement('option');
-        opt.value = svc.id;
-        opt.textContent = svc.name;
-        opt.title = svc.desc;
-        select.appendChild(opt);
-      });
-    }
+    ['change','input'].forEach(evt => {
+      document.addEventListener(evt, e => {
+        if (e.target === els.service) {
+          loadPackages();
+          renderAddons();
+          go(2);
+        }
+        if (e.target === els.pkg) {
+          const svc = els.service.value; const list = CONFIG.PACKAGES[svc] || [];
+          const selected = list.find(p => p.id === els.pkg.value);
+          if (selected) { els.hours.value = selected.hours; renderPackageDetails(selected); }
+        }
+        compute();
+        saveProgress();
+      }, true);
+    });
 
-    // Copy summary button functionality
     els.btnCopy.addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(summaryText()); els.btnCopy.textContent = 'Copied!'; setTimeout(() => els.btnCopy.textContent = 'Copy Summary', 1500); }
       catch(e) { alert('Summary ready to copy:\n' + summaryText()); }
     });
 
-    // Generate summary text for email
     document.addEventListener('click', (e) => {
       if (e.target.id === 'btnCompose') {
-        if (!els.leadEmail.value) { alert('Please enter an email address.'); return; }
+        if (!els.email.value) { alert('Please enter an email address.'); return; }
         const to = CONFIG.EMAIL_TO || '';
         const subject = encodeURIComponent('New Photography Inquiry');
         const body = encodeURIComponent(summaryText());
@@ -814,10 +853,6 @@
       }
     });
 
-    // Initial state
-    populateServiceDropdown();
-    restoreProgress();
-    updateNavButtons();
     renderStepper();
     compute();
   </script>
