@@ -45,7 +45,6 @@
       align-items: start;
       max-width: 1600px;
       padding: 0rem;
-      /* Height is not restricted here, so vertical overflow is handled by children */
       justify-content: center;
     }
 
@@ -53,14 +52,12 @@
       max-width: 800px;
       margin: 1rem 1rem;
       flex-direction: column;
-      /* Allow vertical growth */
     }
 
     .estimate-sticky {
       max-width: 800px;
       margin: 1rem 1rem;
       flex-direction: column;
-      /* Allow vertical growth */
     }
 
     .card {
@@ -69,7 +66,6 @@
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,.04);
       padding: 2rem;
-      /* No height restriction, cards expand to fit content */
     }
 
     .stepper { display:flex; align-items:center; gap:.5rem; margin: .25rem 0 1rem; }
@@ -85,7 +81,6 @@
   .slide {
     display: none;
     padding-top: .25rem;
-    /* Remove absolute positioning so slides are contained in card */
   }
   .slide.active {
     display: block;
@@ -202,10 +197,6 @@
                 <input type="number" id="hours" min="1" step="1" inputmode="numeric" readonly disabled aria-readonly="true" />
                 <div class="hint">Package hours are fixed. Add extra time on the next step.</div>
               </div>
-              <div id="headcountWrap">
-                <label for="headcount">Approx. headcount (optional)</label>
-                <input type="number" id="headcount" min="1" step="1" inputmode="numeric" />
-              </div>
             </div>
             <div class="nav">
               <button class="btn secondary" data-nav="prev" type="button">Back</button>
@@ -232,56 +223,7 @@
               <button class="btn" data-nav="next" type="button">Next</button>
             </div>
           </div>
-
           <div class="slide" data-step="4">
-            <p class="section-title">Where will we be?</p>
-            <div class="row">
-              <div>
-                <label for="location">Location / Venue</label>
-                <input id="location" name="location" placeholder="City, venue, or area" />
-              </div>
-              <div>
-                <label for="date">Preferred date</label>
-                <input id="date" name="date" type="date" />
-              </div>
-            </div>
-            <div class="nav">
-              <button class="btn secondary" data-nav="prev" type="button">Back</button>
-              <button class="btn" data-nav="next" type="button">Next</button>
-            </div>
-          </div>
-
-          <div class="slide" data-step="5">
-            <p class="section-title">How can I reach you?</p>
-            <div class="row">
-              <div>
-                <label for="leadName">Full name</label>
-                <input id="leadName" name="leadName" autocomplete="name" required />
-              </div>
-              <div>
-                <label for="leadEmail">Email</label>
-                <input id="leadEmail" name="leadEmail" type="email" autocomplete="email" required />
-              </div>
-            </div>
-            <div class="row">
-              <div>
-                <label for="leadPhone">Phone</label>
-                <input id="leadPhone" name="leadPhone" type="tel" autocomplete="tel" />
-              </div>
-            </div>
-            <div class="row">
-              <div style="grid-column: 1 / -1;">
-                <label for="notes">Notes (timeline, vision, must‑haves)</label>
-                  <textarea id="notes" placeholder="Share details you'd like me to know" style="resize: vertical;"></textarea>
-              </div>
-            </div>
-            <div class="nav">
-              <button class="btn secondary" data-nav="prev" type="button">Back</button>
-              <button class="btn" data-nav="next" type="button">Review</button>
-            </div>
-          </div>
-
-          <div class="slide" data-step="6">
             <h3 class="section-title">Review & send</h3>
             <p class="muted">Here’s a summary of your selections. You can go back to make changes.</p>
             <pre id="reviewBox" class="review-box" aria-live="polite"></pre>
@@ -304,7 +246,7 @@
           <div class="hr" role="separator" aria-hidden="true"></div>
 
           <!-- 2. Extra Hours + Additional Shooters -->
-          <div class="sum-line"><span>Extra hours</span><span class="price" id="sumExtraHours">$0</span></div>
+          <div class="sum-line"><span id="sumExtraHoursLabel">Extra hours</span><span class="price" id="sumExtraHours">$0</span></div>
           <div class="sum-line"><span id="sumShootersLabel">Additional shooters</span><span class="price" id="sumShooters">$0</span></div>
           <div class="hr" role="separator" aria-hidden="true"></div>
 
@@ -317,14 +259,21 @@
           <div class="sum-line total"><span>Estimated total</span><span class="price" id="sumTotal">$0</span></div>
 
           <!-- 5. Package details -->
-          <div id="pkgDetails" class="pkg-details hidden" aria-live="polite"></div>
-          <p class="muted mt-3">Travel cost are not included in this estimate. Driving mileage starts after 100 miles from RCC Photography's Sioux Falls Office.</p>
-          <p class="muted mt-3">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
-          <p id="retainerNote" class="muted hidden mt-2"> <span class="badge">Wedding</span></p>
           <div class="hr" role="separator" aria-hidden="true"></div>
 
-          <!-- 6. Copy Summary Button -->
-          <button class="btn ghost" id="btnCopy" type="button" style="width:100%">Copy Summary</button>
+          <div class="hr" role="separator" aria-hidden="true"></div>
+          <div id="pkgDetails" class="pkg-details hidden" aria-live="polite"></div>
+          <h3 class="muted mt-3" style="font-weight:bold;">Included in all packages:</h3>
+          <ul class="muted mt-3" style="margin-top:0.5rem;">
+            <li>Full-resolution online image gallery with unlimited downloads</li>
+            <li>Image printing service built into your online gallery</li>
+            <li>First 30 miles of travel</li>
+            <li>2-3 week gallery turnaround for sessions 2hrs or under</li>
+            <li>4-6 week gallery turnaround for sessions greater than 2hrs </li>
+          </ul>
+          <p class="muted mt-3">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
+          <p id="retainerNote" class="muted hidden mt-2"> <span class="badge">Wedding</span></p>
+
         </div>
       </div>
     </aside>
@@ -332,34 +281,42 @@
 
   <script>
     const CONFIG = {
-      EMAIL_TO: "markbrauning@gmail.com",
-      MILEAGE_RATE: 0.67,
       SERVICE_TYPE: [
-          { id: "wedding", name: "Wedding", desc: "Full wedding day coverage and packages", hourlyRate: 250, hourlyRateShooter: 100 },
-          { id: "engagement", name: "Engagement", desc: "Engagement sessions and packages", hourlyRate: 200, hourlyRateShooter: 100 },
-          { id: "family", name: "Family", desc: "Family portraits and sessions", hourlyRate: 175, hourlyRateShooter: 100 },
-          { id: "senior", name: "Senior", desc: "Senior portraits and packages", hourlyRate: 175, hourlyRateShooter: 100 },
-          { id: "events", name: "Events", desc: "Event photography and coverage", hourlyRate: 225, hourlyRateShooter: 100 }
-        ],
-      SHOW_HEADCOUNT_FOR: ['events', 'wedding', 'family'],
+        { id: "wedding", name: "Wedding", desc: "Full wedding day coverage and packages", hourlyRate: 300, hourlyRateShooter: 80, allowAdditionalShooters: true },
+        { id: "engagement", name: "Engagement", desc: "Engagement sessions and packages", hourlyRate: 200, hourlyRateShooter: 80, allowAdditionalShooters: false },
+        { id: "senior", name: "Senior", desc: "Senior portraits and packages", hourlyRate: 200, hourlyRateShooter: 80, allowAdditionalShooters: false },
+        { id: "family", name: "Family", desc: "Family portraits and sessions", hourlyRate: 200, hourlyRateShooter: 80, allowAdditionalShooters: false },
+        { id: "events", name: "Events", desc: "Event photography and coverage", hourlyRate: 300, hourlyRateShooter: 80, allowAdditionalShooters: true },
+        { id: "maternity", name: "Maternity", desc: "Maternity portraits and sessions", hourlyRate: 200, hourlyRateShooter: 80, allowAdditionalShooters: false },
+        { id: "newborn", name: "Newborn", desc: "Newborn portraits and sessions", hourlyRate: 200, hourlyRateShooter: 80, allowAdditionalShooters: false },
+        { id: "brand", name: "Brand", desc: "Brand portraits and sessions", hourlyRate: 200, hourlyRateShooter: 80, allowAdditionalShooters: false }
+      ],
       ADDONS: [
-          { id: "rush", name: "Rush editing", price: 20, priceperhr: 10, priceperphoto: 0, pricemin: 0, pricemax: 0, 
-            services: ["wedding", "engagement", "family", "senior", "events"] },
-          { id: "album", name: "Album", price: 350, priceperhr: 0, priceperphoto: 0, pricemin: 0, pricemax: 0,
-            services: ["wedding"] }
-        ],
+        { id: "album", name: "Heirloom Album Creation", price: 650, priceperhr: 0, priceperphoto: 0, pricemin: 0, pricemax: 0, services: ["wedding"] },
+        { id: "engagement", name: "1-Hr Engagement Session", price: 550, priceperhr: 0, priceperphoto: 0, pricemin: 0, pricemax: 0, services: ["wedding"] },
+        { id: "rush", name: "Rush Gallery Turnaround", price: 100, priceperhr: 0, priceperphoto: 0.5, pricemin: 150, pricemax: 950, services: [] },
+        { id: "social", name: "Behind the Scenes + Social Media Coverage", price: 150, priceperhr: 50, priceperphoto: 0, pricemin: 0, pricemax: 950, services: [] },
+        { id: "studio", name: "Studio Rental", price: 0, priceperhr: 80, priceperphoto: 0, pricemin: 0, pricemax: 0, services: ["family","maternity","senior","newborn","brand","engagement"] }
+      ],
       PACKAGE: [
-        { id:"wed1", type:"wedding", name:"Wedding — Classic", hours:6, price:3600, desc:"Coverage for key moments and a full gallery.", includes:["Lead photographer","Timeline consult","Online gallery"], photocount: 100 },
-        { id:"wed2", type:"wedding", name:"Wedding — Signature", hours:8, price:4400, desc:"Most popular: extra coverage for prep and reception.", includes:["Lead photographer","Second shooter (optional add-on)","Sneak peeks within 72h","Online gallery"], photocount: 100 },
-        { id:"wed3", type:"wedding", name:"Wedding — Heirloom", hours:10, price:5500, desc:"All-day story with room for portraits & party.", includes:["Lead photographer","Extended coverage","Keepsake album credit","Online gallery"], photocount: 100 },
-        { id:"eng1", type:"engagement", name:"Engagement — Standard", hours:1.5, price: 450, desc:"One location, relaxed prompts.", includes:["Up to 1.5 hrs","Online gallery","Style guidance"], photocount: 100 },
-        { id:"eng2", type:"engagement", name:"Engagement — Extended", hours:2, price: 650, desc:"More time, outfit change, second location.", includes:["Up to 2 hrs","Two locations","Online gallery"], photocount: 100 },
-        { id:"fam1", type:"family", name:"Family — Petite", hours:0.75, price:300, desc:"Short & sweet for quick updates.", includes:["45 minutes","One location","Online gallery"], photocount: 100 },
-        { id:"fam2", type:"family", name:"Family — Standard", hours:1, price:450, desc:"Room for candid + posed combos.", includes:["60 minutes","Online gallery","Print shop access"], photocount: 100 },
-        { id:"sen1", type:"senior", name:"Senior — Standard", hours:1, price:400, desc:"Classic portraits and a few candid looks.", includes:["60 minutes","1–2 outfits","Online gallery"], photocount: 100 },
-        { id:"sen2", type:"senior", name:"Senior — Deluxe", hours:2, price:650, desc:"Multiple looks and locations.", includes:["120 minutes","2–3 outfits","Two locations","Online gallery"], photocount: 100 },
-        { id:"evt1", type:"events", name:"Event — Half Day", hours:4, price:1200, desc:"Great for short events.", includes:["Up to 4 hours","Online gallery"], photocount: 100 },
-        { id:"evt2", type:"events", name:"Event — Full Day", hours:8, price:2200, desc:"For conferences and full-day coverage.", includes:["Up to 8 hours","Online gallery"], photocount: 100 }
+        { id: "fam1", type: "family", name: "Family Package I", hours: 1, price: 550, desc: "1-Hour Family photo session", includes: ["1-Hour Photo shoot", "75+ Images", "Up to 2 outfits at 1 location", "Outfit & planning guide"], photocount: 75 },
+        { id: "fam2", type: "family", name: "Family Package II", hours: 0.5, price: 450, desc: "30-Minute Family photo session", includes: ["30-Minute Photo shoot", "45+ Images", "1 outfit at 1 location", "Outfit & planning guide"], photocount: 45 },
+        { id: "mat1", type: "maternity", name: "Maternity Package I", hours: 1, price: 550, desc: "1-Hour Maternity photo session", includes: ["1-Hour Photo shoot", "75+ Images", "Up to 2 outfits at 1 location", "Outfit & planning guide"], photocount: 75 },
+        { id: "mat2", type: "maternity", name: "Maternity Package II", hours: 0.5, price: 450, desc: "30-Minute Maternity photo session", includes: ["30-Minute Photo shoot", "45+ Images", "1 outfit at 1 location", "Outfit & planning guide"], photocount: 45 },
+        { id: "new1", type: "newborn", name: "Newborn Package I", hours: 1, price: 550, desc: "1-Hour Newborn photo session", includes: ["1-Hour Photo shoot", "75+ Images", "Up to 2 outfits at 1 location", "Outfit & planning guide"], photocount: 75 },
+        { id: "new2", type: "newborn", name: "Newborn Package II", hours: 0.5, price: 450, desc: "30-Minute Newborn photo session", includes: ["30-Minute Photo shoot", "45+ Images", "1 outfit at 1 location", "Outfit & planning guide"], photocount: 45 },
+        { id: "sen1", type: "senior", name: "Senior Package I", hours: 2, price: 750, desc: "2-Hour Senior photo session", includes: ["2-Hour Photo shoot", "200+ Images", "Up to 5 outfits", "Outfit & planning guide"], photocount: 200 },
+        { id: "sen2", type: "senior", name: "Senior Package II", hours: 1, price: 550, desc: "1-Hour Senior photo session", includes: ["1-Hour Photo shoot", "90+ Images", "Up to 2 outfits", "Outfit & planning guide"], photocount: 90 },
+        { id: "sen3", type: "senior", name: "Senior Package III", hours: 0.5, price: 450, desc: "30-Minute Senior photo session", includes: ["30-Minute Photo shoot", "50+ Images", "1 outfit", "Outfit & planning guide"], photocount: 50 },
+        { id: "eng1", type: "engagement", name: "Engagement  Package I", hours: 1, price: 550, desc: "1-Hour Engagement photo session", includes: ["1-Hour Photo shoot", "75+ Images", "Up to 2 outfits at 1 location", "Outfit & planning guide"], photocount: 75 },
+        { id: "eng2", type: "engagement", name: "Engagement  Package II", hours: 0.5, price: 450, desc: "30-Minute Engagement photo session", includes: ["30-Minute Photo shoot", "45+ Images", "1 outfit at 1 location", "Outfit & planning guide"], photocount: 45 },
+        { id: "wed1", type: "wedding", name: "Wedding Collection I", hours: 10, price: 3900, desc: "10-Hour day. Perfect for all-day weddings", includes: ["10-Hour of converage", "Timeline creation", "Consultation call", "Sneak peeks within 72 hours", "Wedding Guide"], photocount: 1000 },
+        { id: "wed2", type: "wedding", name: "Wedding Collection II", hours: 8, price: 3450, desc: "8-Hour day. Ideal for most every wedding", includes: ["8-Hour of converage", "Timeline creation", "Consultation call", "Sneak peeks within 72 hours", "Wedding Guide"], photocount: 800 },
+        { id: "wed3", type: "wedding", name: "Wedding Collection III", hours: 6, price: 3000, desc: "6-Hour day. Best for a half-day, laid back wedding", includes: ["6-Hour of converage", "Timeline creation", "Consultation call", "Sneak peeks within 72 hours", "Wedding Guide"], photocount: 600 },
+        { id: "wed4", type: "wedding", name: "Microwedding", hours: 4, price: 2550, desc: "4-Hour day. Great for a small ceremonies", includes: ["4-Hour of converage", "Timeline creation", "Consultation call", "Sneak peeks within 72 hours", "Wedding Guide"], photocount: 400 },
+        { id: "evt1", type: "events", name: "Event - Half Day", hours: 4, price: 1500, desc: "4-Hour Event photo coverage", includes: ["4-Hour of converage"], photocount: 300 },
+        { id: "bnd1", type: "brand", name: "Personal Brand Package I", hours: 3, price: 975, desc: "2-3 Hour Personal Brand session", includes: ["2-3 Hours of converage","2-3 locations","3-5 outfits + outfit guide","Collaborated mood board + questionnaire","Professional hair + makeup styling"], photocount: 300 },
+        { id: "bnd2", type: "brand", name: "Personal Brand Package II", hours: 1.5, price: 650, desc: "4-Hour Event photo coverage", includes: ["1.5 Hours of converage","1 location","2-3 outfits + outfit guide","Collaborated mood board + questionnaire"], photocount: 150 }
       ]
     };
 
@@ -386,8 +343,6 @@
       // Form fields Step 2
       pkg: $('#package'),
       hours: $('#hours'),
-      headcount: $('#headcount'),
-      headcountWrap: $('#headcountWrap'),
       
       // Form fields Step 3
       addonItems: $('#addonItems'),
@@ -396,16 +351,6 @@
       additionalShoots: $('#additionalShoots'),
       
       // Form fields Step 4
-      location: $('#location'),
-      date: $('#date'),
-
-      // Form fields Step 5
-      leadName: $('#leadName'),
-      leadEmail: $('#leadEmail'),
-      leadPhone: $('#leadPhone'),
-      notes: $('#notes'),
-
-      // Form fields Step 6
       reviewBox: $('#reviewBox'),
 
       // Estimate totals
@@ -425,28 +370,21 @@
 
     // Save progress to localStorage
     function saveProgress() {
-      const data = {
+      const progressData = {
         service: els.service.value,
         pkg: els.pkg.value,
         hours: els.hours.value,
-        headcount: els.headcount.value,
         extraHours: els.extraHours.value,
-        location: els.location.value,
-        date: els.date.value,
-        leadName: els.leadName.value,
-        leadEmail: els.leadEmail.value,
-        leadPhone: els.leadPhone.value,
-        notes: els.notes.value,
         addons: {}
       };
       // Save add-on checkboxes
       CONFIG.ADDONS.forEach(addon => {
         const input = document.getElementById(addon.id);
         if (input && input.type === 'checkbox') {
-          data.addons[addon.id] = input.checked;
+          progressData.addons[addon.id] = input.checked;
         }
       });
-      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_KEY, JSON.stringify(progressData));
     }
 
     // Reset all selections and start from scratch
@@ -460,12 +398,8 @@
         }
       });
       // Clear all form fields
-      els.notes.value = '';
-      els.date.value = '';
-      els.location.value = '';
       els.additionalShoots.value = '0';
       els.extraHours.value = '0';
-      els.headcount.value = '';
       els.pkg.value = '';
       els.service.value = '';
 
@@ -480,26 +414,19 @@
       if (!raw) return;
       try {
         // Restore all form fields
-        const data = JSON.parse(raw);
-        if (data.service) els.service.value = data.service;
+        const progressData = JSON.parse(raw);
+        if (progressData.service) els.service.value = progressData.service;
         loadPackages();
-        if (data.pkg) els.pkg.value = data.pkg;
-        if (data.hours) els.hours.value = data.hours;
-        if (data.headcount) els.headcount.value = data.headcount;
-        if (data.extraHours) els.extraHours.value = data.extraHours;
-        if (data.location) els.location.value = data.location;
-        if (data.date) els.date.value = data.date;
-        if (data.leadName) els.leadName.value = data.leadName;
-        if (data.leadEmail) els.leadEmail.value = data.leadEmail;
-        if (data.leadPhone) els.leadPhone.value = data.leadPhone;
-        if (data.notes) els.notes.value = data.notes;
+        if (progressData.pkg) els.pkg.value = progressData.pkg;
+        if (progressData.hours) els.hours.value = progressData.hours;
+        if (progressData.extraHours) els.extraHours.value = progressData.extraHours;
         // Restore add-on checkboxes
         renderAddons();
-        if (data.addons) {
-          Object.keys(data.addons).forEach(key => {
+        if (progressData.addons) {
+          Object.keys(progressData.addons).forEach(key => {
             const input = document.getElementById(key);
             if (input && input.type === 'checkbox') {
-              input.checked = data.addons[key];
+              input.checked = progressData.addons[key];
             }
           });
         }
@@ -510,7 +437,7 @@
     }
 
     let currentStep = 0;
-    const lastStep = 6;
+    const lastStep = 4;
     
     // Drawing the stepper dots
     function renderStepper() {
@@ -534,20 +461,12 @@
       const nextStep = document.querySelector(`.slide[data-step="${currentStep}"]`);
       if (nextStep) nextStep.classList.add('active');
       renderStepper();
-      if (currentStep === 6) {
+      if (currentStep === lastStep) {
         els.reviewBox.textContent = summaryText();
       }
     }
 
-    function toggleHeadcount() {
-      const svc = els.service.value;
-      if (!els.headcountWrap) return;
-      els.headcountWrap.classList.toggle('hidden', !(CONFIG.SHOW_HEADCOUNT_FOR && CONFIG.SHOW_HEADCOUNT_FOR.includes(svc)));
-      if (!(CONFIG.SHOW_HEADCOUNT_FOR && CONFIG.SHOW_HEADCOUNT_FOR.includes(svc))) els.headcount.value = '';
-    }
-
     function loadPackages() {
-      toggleHeadcount();
       const svc = els.service.value;
       const pkglist = CONFIG.PACKAGE.filter(p => p.type === svc);
       els.pkg.innerHTML = '';
@@ -612,17 +531,45 @@
         els.hours.value = '';
       }
 
+      // Hide/show Additional Shooters field based on CONFIG
+      const svcObj = CONFIG.SERVICE_TYPE.find(s => s.id === svc);
+      if (els.additionalShoots) {
+        // Find the parent div for the field (label + input + hint)
+        const shootersFieldDiv = els.additionalShoots.closest('div');
+        if (svcObj && svcObj.allowAdditionalShooters) {
+          els.additionalShoots.disabled = false;
+          if (shootersFieldDiv) shootersFieldDiv.style.display = '';
+        } else {
+          els.additionalShoots.disabled = true;
+          els.additionalShoots.value = '0';
+          if (shootersFieldDiv) shootersFieldDiv.style.display = 'none';
+        }
+      }
+
+      // Hide/show Additional Shooters sum line in Estimate card
+      const shootersSumLine = document.getElementById('sumShootersLabel')?.closest('.sum-line');
+      if (shootersSumLine) {
+        if (svcObj && svcObj.allowAdditionalShooters) {
+          shootersSumLine.style.display = '';
+        } else {
+          shootersSumLine.style.display = 'none';
+        }
+      }
+
       // Pricing calculations
       const basePrice = pkg ? num(pkg.price) : 0;
       const baseHours = pkg ? num(pkg.hours) : 0;
       const extraHours = Math.max(0, num(els.extraHours.value));
-      const svcObj = CONFIG.SERVICE_TYPE.find(s => s.id === svc);
       const hourly = svcObj?.hourlyRate ?? 200;
       const hoursExtraBase = extraHours * hourly;
       const totalhours = baseHours + extraHours;
       if (els.sumBase) els.sumBase.textContent = fmt(basePrice);
       if (els.sumExtraHours) els.sumExtraHours.textContent = fmt(hoursExtraBase);
-
+      // Update Extra Hours label dynamically
+      const extraHoursLabel = document.getElementById('sumExtraHoursLabel');
+      if (extraHoursLabel) {
+        extraHoursLabel.textContent = `Extra hours${extraHours > 0 ? ` (${extraHours})` : ''}`;
+      }
 
       // Additional Shooters calculation
       let shootersTotal = 0;
@@ -649,7 +596,7 @@
         let addonPrice = 0;
         addonPrice += addon.price || 0;
         addonPrice += (pkg?.photocount || 0) * (addon.priceperphoto || 0);
-        addonPrice += (totalhours || 0) * (addon.priceperhr || 0);
+        addonPrice += (Math.ceil(totalhours) || 0) * (addon.priceperhr || 0);
         addonsTotal += addonPrice;
         addonItems.push({ name: addon.name, price: addonPrice });
       });
@@ -670,15 +617,42 @@
 
     // Generate summary of selections for review box
     function summaryText() {
-       // Compose summary text
+      // Pull information from Estimate card
       let lines = [];
-      lines.push(`Service Type: `);
-      lines.push(`Base Package: `);
-      lines.push(`Base Package Hours: `);
-      lines.push(`Extra hours: `);
-      lines.push(`Additional shooters: `);
-      lines.push(`Add-ons:`);
-      lines.push(`Estimated total:`);
+
+      // Base Package
+      const pkgOption = els.pkg.options[els.pkg.selectedIndex]?.textContent || '';
+      lines.push(`Base Package: ${pkgOption}`);
+
+      // Extra hours (only if selected and > 0)
+      const extraHours = parseFloat(els.extraHours?.value || '0');
+      if (extraHours > 0) {
+        const extraHoursLabel = document.getElementById('sumExtraHoursLabel')?.textContent || 'Extra hours';
+        const extraHoursValue = els.sumExtraHours?.textContent || '';
+        lines.push(`${extraHoursLabel}: ${extraHoursValue}`);
+      }
+
+      // Additional shooters (only if selected and > 0)
+      const additionalShooters = parseFloat(els.additionalShoots?.value || '0');
+      if (additionalShooters > 0) {
+        const shootersLabel = document.getElementById('sumShootersLabel')?.textContent || 'Additional shooters';
+        const shootersValue = els.sumShooters?.textContent || '';
+        lines.push(`${shootersLabel}: ${shootersValue}`);
+      }
+
+      // Add-ons (only if any selected, no header if none)
+      const addonItems = Array.from(document.querySelectorAll('#addonItems .sum-line'));
+      if (addonItems.length > 0) {
+        addonItems.forEach(item => {
+          const name = item.querySelector('span:first-child')?.textContent || '';
+          const price = item.querySelector('span.price')?.textContent || '';
+          lines.push(`Add-on ${name}: ${price}`);
+        });
+      }
+
+      // Estimated total
+      const totalValue = els.sumTotal?.textContent || '';
+      lines.push(`Estimated total: ${totalValue}`);
       return lines.join('\n');
     }
 
@@ -690,10 +664,6 @@
         case 2:
           // Only require package selection, not hours or index
           return els.pkg.value !== '';
-        case 4:
-          return els.location.value.trim() !== '' && els.date.value !== '';
-        case 5:
-          return els.leadName.value.trim() !== '' && els.leadEmail.value.trim() !== '';
         default:
           return true;
       }
@@ -737,14 +707,6 @@
           break;
         case 2:
           if (!els.pkg.value) els.pkg.classList.add('missing-field');
-          break;
-        case 4:
-          if (!els.location.value.trim()) els.location.classList.add('missing-field');
-          if (!els.date.value) els.date.classList.add('missing-field');
-          break;
-        case 5:
-          if (!els.leadName.value.trim()) els.leadName.classList.add('missing-field');
-          if (!els.leadEmail.value.trim()) els.leadEmail.classList.add('missing-field');
           break;
       }
     }
@@ -797,16 +759,9 @@
       });
     }
 
-    // Copy summary button functionality
-    els.btnCopy.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(summaryText()); els.btnCopy.textContent = 'Copied!'; setTimeout(() => els.btnCopy.textContent = 'Copy Summary', 1500); }
-      catch(e) { alert('Summary ready to copy:\n' + summaryText()); }
-    });
-
     // Generate summary text for email
     document.addEventListener('click', (e) => {
       if (e.target.id === 'btnCompose') {
-        if (!els.leadEmail.value) { alert('Please enter an email address.'); return; }
         // Save summary to localStorage and redirect to index.html
         localStorage.setItem('photoSummary', summaryText());
         window.location.href = 'index.html';
