@@ -17,18 +17,18 @@
       --border: #e8e1d8;
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
+    .rcc-photo-quote * { box-sizing: border-box; }
+    .rcc-photo-quote html, .rcc-photo-quote body { height: 100%; }
+    .rcc-photo-quote body {
       margin: 0;
       font-family: 'Open Sans', sans-serif !important;
       color: #24272b !important;
       background: transparent;
     }
-    header {
+    .rcc-photo-quote header {
       padding: 0.1rem 0.1rem;
       text-align: center; }
-    h1 {
+    .rcc-photo-quote h1 {
       letter-spacing: .5px;
       margin: 0rem 0rem;
       font-size: clamp(1.5rem, 2.5vw, 2rem);
@@ -37,7 +37,7 @@
       font-weight: normal !important;
       white-space: pre-wrap !important;
     }
-    .tag {
+    .rcc-photo-quote .tag {
       margin: 0.5rem 0rem 0rem;
       color: #24272b !important;
       font-size: 14px !important;
@@ -45,14 +45,10 @@
       font-weight: normal !important;
       white-space: pre-wrap !important;
     }
-    .hidden { display: none !important; }
-    .mt-2 { margin-top: .75rem; }
-    .mt-3 { 
-      margin-top: .75rem;
-
-    }
-
-    .container {
+    .rcc-photo-quote .hidden { display: none !important; }
+    .rcc-photo-quote .mt-2 { margin-top: .75rem; }
+    .rcc-photo-quote .mt-3 { margin-top: .75rem; }
+    .rcc-photo-quote .container {
       width: 100%;
       margin: auto;
       display: grid;
@@ -63,57 +59,40 @@
       padding: 0rem;
       justify-content: center;
     }
-
-      /* Stack cards vertically on small screens */
-      @media (max-width: 900px) {
-        .container {
-          grid-template-columns: 1fr;
-        }
-        .guided-steps, .estimate-sticky {
-          margin: 1rem 0.5rem;
-          max-width: 100%;
-        }
+    @media (max-width: 900px) {
+      .rcc-photo-quote .container {
+        grid-template-columns: 1fr;
       }
-
-    .guided-steps {
+      .rcc-photo-quote .guided-steps, .rcc-photo-quote .estimate-sticky {
+        margin: 1rem 0.5rem;
+        max-width: 100%;
+      }
+    }
+    .rcc-photo-quote .guided-steps {
       max-width: 800px;
       margin: 1rem 1rem;
       flex-direction: column;
     }
-
-    .estimate-sticky {
+    .rcc-photo-quote .estimate-sticky {
       max-width: 800px;
       margin: 1rem 1rem;
       flex-direction: column;
     }
-
-    .card {
+    .rcc-photo-quote .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,.04);
       padding: 2rem;
     }
-
-    .stepper { display:flex; align-items:center; gap:.5rem; margin: .25rem 0 1rem; }
-    .dot { width: 8px; height: 8px; border-radius:999px; background:#e9e1d6; transition: all .25s ease; }
-    .dot.on { background: var(--accent); transform: scale(1.15); }
-    .step-label { margin-left:.5rem; color:var(--muted); font-size:.95rem; }
-
-  .slides {
-    position: relative;
-    min-height: 0;
-    overflow: visible;
-  }
-  .slide {
-    display: none;
-    padding-top: .25rem;
-  }
-  .slide.active {
-    display: block;
-  }
-
-    label {
+    .rcc-photo-quote .stepper { display:flex; align-items:center; gap:.5rem; margin: .25rem 0 1rem; }
+    .rcc-photo-quote .dot { width: 8px; height: 8px; border-radius:999px; background:#e9e1d6; transition: all .25s ease; }
+    .rcc-photo-quote .dot.on { background: var(--accent); transform: scale(1.15); }
+    .rcc-photo-quote .step-label { margin-left:.5rem; color:var(--muted); font-size:.95rem; }
+    .rcc-photo-quote .slides { position: relative; min-height: 0; overflow: visible; }
+    .rcc-photo-quote .slide { display: none; padding-top: .25rem; }
+    .rcc-photo-quote .slide.active { display: block; }
+    .rcc-photo-quote label {
       display: block;
       font-weight: normal !important;
       margin: .5rem 0 .35rem;
@@ -122,15 +101,14 @@
       font-family: 'Open Sans', sans-serif !important;
       white-space: pre-wrap !important;
     }
-    .hint {
+    .rcc-photo-quote .hint {
       color: #24272b !important;
       font-size: 14px !important;
       font-family: 'Open Sans', sans-serif !important;
       font-weight: normal !important;
       white-space: pre-wrap !important;
     }
-
-    input, select, textarea {
+    .rcc-photo-quote input, .rcc-photo-quote select, .rcc-photo-quote textarea {
       width: 100%;
       padding: .7rem .8rem;
       border-radius: 10px;
@@ -143,31 +121,27 @@
       white-space: pre-wrap !important;
       transition: box-shadow .2s ease, border-color .2s ease;
     }
-    input:focus-visible, select:focus-visible, textarea:focus-visible { outline:none; border-color:var(--accent); box-shadow: 0 0 0 3px rgba(194,164,125,.15); }
-    textarea{ min-height:110px; }
-
-    .error-msg {
+    .rcc-photo-quote input:focus-visible, .rcc-photo-quote select:focus-visible, .rcc-photo-quote textarea:focus-visible { outline:none; border-color:var(--accent); box-shadow: 0 0 0 3px rgba(194,164,125,.15); }
+    .rcc-photo-quote textarea{ min-height:110px; }
+    .rcc-photo-quote .error-msg {
       color: #e57373;
       font-size: 1rem;
       font-weight: 600;
       margin: 1rem 0 0 0;
       text-align: center;
       display: block;
-  }
-  .missing-field {
-    border: 2px solid #e57373 !important;
-    box-shadow: 0 0 0 2px #e5737333;
-  }
-
-    .row{ display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
-    .row-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:.75rem; }
-    @media (max-width: 640px) { .row, .row-3 { grid-template-columns: 1fr; } }
-
-    .pill { display:inline-flex; align-items:center; gap:.5rem; padding:.45rem .75rem; border:1px solid var(--border); border-radius:999px; cursor:pointer; user-select:none; background:#fff; }
-    .pill input{ width:auto; }
-
-    .nav { display:flex; justify-content:space-between; gap:.5rem; margin-top:1rem; }
-    .btn {
+    }
+    .rcc-photo-quote .missing-field {
+      border: 2px solid #e57373 !important;
+      box-shadow: 0 0 0 2px #e5737333;
+    }
+    .rcc-photo-quote .row{ display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+    .rcc-photo-quote .row-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:.75rem; }
+    @media (max-width: 640px) { .rcc-photo-quote .row, .rcc-photo-quote .row-3 { grid-template-columns: 1fr; } }
+    .rcc-photo-quote .pill { display:inline-flex; align-items:center; gap:.5rem; padding:.45rem .75rem; border:1px solid var(--border); border-radius:999px; cursor:pointer; user-select:none; background:#fff; }
+    .rcc-photo-quote .pill input{ width:auto; }
+    .rcc-photo-quote .nav { display:flex; justify-content:space-between; gap:.5rem; margin-top:1rem; }
+    .rcc-photo-quote .btn {
       appearance: none;
       border: 0;
       cursor: pointer;
@@ -184,18 +158,18 @@
       color: #fff;
       white-space: pre-wrap !important;
     }
-    .btn:hover { background: var(--accent-dark); }
-    .btn.secondary {
+    .rcc-photo-quote .btn:hover { background: var(--accent-dark); }
+    .rcc-photo-quote .btn.secondary {
       background: #fff;
       color: #24272b !important;
       border: 1px solid var(--border);
     }
-    .btn.ghost {
+    .rcc-photo-quote .btn.ghost {
       background: transparent;
       border: 1px dashed var(--border);
       color: #24272b !important;
     }
-    .section-title {
+    .rcc-photo-quote .section-title {
       margin: .25rem 0 .75rem;
       font-size: 1.1rem !important;
       color: #24272b !important;
@@ -203,7 +177,7 @@
       font-weight: normal !important;
       white-space: pre-wrap !important;
     }
-    #journeyTitle.section-title {
+    .rcc-photo-quote #journeyTitle.section-title {
       display: block;
       width: 100%;
       text-align: center;
@@ -214,24 +188,21 @@
       letter-spacing: 0.5px;
       white-space: pre-wrap !important;
     }
-
-    .price { font-feature-settings:"tnum" on, "lnum" on; font-variant-numeric:tabular-nums; }
-    .sum-line { display:flex; justify-content:space-between; margin:.35rem 0; }
-    .sum-line.total { font-size:1.15rem; font-weight:800; }
-    .hr { height:1px; background:var(--border); margin:.75rem 0; }
-    .muted {
+    .rcc-photo-quote .price { font-feature-settings:"tnum" on, "lnum" on; font-variant-numeric:tabular-nums; }
+    .rcc-photo-quote .sum-line { display:flex; justify-content:space-between; margin:.35rem 0; }
+    .rcc-photo-quote .sum-line.total { font-size:1.15rem; font-weight:800; }
+    .rcc-photo-quote .hr { height:1px; background:var(--border); margin:.75rem 0; }
+    .rcc-photo-quote .muted {
       color: #24272b !important;
       font-size: 14px !important;
       font-family: 'Open Sans', sans-serif !important;
       font-weight: normal !important;
       white-space: pre-wrap !important;
     }
-    .badge { display:inline-block; padding:.15rem .5rem; border-radius:8px; background:#f3eee6; color:#7a5f3e; font-size:.8rem; font-weight:700; }
-
-    .flash { animation: flash .4s ease; }
+    .rcc-photo-quote .badge { display:inline-block; padding:.15rem .5rem; border-radius:8px; background:#f3eee6; color:#7a5f3e; font-size:.8rem; font-weight:700; }
+    .rcc-photo-quote .flash { animation: flash .4s ease; }
     @keyframes flash { from { background: #fff5e9; } to { background: transparent; } }
-
-    .review-box {
+    .rcc-photo-quote .review-box {
       background: #faf7f2;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -248,15 +219,12 @@
       width: 100%;
       box-sizing: border-box;
     }
-
-    /* Package details (estimate panel) */
-    .pkg-details { border: 1px dashed var(--border); border-radius: 12px; padding: .75rem; margin-top: .75rem; }
-    .pkg-title { font-weight: 700; margin: 0 0 .25rem; font-size: 1rem; }
-    .pkg-desc { margin: 0 0 .35rem; color: var(--muted); font-size: .95rem; }
-    .pkg-includes { margin: 0; padding-left: 1.1rem; font-size: .95rem; }
-    .pkg-includes li { margin: .15rem 0; }
-
-    @media (prefers-reduced-motion: reduce) { .slide, .dot { transition: none; } }
+    .rcc-photo-quote .pkg-details { border: 1px dashed var(--border); border-radius: 12px; padding: .75rem; margin-top: .75rem; }
+    .rcc-photo-quote .pkg-title { font-weight: 700; margin: 0 0 .25rem; font-size: 1rem; }
+    .rcc-photo-quote .pkg-desc { margin: 0 0 .35rem; color: var(--muted); font-size: .95rem; }
+    .rcc-photo-quote .pkg-includes { margin: 0; padding-left: 1.1rem; font-size: .95rem; }
+    .rcc-photo-quote .pkg-includes li { margin: .15rem 0; }
+    @media (prefers-reduced-motion: reduce) { .rcc-photo-quote .slide, .rcc-photo-quote .dot { transition: none; } }
   </style>
 </head>
 <body>
