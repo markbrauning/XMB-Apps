@@ -1,156 +1,134 @@
-<style>
-  :root {
-    --bg: #faf8f6;
-    --card: #ffffff;
-    --text: #1a1a1a;
-    --muted: #6b6b6b;
-    --accent: #c2a47d;
-    --accent-dark: #a7865f;
-    --border: #e8e1d8;
-  }
-  body {
-    background: transparent;
-    font-family: 'Open Sans', sans-serif !important;
-    color: #24272b !important;
-    margin: 0;
-  }
-  .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 3rem auto;
-    align-items: start;
-    padding: 0 1rem;
-  }
-  .rcc-summary-card {
-    background: #fff;
-    border-radius: 18px;
-    border: 1px solid #e2ded9;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-    padding: 2rem 2.5rem;
-    margin: 0;
-    max-width: 100%;
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-  }
-  .rcc-summary-card h2 {
-    margin-top: 0;
-    font-size: 1.35rem !important;
-    font-weight: normal !important;
-    letter-spacing: 0.02em;
-    color: #24272b !important;
-    font-family: 'Open Sans', sans-serif !important;
-    margin-bottom: 1rem;
-    white-space: pre-wrap !important;
-  }
-  #summaryBox {
-    white-space: pre-wrap !important;
-    font-family: 'Open Sans', sans-serif !important;
-    background: #fff;
-    border-radius: 10px;
-    padding: 1.2rem;
-    border: 1px solid #e2ded9;
-    min-height: 90px;
-    font-size: 14px !important;
-    color: #24272b !important;
-    font-weight: normal !important;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  #btnCopySummary {
-    appearance: none;
-    border: 0;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5rem;
-    padding: .85rem 1rem;
-    border-radius: 12px;
-    font-weight: normal !important;
-    font-size: 14px !important;
-    font-family: 'Open Sans', sans-serif !important;
-    background: var(--accent);
-    color: #fff;
-    white-space: pre-wrap !important;
-  }
-  #btnCopySummary:active {
-    background: linear-gradient(90deg, #a68c5c 0%, #d6c29a 100%);
-  }
-  .rcc-summary-card p {
-    color: #24272b !important;
-    font-size: 14px !important;
-    font-family: 'Open Sans', sans-serif !important;
-    font-weight: normal !important;
-    white-space: pre-wrap !important;
-    margin-top: .7rem;
-    margin-bottom: 0;
-    letter-spacing: 0.01em;
-  }
-  .honeybook-card {
-    background: #fff;
-    border-radius: 18px;
-    border: 1px solid #e2ded9;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-    padding: 2rem 2.5rem;
-    margin: 0;
-    max-width: 100%;
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-  }
-  @media (max-width: 900px) {
-    .container {
-      grid-template-columns: 1fr;
-      gap: 2rem;
+<head>
+  <style>
+    :root {
+      --bg: #faf8f6;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --accent: #c2a47d;
+      --accent-dark: #a7865f;
+      --border: #e8e1d8;
     }
-  }
-</style>
 
-<div class="container">
-  <div class="honeybook-card">
-    <div class="hb-p-5f6b9ad3463616000e504342-1"></div>
-    <img height="1" width="1" style="display:none" src="https://www.honeybook.com/p.png?pid=5f6b9ad3463616000e504342">
-  </div>
-  <div class="rcc-summary-card">
-    <h2>Your Quote Summary</h2>
-    <pre id="summaryBox">Loading...</pre>
-    <button id="btnCopySummary">Copy to Clipboard</button>
-    <p>Copy and paste this summary into the Honeybook form.</p>
-  </div>
-</div>
-<script>
-  (function(h,b,s,n,i,p,e,t) {
-    h._HB_ = h._HB_ || {};h._HB_.pid = i;;;;
-    t=b.createElement(s);t.type="text/javascript";t.async=!0;t.src=n;
-    e=b.getElementsByTagName(s)[0];e.parentNode.insertBefore(t,e);
-})(window,document,"script","https://widget.honeybook.com/assets_users_production/websiteplacements/placement-controller.min.js","5f6b9ad3463616000e504342");
-</script>
+    .rcc-photo-quote {
+      background: transparent;
+      max-width: 800px;
+      margin: 0.5rem auto;
+    }
 
-<script>
-// Display summary and enable copy to clipboard
-document.addEventListener('DOMContentLoaded', function() {
-  const summary = localStorage.getItem('photoSummary');
-  const box = document.getElementById('summaryBox');
-  if (box) box.textContent = summary || 'No summary found.';
-  const btn = document.getElementById('btnCopySummary');
-  if (btn) {
-    btn.addEventListener('click', async function() {
-      if (!summary) return;
-      try {
-        await navigator.clipboard.writeText(summary);
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 10000);
-      } catch(e) {
-        alert('Copy failed. Please select and copy manually.');
+    .rcc-photo-quote .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.04);
+      padding: 2rem;
+    }
+
+    .rcc-photo-quote label {
+      display: block;
+      font-weight: normal !important;
+      margin: .5rem 0 .35rem;
+      color: #24272b !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      white-space: pre-wrap !important;
+    }
+
+    .rcc-photo-quote .nav { display:flex; justify-content:space-between; gap:.5rem; margin-top:1rem; }
+
+    .rcc-photo-quote .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      padding: .85rem 1rem;
+      border-radius: 12px;
+      font-weight: normal !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      background: var(--accent);
+      color: #fff;
+      white-space: pre-wrap !important;
+    }
+    .rcc-photo-quote .btn:hover { background: var(--accent-dark); }
+
+    .rcc-photo-quote .btn.secondary {
+      background: #fff;
+      color: #24272b !important;
+      border: 1px solid var(--border);
+    }
+    .rcc-photo-quote .btn.secondary:hover { background: var(--border); }
+
+    .rcc-photo-quote .section-title {
+      margin: .25rem 0 .75rem;
+      font-size: 1.1rem !important;
+      color: #24272b !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+    }
+
+  .rcc-photo-quote .review-box {
+      background: #faf7f2;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1rem;
+      white-space: pre-wrap !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-size: 14px !important;
+      color: #24272b !important;
+      font-weight: normal !important;
+      min-height: 100px;
+      height: auto;
+      max-height: none;
+      overflow-y: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body class="rcc-photo-quote">
+  <div class="card">
+    <div class="section-title">Quoted</div>
+    <div id="reviewBox" class="review-box" aria-live="polite"></div>
+    <div class="nav">
+      <button class="btn" id="btnEditQuote" type="button">Edit Quote</button>
+      <button class="btn secondary" id="btnCopySummary" type="button">Copy to Clipboard</button>
+    </div>
+  </div>
+
+  <script>
+    // Display summary and enable copy to clipboard
+    document.addEventListener('DOMContentLoaded', function() {
+      const summary = localStorage.getItem('photoSummary');
+      const box = document.getElementById('reviewBox');
+      if (box) box.textContent = summary || 'Nothing quoted yet! Go to Edit Quote to get detailed pricing.';
+      const btn = document.getElementById('btnCopySummary');
+      if (btn) {
+        btn.addEventListener('click', async function() {
+          if (!summary) return;
+          try {
+            await navigator.clipboard.writeText(summary);
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 10000);
+          } catch(e) {
+            alert('Failed to copy');
+          }
+        });
       }
+        // Add redirect for Edit Quote button
+        const btnEdit = document.getElementById('btnEditQuote');
+        if (btnEdit) {
+          btnEdit.addEventListener('click', function() {
+            window.location.href = 'index.html';
+          });
+        }
     });
-  }
-});
-</script>
+  </script>
+
+</body>
+
