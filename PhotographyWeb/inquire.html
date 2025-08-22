@@ -1,10 +1,130 @@
-<div id="summaryBoxWrap" style="max-width:800px;margin:2rem auto 1rem auto;padding:1rem 2rem;background:#faf8f6;border-radius:12px;border:1px solid #e8e1d8;box-shadow:0 2px 8px rgba(0,0,0,.04);">
-  <h2 style="margin-top:0;font-size:1.2rem;">Your Inquiry Summary</h2>
-  <pre id="summaryBox" style="white-space:pre-wrap;font-family:inherit;background:#fff;border-radius:8px;padding:1rem;border:1px solid #e8e1d8;min-height:80px;">Loading...</pre>
-  <button id="btnCopySummary" style="margin-top:.5rem;padding:.6rem 1.2rem;border-radius:8px;background:#c2a47d;color:#fff;font-weight:700;border:none;cursor:pointer;">Copy to Clipboard</button>
-  <p style="color:#6b6b6b;font-size:.95rem;margin-top:.5rem;">Copy and paste this summary into the Honeybook form below.</p>
+<style>
+  :root {
+    --bg: #faf8f6;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #c2a47d;
+    --accent-dark: #a7865f;
+    --border: #e8e1d8;
+  }
+  body {
+    background: transparent;
+    font-family: 'Open Sans', sans-serif !important;
+    color: #24272b !important;
+    margin: 0;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 3rem auto;
+    align-items: start;
+    padding: 0 1rem;
+  }
+  .rcc-summary-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #e2ded9;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    padding: 2rem 2.5rem;
+    margin: 0;
+    max-width: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  .rcc-summary-card h2 {
+    margin-top: 0;
+    font-size: 1.35rem !important;
+    font-weight: normal !important;
+    letter-spacing: 0.02em;
+    color: #24272b !important;
+    font-family: 'Open Sans', sans-serif !important;
+    margin-bottom: 1rem;
+    white-space: pre-wrap !important;
+  }
+  #summaryBox {
+    white-space: pre-wrap !important;
+    font-family: 'Open Sans', sans-serif !important;
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.2rem;
+    border: 1px solid #e2ded9;
+    min-height: 90px;
+    font-size: 14px !important;
+    color: #24272b !important;
+    font-weight: normal !important;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  #btnCopySummary {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .85rem 1rem;
+    border-radius: 12px;
+    font-weight: normal !important;
+    font-size: 14px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    background: var(--accent);
+    color: #fff;
+    white-space: pre-wrap !important;
+  }
+  #btnCopySummary:active {
+    background: linear-gradient(90deg, #a68c5c 0%, #d6c29a 100%);
+  }
+  .rcc-summary-card p {
+    color: #24272b !important;
+    font-size: 14px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-weight: normal !important;
+    white-space: pre-wrap !important;
+    margin-top: .7rem;
+    margin-bottom: 0;
+    letter-spacing: 0.01em;
+  }
+  .honeybook-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #e2ded9;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    padding: 2rem 2.5rem;
+    margin: 0;
+    max-width: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  @media (max-width: 900px) {
+    .container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="honeybook-card">
+    <div class="hb-p-5f6b9ad3463616000e504342-1"></div>
+    <img height="1" width="1" style="display:none" src="https://www.honeybook.com/p.png?pid=5f6b9ad3463616000e504342">
+  </div>
+  <div class="rcc-summary-card">
+    <h2>Your Quote Summary</h2>
+    <pre id="summaryBox">Loading...</pre>
+    <button id="btnCopySummary">Copy to Clipboard</button>
+    <p>Copy and paste this summary into the Honeybook form.</p>
+  </div>
 </div>
-<div class="hb-p-5f6b9ad3463616000e504342-1"></div><img height="1" width="1" style="display:none" src="https://www.honeybook.com/p.png?pid=5f6b9ad3463616000e504342">
 <script>
   (function(h,b,s,n,i,p,e,t) {
     h._HB_ = h._HB_ || {};h._HB_.pid = i;;;;
@@ -26,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         await navigator.clipboard.writeText(summary);
         btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 1500);
+        setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 10000);
       } catch(e) {
         alert('Copy failed. Please select and copy manually.');
       }

@@ -19,22 +19,38 @@
 
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--text); background: linear-gradient(180deg, var(--bg), #fff); }
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif !important;
+      color: #24272b !important;
+      background: transparent;
+    }
     header {
       padding: 0.1rem 0.1rem;
       text-align: center; }
-    h1 { 
+    h1 {
       letter-spacing: .5px;
       margin: 0rem 0rem;
-      font-size: clamp(1.5rem, 2.5vw, 2rem); }
-      .tag {
-        margin: 0.5rem 0rem 0rem;
-        color: var(--muted); 
-        font-size: .95rem; }
-
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      color: #24272b !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+    }
+    .tag {
+      margin: 0.5rem 0rem 0rem;
+      color: #24272b !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+    }
     .hidden { display: none !important; }
     .mt-2 { margin-top: .75rem; }
-    .mt-3 { margin-top: .75rem; }
+    .mt-3 { 
+      margin-top: .75rem;
+
+    }
 
     .container {
       width: 100%;
@@ -47,6 +63,17 @@
       padding: 0rem;
       justify-content: center;
     }
+
+      /* Stack cards vertically on small screens */
+      @media (max-width: 900px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+        .guided-steps, .estimate-sticky {
+          margin: 1rem 0.5rem;
+          max-width: 100%;
+        }
+      }
 
     .guided-steps {
       max-width: 800px;
@@ -86,10 +113,36 @@
     display: block;
   }
 
-    label { display:block; font-weight:600; margin:.5rem 0 .35rem; }
-    .hint { color: var(--muted); font-size: .9rem; }
+    label {
+      display: block;
+      font-weight: normal !important;
+      margin: .5rem 0 .35rem;
+      color: #24272b !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      white-space: pre-wrap !important;
+    }
+    .hint {
+      color: #24272b !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+    }
 
-    input, select, textarea { width:100%; padding:.7rem .8rem; border-radius:10px; border:1px solid var(--border); background:#fff; font-size:1rem; transition: box-shadow .2s ease, border-color .2s ease; }
+    input, select, textarea {
+      width: 100%;
+      padding: .7rem .8rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      color: #24272b !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+      transition: box-shadow .2s ease, border-color .2s ease;
+    }
     input:focus-visible, select:focus-visible, textarea:focus-visible { outline:none; border-color:var(--accent); box-shadow: 0 0 0 3px rgba(194,164,125,.15); }
     textarea{ min-height:110px; }
 
@@ -114,19 +167,65 @@
     .pill input{ width:auto; }
 
     .nav { display:flex; justify-content:space-between; gap:.5rem; margin-top:1rem; }
-    .btn { appearance:none; border:0; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.85rem 1rem; border-radius:12px; font-weight:700; font-size:1rem; background:var(--accent); color:#fff; }
-    .btn:hover{ background:var(--accent-dark); }
-    .btn.secondary{ background:#fff; color:var(--text); border:1px solid var(--border); }
-    .btn.ghost{ background:transparent; border:1px dashed var(--border); color:var(--muted); }
-
-    .section-title { margin: .25rem 0 .75rem; font-size: 1.1rem; }
-    #journeyTitle.section-title { display: block; width: 100%; text-align: center; font-size: 2.2rem; font-weight: 700; letter-spacing: 0.5px; }
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      padding: .85rem 1rem;
+      border-radius: 12px;
+      font-weight: normal !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      background: var(--accent);
+      color: #fff;
+      white-space: pre-wrap !important;
+    }
+    .btn:hover { background: var(--accent-dark); }
+    .btn.secondary {
+      background: #fff;
+      color: #24272b !important;
+      border: 1px solid var(--border);
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: #24272b !important;
+    }
+    .section-title {
+      margin: .25rem 0 .75rem;
+      font-size: 1.1rem !important;
+      color: #24272b !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+    }
+    #journeyTitle.section-title {
+      display: block;
+      width: 100%;
+      text-align: center;
+      font-size: 2.2rem !important;
+      font-weight: normal !important;
+      color: #24272b !important;
+      font-family: 'Open Sans', sans-serif !important;
+      letter-spacing: 0.5px;
+      white-space: pre-wrap !important;
+    }
 
     .price { font-feature-settings:"tnum" on, "lnum" on; font-variant-numeric:tabular-nums; }
     .sum-line { display:flex; justify-content:space-between; margin:.35rem 0; }
     .sum-line.total { font-size:1.15rem; font-weight:800; }
     .hr { height:1px; background:var(--border); margin:.75rem 0; }
-    .muted{ color:var(--muted); }
+    .muted {
+      color: #24272b !important;
+      font-size: 14px !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-weight: normal !important;
+      white-space: pre-wrap !important;
+    }
     .badge { display:inline-block; padding:.15rem .5rem; border-radius:8px; background:#f3eee6; color:#7a5f3e; font-size:.8rem; font-weight:700; }
 
     .flash { animation: flash .4s ease; }
@@ -137,8 +236,11 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1rem 1rem;
-      white-space: pre-wrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      white-space: pre-wrap !important;
+      font-family: 'Open Sans', sans-serif !important;
+      font-size: 14px !important;
+      color: #24272b !important;
+      font-weight: normal !important;
       min-height: 180px;
       height: auto;
       max-height: none;
@@ -260,21 +362,22 @@
 
           <!-- 5. Package details -->
           <div class="hr" role="separator" aria-hidden="true"></div>
-
-          <div class="hr" role="separator" aria-hidden="true"></div>
           <div id="pkgDetails" class="pkg-details hidden" aria-live="polite"></div>
-          <h3 class="muted mt-3" style="font-weight:bold;">Included in all packages:</h3>
-          <ul class="muted mt-3" style="margin-top:0.5rem;">
-            <li>Full-resolution online image gallery with unlimited downloads</li>
-            <li>Image printing service built into your online gallery</li>
-            <li>First 30 miles of travel</li>
-            <li>2-3 week gallery turnaround for sessions 2hrs or under</li>
-            <li>4-6 week gallery turnaround for sessions greater than 2hrs </li>
-          </ul>
-          <p class="muted mt-3">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
-          <p id="retainerNote" class="muted hidden mt-2"> <span class="badge">Wedding</span></p>
 
-        </div>
+          <!-- 6. All Packages -->
+          <div id="pkgAllInclude" class="pkg-details" aria-live="polite">
+            <p class="pkg-desc">Included in all packages:</p>
+              <ul class="pkg-includes">
+                <li>Full-resolution online image gallery with unlimited downloads</li>
+                <li>Image printing service built into your online gallery</li>
+                <li>First 30 miles of travel</li>
+                <li>2-3 week gallery turnaround for sessions 2hrs or under</li>
+                <li>4-6 week gallery turnaround for sessions greater than 2hrs </li>
+              </ul>
+              <p class="muted mt-2">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
+          </div>
+          </ul>
+          </div>
       </div>
     </aside>
   </main>
@@ -762,9 +865,9 @@
     // Generate summary text for email
     document.addEventListener('click', (e) => {
       if (e.target.id === 'btnCompose') {
-        // Save summary to localStorage and redirect to index.html
+        // Save summary to localStorage and redirect to inquire.html
         localStorage.setItem('photoSummary', summaryText());
-        window.location.href = 'index.html';
+        window.location.href = 'inquire.html';
       }
     });
 
