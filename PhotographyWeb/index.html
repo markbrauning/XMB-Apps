@@ -260,127 +260,129 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Build Your Photography Package</h1>
-    <p class="tag" aria-label="brand tagline">RCC Photography • Guided journey • Live estimate</p>
-  </header>
+  <div class="rcc-photo-quote">
+    <header>
+      <h1>Build Your Photography Package</h1>
+      <p class="tag" aria-label="brand tagline">RCC Photography • Guided journey • Live estimate</p>
+    </header>
 
-  <main class="container">
-    <section class="guided-steps" aria-labelledby="journeyTitle">
-      <div class="card">
-        <div class="stepper" id="stepper" aria-hidden="true" aria-live="polite"></div>
-        <h2 id="journeyTitle" class="section-title">Let's personalize your session</h2>
-        <div class="slides" id="slides" role="group" aria-label="Quote builder steps">
-          <div class="slide active" data-step="0">
-            <p class="muted">Answer a few quick questions. You’ll see your estimate update on the right after each step. No payment collected here.</p>
-            <div class="nav">
-              <button class="btn" id="startBtn" type="button">Continue</button>
-              <button class="btn secondary" id="resetBtn" type="button">Reset Quote</button>
-            </div>
-          </div>
-
-          <div class="slide" data-step="1">
-            <label for="service">What are we celebrating?</label>
-            <select id="service" aria-label="Service type">
-              <option value="">Select…</option>
-            </select>
-            <div class="nav">
-              <button class="btn secondary" data-nav="prev" type="button">Back</button>
-              <button class="btn" data-nav="next" type="button">Next</button>
-            </div>
-          </div>
-
-          <div class="slide" data-step="2">
-            <label for="package">Choose a package</label>
-            <select id="package" aria-label="Package"></select>
-            <div class="row mt-2">
-              <div>
-                <label for="hours">Hours of coverage</label>
-                <input type="number" id="hours" min="1" step="1" inputmode="numeric" readonly disabled aria-readonly="true" />
-                <div class="hint">Package hours are fixed. Add extra time on the next step.</div>
+    <main class="container">
+      <section class="guided-steps" aria-labelledby="journeyTitle">
+        <div class="card">
+          <div class="stepper" id="stepper" aria-hidden="true" aria-live="polite"></div>
+          <h2 id="journeyTitle" class="section-title">Let's personalize your session</h2>
+          <div class="slides" id="slides" role="group" aria-label="Quote builder steps">
+            <div class="slide active" data-step="0">
+              <p class="muted">Answer a few quick questions. You’ll see your estimate update on the right after each step. No payment collected here.</p>
+              <div class="nav">
+                <button class="btn" id="startBtn" type="button">Continue</button>
+                <button class="btn secondary" id="resetBtn" type="button">Reset Quote</button>
               </div>
             </div>
-            <div class="nav">
-              <button class="btn secondary" data-nav="prev" type="button">Back</button>
-              <button class="btn" data-nav="next" type="button">Next</button>
-            </div>
-          </div>
 
-          <div class="slide" data-step="3">
-            <p class="section-title" style="margin-top:.25rem;">Would you like any add‑ons?</p>
-            <div class="row-3" id="addonsWrap"></div>
-            <div class="row mt-2">
-              <div>
-                <label for="extraHours">Extra hours</label>
-                <input type="number" id="extraHours" min="0" step="1" value="0" inputmode="numeric" />
-              </div>
-              <div>
-                <label for="additionalShoots">Additional shooters</label>
-                <input type="number" id="additionalShoots" min="0" step="1" value="0" inputmode="numeric" />
-                <div class="hint">Each additional shooter is charged per hour of coverage.</div>
+            <div class="slide" data-step="1">
+              <label for="service">What are we celebrating?</label>
+              <select id="service" aria-label="Service type">
+                <option value="">Select…</option>
+              </select>
+              <div class="nav">
+                <button class="btn secondary" data-nav="prev" type="button">Back</button>
+                <button class="btn" data-nav="next" type="button">Next</button>
               </div>
             </div>
-            <div class="nav">
-              <button class="btn secondary" data-nav="prev" type="button">Back</button>
-              <button class="btn" data-nav="next" type="button">Next</button>
+
+            <div class="slide" data-step="2">
+              <label for="package">Choose a package</label>
+              <select id="package" aria-label="Package"></select>
+              <div class="row mt-2">
+                <div>
+                  <label for="hours">Hours of coverage</label>
+                  <input type="number" id="hours" min="1" step="1" inputmode="numeric" readonly disabled aria-readonly="true" />
+                  <div class="hint">Package hours are fixed. Add extra time on the next step.</div>
+                </div>
+              </div>
+              <div class="nav">
+                <button class="btn secondary" data-nav="prev" type="button">Back</button>
+                <button class="btn" data-nav="next" type="button">Next</button>
+              </div>
+            </div>
+
+            <div class="slide" data-step="3">
+              <p class="section-title" style="margin-top:.25rem;">Would you like any add‑ons?</p>
+              <div class="row-3" id="addonsWrap"></div>
+              <div class="row mt-2">
+                <div>
+                  <label for="extraHours">Extra hours</label>
+                  <input type="number" id="extraHours" min="0" step="1" value="0" inputmode="numeric" />
+                </div>
+                <div>
+                  <label for="additionalShoots">Additional shooters</label>
+                  <input type="number" id="additionalShoots" min="0" step="1" value="0" inputmode="numeric" />
+                  <div class="hint">Each additional shooter is charged per hour of coverage.</div>
+                </div>
+              </div>
+              <div class="nav">
+                <button class="btn secondary" data-nav="prev" type="button">Back</button>
+                <button class="btn" data-nav="next" type="button">Next</button>
+              </div>
+            </div>
+            <div class="slide" data-step="4">
+              <h3 class="section-title">Review & send</h3>
+              <p class="muted">Here’s a summary of your selections. You can go back to make changes.</p>
+              <pre id="reviewBox" class="review-box" aria-live="polite"></pre>
+              <div class="nav">
+                <button class="btn secondary" data-nav="prev" type="button">Back</button>
+                <button class="btn" id="btnCompose" type="button">Send Inquiry Email</button>
+              </div>
             </div>
           </div>
-          <div class="slide" data-step="4">
-            <h3 class="section-title">Review & send</h3>
-            <p class="muted">Here’s a summary of your selections. You can go back to make changes.</p>
-            <pre id="reviewBox" class="review-box" aria-live="polite"></pre>
-            <div class="nav">
-              <button class="btn secondary" data-nav="prev" type="button">Back</button>
-              <button class="btn" id="btnCompose" type="button">Send Inquiry Email</button>
-            </div>
-          </div>
+          <div id="errorMsgContainer"></div>
         </div>
-        <div id="errorMsgContainer"></div>
-      </div>
-    </section>
+      </section>
 
-    <aside class="estimate-sticky" aria-label="Live estimate">
-      <div class="card">
-        <h2 class="section-title">Estimate</h2>
-        <div id="estimateBox">
-          <!-- 1. Base Package -->
-          <div class="sum-line"><span>Base package</span><span class="price" id="sumBase">$0</span></div>
-          <div class="hr" role="separator" aria-hidden="true"></div>
+      <aside class="estimate-sticky" aria-label="Live estimate">
+        <div class="card">
+          <h2 class="section-title">Estimate</h2>
+          <div id="estimateBox">
+            <!-- 1. Base Package -->
+            <div class="sum-line"><span>Base package</span><span class="price" id="sumBase">$0</span></div>
+            <div class="hr" role="separator" aria-hidden="true"></div>
 
-          <!-- 2. Extra Hours + Additional Shooters -->
-          <div class="sum-line"><span id="sumExtraHoursLabel">Extra hours</span><span class="price" id="sumExtraHours">$0</span></div>
-          <div class="sum-line"><span id="sumShootersLabel">Additional shooters</span><span class="price" id="sumShooters">$0</span></div>
-          <div class="hr" role="separator" aria-hidden="true"></div>
+            <!-- 2. Extra Hours + Additional Shooters -->
+            <div class="sum-line"><span id="sumExtraHoursLabel">Extra hours</span><span class="price" id="sumExtraHours">$0</span></div>
+            <div class="sum-line"><span id="sumShootersLabel">Additional shooters</span><span class="price" id="sumShooters">$0</span></div>
+            <div class="hr" role="separator" aria-hidden="true"></div>
 
-          <!-- 3. Add-ons -->
-          <div class="sum-line">Add-ons</div>
-          <div id="addonItems" class="mt-2" aria-live="polite"></div>
+            <!-- 3. Add-ons -->
+            <div class="sum-line">Add-ons</div>
+            <div id="addonItems" class="mt-2" aria-live="polite"></div>
 
-          <!-- 4. Total -->
-          <div class="hr" role="separator" aria-hidden="true"></div>
-          <div class="sum-line total"><span>Estimated total</span><span class="price" id="sumTotal">$0</span></div>
+            <!-- 4. Total -->
+            <div class="hr" role="separator" aria-hidden="true"></div>
+            <div class="sum-line total"><span>Estimated total</span><span class="price" id="sumTotal">$0</span></div>
 
-          <!-- 5. Package details -->
-          <div class="hr" role="separator" aria-hidden="true"></div>
-          <div id="pkgDetails" class="pkg-details hidden" aria-live="polite"></div>
+            <!-- 5. Package details -->
+            <div class="hr" role="separator" aria-hidden="true"></div>
+            <div id="pkgDetails" class="pkg-details hidden" aria-live="polite"></div>
 
-          <!-- 6. All Packages -->
-          <div id="pkgAllInclude" class="pkg-details" aria-live="polite">
-            <p class="pkg-desc">Included in all packages:</p>
-              <ul class="pkg-includes">
-                <li>Full-resolution online image gallery with unlimited downloads</li>
-                <li>Image printing service built into your online gallery</li>
-                <li>First 30 miles of travel</li>
-                <li>2-3 week gallery turnaround for sessions 2hrs or under</li>
-                <li>4-6 week gallery turnaround for sessions greater than 2hrs </li>
-              </ul>
-              <p class="muted mt-2">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
-          </div>
-          </ul>
-          </div>
-      </div>
-    </aside>
-  </main>
+            <!-- 6. All Packages -->
+            <div id="pkgAllInclude" class="pkg-details" aria-live="polite">
+              <p class="pkg-desc">Included in all packages:</p>
+                <ul class="pkg-includes">
+                  <li>Full-resolution online image gallery with unlimited downloads</li>
+                  <li>Image printing service built into your online gallery</li>
+                  <li>First 30 miles of travel</li>
+                  <li>2-3 week gallery turnaround for sessions 2hrs or under</li>
+                  <li>4-6 week gallery turnaround for sessions greater than 2hrs </li>
+                </ul>
+                <p class="muted mt-2">Taxes (if applicable) not included. This is intended to be used for price estimates only. Final proposals will be sent via email through Honeybook.</p>
+            </div>
+            </ul>
+            </div>
+        </div>
+      </aside>
+    </main>
+  </div>
 
   <script>
     const CONFIG = {
