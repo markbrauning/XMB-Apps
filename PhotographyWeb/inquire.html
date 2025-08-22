@@ -1,4 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RCC Photography — Guided Quote Journey</title>
+  <meta name="description" content="Guided, animated quote + inquiry builder for RCC Photography with live pricing." />
+  <meta name="theme-color" content="#c2a47d" />
   <style>
     :root {
       --bg: #faf8f6;
@@ -10,13 +17,14 @@
       --border: #e8e1d8;
     }
 
-    .rcc-photo-quote {
+    .rcc-photo-quote-summary {
       background: transparent;
       max-width: 800px;
-      margin: 0.5rem auto;
+      margin: auto;
+      overflow-y: hidden;
     }
 
-    .rcc-photo-quote .card {
+    .rcc-photo-quote-summary .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -24,7 +32,7 @@
       padding: 2rem;
     }
 
-    .rcc-photo-quote label {
+    .rcc-photo-quote-summary label {
       display: block;
       font-weight: normal !important;
       margin: .5rem 0 .35rem;
@@ -34,9 +42,9 @@
       white-space: pre-wrap !important;
     }
 
-    .rcc-photo-quote .nav { display:flex; justify-content:space-between; gap:.5rem; margin-top:1rem; }
+    .rcc-photo-quote-summary .nav { display:flex; justify-content:space-between; gap:.5rem; margin-top:1rem; }
 
-    .rcc-photo-quote .btn {
+    .rcc-photo-quote-summary .btn {
       appearance: none;
       border: 0;
       cursor: pointer;
@@ -53,25 +61,25 @@
       color: #fff;
       white-space: pre-wrap !important;
     }
-    .rcc-photo-quote .btn:hover { background: var(--accent-dark); }
+    .rcc-photo-quote-summary .btn:hover { background: var(--accent-dark); }
 
-    .rcc-photo-quote .btn.secondary {
+    .rcc-photo-quote-summary .btn.secondary {
       background: #fff;
       color: #24272b !important;
       border: 1px solid var(--border);
     }
-    .rcc-photo-quote .btn.secondary:hover { background: var(--border); }
+    .rcc-photo-quote-summary .btn.secondary:hover { background: var(--border); }
 
-    .rcc-photo-quote .section-title {
+    .rcc-photo-quote-summary .section-title {
       margin: .25rem 0 .75rem;
-      font-size: 1.1rem !important;
+      font-size: 1.5rem !important;
       color: #24272b !important;
-      font-family: 'Open Sans', sans-serif !important;
+      font-family: 'Instrument Serif' !important;
       font-weight: normal !important;
       white-space: pre-wrap !important;
     }
 
-  .rcc-photo-quote .review-box {
+  .rcc-photo-quote-summary .review-box {
       background: #faf7f2;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -84,24 +92,24 @@
       min-height: 100px;
       height: auto;
       max-height: none;
-      overflow-y: auto;
       width: 100%;
       box-sizing: border-box;
     }
   </style>
 </head>
 
-<body class="rcc-photo-quote">
-  <div class="card">
-    <div class="section-title">Quoted</div>
-    <div id="reviewBox" class="review-box" aria-live="polite"></div>
-    <div class="nav">
-      <button class="btn" id="btnEditQuote" type="button">Edit Quote</button>
-      <button class="btn secondary" id="btnCopySummary" type="button">Copy to Clipboard</button>
+</body>
+  <div class="rcc-photo-quote-summary">
+    <div class="card">
+      <div class="section-title">Quote Summary</div>
+      <div id="reviewBox" class="review-box" aria-live="polite"></div>
+      <div class="nav">
+        <button class="btn" id="btnEditQuote" type="button">Edit Quote</button>
+        <button class="btn secondary" id="btnCopySummary" type="button">Copy to Clipboard</button>
+      </div>
     </div>
   </div>
-
-  <script>
+    <script>
     // Display summary and enable copy to clipboard
     document.addEventListener('DOMContentLoaded', function() {
       const summary = localStorage.getItem('photoSummary');
@@ -129,6 +137,5 @@
         }
     });
   </script>
-
 </body>
-
+</html>
