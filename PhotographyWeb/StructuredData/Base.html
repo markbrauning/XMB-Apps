@@ -1,0 +1,97 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.rccphotography.co/#website",
+      "url": "https://www.rccphotography.co/",
+      "name": "YOUR BRAND NAME",
+      "publisher": { "@id": "https://www.rccphotography.co/#photographer" },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": ["LocalBusiness","Photographer"],
+      "@id": "https://www.rccphotography.co/#photographer",
+      "name": "RCC Photography",
+      "url": "https://www.rccphotography.co/",
+      "image": "https://www.rccphotography.co/PATH/hero.jpg",
+      "logo": "https://www.rccphotography.co/PATH/logo.png",
+      "description": "Wedding photographer serving Sioux Falls, South Dakota and surrounding area.",
+      "email": "rcc.photographer@gmail.com",
+      "priceRange": "$$–$$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Sioux Falls",
+        "addressRegion": "South Dakota",
+        "postalCode": "57103",
+        "addressCountry": "US"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Sioux Falls" },
+        { "@type": "AdministrativeArea", "name": "South Dakota" }
+      ],
+      "openingHoursSpecification": [{
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+        "opens": "09:00",
+        "closes": "19:00"
+      }],
+      "sameAs": [
+        "https://www.instagram.com/rcc.photo",
+        "https://www.pinterest.com/raquelcurriel",
+        "https://www.facebook.com/raquelcurrielphotography",
+        "https://www.tiktok.com/@rcc.photo"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.rccphotography.co/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.rccphotography.co/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "SERVICE_TYPE",
+          "item": "https://www.rccphotography.co/SERVICE_TYPE_PATHNAME/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "PACKAGE_NAME",
+          "item": "https://www.rccphotography.co/PACKAGE_PATHNAME/"
+        }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.rccphotography.co/#service-wedding",
+      "serviceType": "Wedding Photography",
+      "provider": { "@id": "https://www.rccphotography.co/#photographer" },
+      "serviceArea": [
+        { "@type": "City", "name": "Sioux Falls" },
+        { "@type": "AdministrativeArea", "name": "South Dakota" }
+      ],
+      "areaServed": "Sioux Falls metro and surrounding areas",
+      "url": "https://www.rccphotography.co/weddings/"
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.rccphotography.co/#service-family",
+      "serviceType": "Family and Maternity Photography",
+      "provider": { "@id": "https://www.rccphotography.co/#photographer" },
+      "serviceArea": [
+        { "@type": "City", "name": "Sioux Falls" },
+        { "@type": "AdministrativeArea", "name": "South Dakota" }
+      ],
+      "areaServed": "Sioux Falls metro and surrounding areas",
+      "url": "https://www.rccphotography.co/family-milestones/"
+    }
+  ]
+}
+</script>

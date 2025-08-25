@@ -1,0 +1,305 @@
+<html>
+  <head>
+    <title>Executive Anvil</title>
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "OfferCatalog",
+    "name": "Photography Services Catalog",
+    "currency": "USD",
+    "itemListElement": [
+        {
+        "@type": "Service",
+        "@id": "#svc-wedding",
+        "name": "Wedding Photography",
+        "serviceType": "wedding",
+        "description": "Full wedding day coverage and packages",
+        "offers": [
+            {
+            "@type": "Offer",
+            "@id": "#offer-wedding-hourly",
+            "name": "Wedding hourly coverage",
+            "description": "Hourly wedding photography service",
+            "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": 300,
+                "priceCurrency": "USD",
+                "unitCode": "HUR"
+            },
+            "availability": "https://schema.org/InStock",
+            "eligibleRegion": "US"
+            },
+            {
+            "@type": "Offer",
+            "@id": "#pkg-wed1",
+            "name": "Wedding Collection I",
+            "description": "10-Hour day. Perfect for all-day weddings",
+            "price": 3900,
+            "priceCurrency": "USD",
+            "itemOffered": {
+                "@type": "Service",
+                "serviceType": "wedding",
+                "additionalProperty": [
+                {"@type": "PropertyValue", "name": "Included", "value": "10-Hour of coverage"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Timeline creation"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Consultation call"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Sneak peeks within 72 hours"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Wedding Guide"}
+                ],
+                "hoursAvailable": [{"@type": "OpeningHoursSpecification", "opens": "00:00", "closes": "10:00"}],
+                "serviceOutput": {"@type": "QuantitativeValue", "value": 1000, "unitCode": "EACH", "unitText": "Images"},
+                "duration": "PT10H"
+            }
+            },
+            {
+            "@type": "Offer",
+            "@id": "#pkg-wed2",
+            "name": "Wedding Collection II",
+            "description": "8-Hour day. Ideal for most every wedding",
+            "price": 3450,
+            "priceCurrency": "USD",
+            "itemOffered": {
+                "@type": "Service",
+                "serviceType": "wedding",
+                "additionalProperty": [
+                {"@type": "PropertyValue", "name": "Included", "value": "8-Hour of coverage"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Timeline creation"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Consultation call"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Sneak peeks within 72 hours"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Wedding Guide"}
+                ],
+                "serviceOutput": {"@type": "QuantitativeValue", "value": 800, "unitCode": "EACH", "unitText": "Images"},
+                "duration": "PT8H"
+            }
+            },
+            {
+            "@type": "Offer",
+            "@id": "#pkg-wed3",
+            "name": "Wedding Collection III",
+            "description": "6-Hour day. Best for a half-day, laid back wedding",
+            "price": 3000,
+            "priceCurrency": "USD",
+            "itemOffered": {
+                "@type": "Service",
+                "serviceType": "wedding",
+                "additionalProperty": [
+                {"@type": "PropertyValue", "name": "Included", "value": "6-Hour of coverage"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Timeline creation"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Consultation call"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Sneak peeks within 72 hours"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Wedding Guide"}
+                ],
+                "serviceOutput": {"@type": "QuantitativeValue", "value": 600, "unitCode": "EACH", "unitText": "Images"},
+                "duration": "PT6H"
+            }
+            },
+            {
+            "@type": "Offer",
+            "@id": "#pkg-wed4",
+            "name": "Microwedding",
+            "description": "4-Hour day. Great for a small ceremonies",
+            "price": 2550,
+            "priceCurrency": "USD",
+            "itemOffered": {
+                "@type": "Service",
+                "serviceType": "wedding",
+                "additionalProperty": [
+                {"@type": "PropertyValue", "name": "Included", "value": "4-Hour of coverage"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Timeline creation"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Consultation call"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Sneak peeks within 72 hours"},
+                {"@type": "PropertyValue", "name": "Included", "value": "Wedding Guide"}
+                ],
+                "serviceOutput": {"@type": "QuantitativeValue", "value": 400, "unitCode": "EACH", "unitText": "Images"},
+                "duration": "PT4H"
+            }
+            }
+        ],
+        "addOn": [
+            {
+            "@type": "Offer",
+            "@id": "#addon-album",
+            "name": "Heirloom Album Creation",
+            "price": 650,
+            "priceCurrency": "USD"
+            },
+            {
+            "@type": "Offer",
+            "@id": "#addon-engagement",
+            "name": "1-Hr Engagement Session",
+            "price": 550,
+            "priceCurrency": "USD",
+            "itemOffered": {"@type": "Service", "serviceType": "engagement", "duration": "PT1H"}
+            },
+            {
+            "@type": "Offer",
+            "@id": "#addon-rush",
+            "name": "Rush Gallery Turnaround",
+            "priceSpecification": [
+                {"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},
+                {"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH", "unitText": "Per photo"},
+                {"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}
+            ]
+            },
+            {
+            "@type": "Offer",
+            "@id": "#addon-social",
+            "name": "Behind the Scenes + Social Media Coverage",
+            "priceSpecification": [
+                {"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},
+                {"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},
+                {"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}
+            ]
+            },
+            {
+            "@type": "Offer",
+            "@id": "#addon-additional-shooter",
+            "name": "Additional Shooter",
+            "description": "Add an additional photographer for wedding coverage",
+            "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": 80,
+                "priceCurrency": "USD",
+                "unitCode": "HUR"
+            }
+            }
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-engagement",
+        "name": "Engagement Photography",
+        "serviceType": "engagement",
+        "description": "Engagement sessions and packages",
+        "offers": [
+            {
+            "@type": "Offer",
+            "@id": "#offer-engagement-hourly",
+            "name": "Engagement hourly coverage",
+            "priceSpecification": {"@type": "UnitPriceSpecification", "price": 200, "priceCurrency": "USD", "unitCode": "HUR"}
+            },
+            {"@type": "Offer", "@id": "#pkg-eng1", "name": "Engagement Package I", "description": "1-Hour Engagement photo session", "price": 550, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "engagement", "duration": "PT1H", "serviceOutput": {"@type": "QuantitativeValue", "value": 75, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "1-Hour Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "75+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "Up to 2 outfits at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}},
+            {"@type": "Offer", "@id": "#pkg-eng2", "name": "Engagement Package II", "description": "30-Minute Engagement photo session", "price": 450, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "engagement", "duration": "PT30M", "serviceOutput": {"@type": "QuantitativeValue", "value": 45, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "30-Minute Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "45+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "1 outfit at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-studio", "name": "Studio Rental", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#addon-rush-ref", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-ref", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]}
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-senior",
+        "name": "Senior Portraits",
+        "serviceType": "senior",
+        "description": "Senior portraits and packages",
+        "offers": [
+            {"@type": "Offer", "@id": "#offer-senior-hourly", "name": "Senior hourly coverage", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 200, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#pkg-sen1", "name": "Senior Package I", "description": "2-Hour Senior photo session", "price": 750, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "senior", "duration": "PT2H", "serviceOutput": {"@type": "QuantitativeValue", "value": 200, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "2-Hour Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "200+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "Up to 5 outfits"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}},
+            {"@type": "Offer", "@id": "#pkg-sen2", "name": "Senior Package II", "description": "1-Hour Senior photo session", "price": 550, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "senior", "duration": "PT1H", "serviceOutput": {"@type": "QuantitativeValue", "value": 90, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "1-Hour Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "90+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "Up to 2 outfits"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}},
+            {"@type": "Offer", "@id": "#pkg-sen3", "name": "Senior Package III", "description": "30-Minute Senior photo session", "price": 450, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "senior", "duration": "PT30M", "serviceOutput": {"@type": "QuantitativeValue", "value": 50, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "30-Minute Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "50+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "1 outfit"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-studio-senior", "name": "Studio Rental", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#addon-rush-senior", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-senior", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]}
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-family",
+        "name": "Family Portraits",
+        "serviceType": "family",
+        "description": "Family portraits and sessions",
+        "offers": [
+            {"@type": "Offer", "@id": "#offer-family-hourly", "name": "Family hourly coverage", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 200, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#pkg-fam1", "name": "Family Package I", "description": "1-Hour Family photo session", "price": 550, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "family", "duration": "PT1H", "serviceOutput": {"@type": "QuantitativeValue", "value": 75, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "1-Hour Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "75+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "Up to 2 outfits at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}},
+            {"@type": "Offer", "@id": "#pkg-fam2", "name": "Family Package II", "description": "30-Minute Family photo session", "price": 450, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "family", "duration": "PT30M", "serviceOutput": {"@type": "QuantitativeValue", "value": 45, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "30-Minute Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "45+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "1 outfit at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-studio-family", "name": "Studio Rental", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#addon-rush-family", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-family", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]}
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-events",
+        "name": "Event Photography",
+        "serviceType": "events",
+        "description": "Event photography and coverage",
+        "offers": [
+            {"@type": "Offer", "@id": "#offer-events-hourly", "name": "Events hourly coverage", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 300, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#pkg-evt1", "name": "Event - Half Day", "description": "4-Hour Event photo coverage", "price": 1500, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "events", "duration": "PT4H", "serviceOutput": {"@type": "QuantitativeValue", "value": 300, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "4-Hour of coverage"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-rush-events", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-events", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-additional-shooter-events", "name": "Additional Shooter", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}}
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-maternity",
+        "name": "Maternity Portraits",
+        "serviceType": "maternity",
+        "description": "Maternity portraits and sessions",
+        "offers": [
+            {"@type": "Offer", "@id": "#offer-maternity-hourly", "name": "Maternity hourly coverage", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 200, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#pkg-mat1", "name": "Maternity Package I", "description": "1-Hour Maternity photo session", "price": 550, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "maternity", "duration": "PT1H", "serviceOutput": {"@type": "QuantitativeValue", "value": 75, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "1-Hour Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "75+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "Up to 2 outfits at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}},
+            {"@type": "Offer", "@id": "#pkg-mat2", "name": "Maternity Package II", "description": "30-Minute Maternity photo session", "price": 450, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "maternity", "duration": "PT30M", "serviceOutput": {"@type": "QuantitativeValue", "value": 45, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "30-Minute Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "45+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "1 outfit at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-studio-maternity", "name": "Studio Rental", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#addon-rush-maternity", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-maternity", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]}
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-newborn",
+        "name": "Newborn Portraits",
+        "serviceType": "newborn",
+        "description": "Newborn portraits and sessions",
+        "offers": [
+            {"@type": "Offer", "@id": "#offer-newborn-hourly", "name": "Newborn hourly coverage", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 200, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#pkg-new1", "name": "Newborn Package I", "description": "1-Hour Newborn photo session", "price": 550, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "newborn", "duration": "PT1H", "serviceOutput": {"@type": "QuantitativeValue", "value": 75, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "1-Hour Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "75+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "Up to 2 outfits at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}},
+            {"@type": "Offer", "@id": "#pkg-new2", "name": "Newborn Package II", "description": "30-Minute Newborn photo session", "price": 450, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "newborn", "duration": "PT30M", "serviceOutput": {"@type": "QuantitativeValue", "value": 45, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "30-Minute Photo shoot"},{"@type": "PropertyValue", "name": "Included", "value": "45+ Images"},{"@type": "PropertyValue", "name": "Included", "value": "1 outfit at 1 location"},{"@type": "PropertyValue", "name": "Included", "value": "Outfit & planning guide"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-studio-newborn", "name": "Studio Rental", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#addon-rush-newborn", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-newborn", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]}
+        ]
+        },
+
+        {
+        "@type": "Service",
+        "@id": "#svc-brand",
+        "name": "Personal Brand Photography",
+        "serviceType": "brand",
+        "description": "Brand portraits and sessions",
+        "offers": [
+            {"@type": "Offer", "@id": "#offer-brand-hourly", "name": "Brand hourly coverage", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 200, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#pkg-bnd1", "name": "Personal Brand Package I", "description": "2-3 Hour Personal Brand session", "price": 975, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "brand", "duration": "PT3H", "serviceOutput": {"@type": "QuantitativeValue", "value": 300, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "2-3 Hours of coverage"},{"@type": "PropertyValue", "name": "Included", "value": "2-3 locations"},{"@type": "PropertyValue", "name": "Included", "value": "3-5 outfits + outfit guide"},{"@type": "PropertyValue", "name": "Included", "value": "Collaborated mood board + questionnaire"},{"@type": "PropertyValue", "name": "Included", "value": "Professional hair + makeup styling"}]}},
+            {"@type": "Offer", "@id": "#pkg-bnd2", "name": "Personal Brand Package II", "description": "4-Hour Event photo coverage", "price": 650, "priceCurrency": "USD", "itemOffered": {"@type": "Service", "serviceType": "brand", "duration": "PT1H30M", "serviceOutput": {"@type": "QuantitativeValue", "value": 150, "unitCode": "EACH", "unitText": "Images"}, "additionalProperty": [{"@type": "PropertyValue", "name": "Included", "value": "1.5 Hours of coverage"},{"@type": "PropertyValue", "name": "Included", "value": "1 location"},{"@type": "PropertyValue", "name": "Included", "value": "2-3 outfits + outfit guide"},{"@type": "PropertyValue", "name": "Included", "value": "Collaborated mood board + questionnaire"}]}}
+        ],
+        "addOn": [
+            {"@type": "Offer", "@id": "#addon-studio-brand", "name": "Studio Rental", "priceSpecification": {"@type": "UnitPriceSpecification", "price": 80, "priceCurrency": "USD", "unitCode": "HUR"}},
+            {"@type": "Offer", "@id": "#addon-rush-brand", "name": "Rush Gallery Turnaround", "priceSpecification": [{"@type": "PriceSpecification", "price": 100, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 0.5, "priceCurrency": "USD", "unitCode": "EACH"},{"@type": "PriceSpecification", "minPrice": 150, "maxPrice": 950, "priceCurrency": "USD"}]},
+            {"@type": "Offer", "@id": "#addon-social-brand", "name": "Behind the Scenes + Social Media Coverage", "priceSpecification": [{"@type": "PriceSpecification", "price": 150, "priceCurrency": "USD"},{"@type": "UnitPriceSpecification", "price": 50, "priceCurrency": "USD", "unitCode": "HUR"},{"@type": "PriceSpecification", "maxPrice": 950, "priceCurrency": "USD"}]}
+        ]
+        }
+    ]
+    }
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
