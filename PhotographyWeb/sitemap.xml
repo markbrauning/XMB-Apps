@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <!--  Home  -->
+    <url>
+        <loc>https://rccphotography.co/</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>1.00</priority>
+    </url>
+    
+    <!--  Level 1 -Main Pages  -->
+    <url>
+        <loc>https://rccphotography.co/about</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+
+    <url>
+        <loc>https://rccphotography.co/inquire</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+
+    <!--  Level 1 Service Pages  -->
+    <url>
+        <loc>https://rccphotography.co/weddings</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/engagement-couples</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/family-milestones</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/brand-photography</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+
+    <!--  Level 1 Portfolio Pages  -->
+    <url>
+        <loc>https://rccphotography.co/gallery</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/wedding-gallery</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/engagement-gallery</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/family-gallery</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/portraits-brand-gallery</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+
+    <!--  Level 1 OTHER Pages  -->
+    <url>
+        <loc>https://rccphotography.co/for-photographers</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/shop</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/quote</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/opt-in</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/instagram-links</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+
+    <!--  Level 1 Utility Pages  -->
+    <url>
+        <loc>https://rccphotography.co/privacy</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://rccphotography.co/terms-of-service</loc>
+        <lastmod>2025-08-25T14:59:52+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+</urlset>
