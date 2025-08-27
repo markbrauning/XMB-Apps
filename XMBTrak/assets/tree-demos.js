@@ -15,31 +15,55 @@ window.addEventListener('load', function(){
     });
   }
 
-  // FancyTree example with columns
+  // FancyTree example
   if (typeof $ !== 'undefined' && $.fn.fancytree) {
     $('#fancytree-demo').fancytree({
-      extensions: ['table'],
       source: [
-        {
-          title: 'Node 1',
-          data: { info: 'Info 1' },
-          folder: true,
-          children: [
-            { title: 'Child 1', data: { info: 'Info 1.1' } },
-            { title: 'Child 2', data: { info: 'Info 1.2' } }
-          ]
-        },
-        { title: 'Node 2', data: { info: 'Info 2' } }
+        {title: 'Node 1', folder: true, children:[
+          {title: 'Child 1'},
+          {title: 'Child 2'}
+        ]},
+        {title: 'Node 2', children:[{title: 'Child 3'}]}
+      ]
+    });
+  }
+
+  // ag-Grid tree data example
+  if (typeof agGrid !== 'undefined') {
+    const gridOptions = {
+      columnDefs: [
+        { field: 'orgHierarchy', headerName: 'Hierarchy', cellRenderer: 'agGroupCellRenderer' }
       ],
-      table: {
-        indentation: 20,
-        nodeColumnIdx: 0
-      },
-      renderColumns: function(event, data) {
-        var node = data.node;
-        var $tdList = $(node.tr).find('>td');
-        $tdList.eq(1).text(node.data.info);
-      }
+      rowData: [
+        { orgHierarchy: ['A', 'A1'] },
+        { orgHierarchy: ['A', 'A2'] },
+        { orgHierarchy: ['B'] },
+        { orgHierarchy: ['B', 'B1'] }
+      ],
+      treeData: true,
+      animateRows: true,
+      groupDefaultExpanded: -1,
+      getDataPath: function(data){ return data.orgHierarchy; }
+    };
+    new agGrid.Grid(document.querySelector('#aggrid-demo'), gridOptions);
+  }
+
+  // Handsontable nested rows example
+  if (typeof Handsontable !== 'undefined') {
+    const hotData = [
+      {id:1, name:'Parent 1', __children:[
+        {id:2, name:'Child 1.1'},
+        {id:3, name:'Child 1.2'}
+      ]},
+      {id:4, name:'Parent 2'}
+    ];
+    new Handsontable(document.getElementById('handsontable-demo'), {
+      data: hotData,
+      colHeaders: ['ID', 'Name'],
+      columns: [{data:'id'}, {data:'name'}],
+      nestedRows: true,
+      rowHeaders: true,
+      licenseKey: 'non-commercial-and-evaluation'
     });
   }
 
