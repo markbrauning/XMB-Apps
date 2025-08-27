@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XMB Bulma+Alpine+Tabulator</title>
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <!-- Optional: Tabulator table styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/css/tabulator.min.css">
+  <!-- Custom Header Color Scheme -->
+  <link rel="stylesheet" href="assets/custom-header.css">
+  <!-- Custom Page Styles -->
+  <link rel="stylesheet" href="assets/styler.css">
+  <!-- Page-specific styles moved to styler.css -->
+</head>
+<body>
+  <!-- Header Include -->
+  <div id="header-include"></div>
+
+  <main class="section">
+    <div class="page content">
+      <h1 id="intro" class="title">Bulma + Alpine.js Starter</h1>
+      <p class="subtitle">Clean UI with zero build tools. Open this file in your browser and start editing.</p>
+
+      <div class="box">
+        <h2 class="title is-4">What's inside?</h2>
+        <ul>
+          <li><strong>Bulma</strong> for layout, grid, components</li>
+          <li><strong>Alpine.js</strong> for interactivity via HTML attributes</li>
+          <li><strong>Tabulator</strong> (optional) for Excel-like tables</li>
+        </ul>
+        <p class="is-code">Edit <code>assets/app.js</code> to customize behavior.</p>
+      </div>
+
+      <hr/>
+
+      <section id="interactive" class="mt-4" x-data="{ open: false, count: 0 }">
+        <h2 class="title is-4">Alpine.js Interactive Demo</h2>
+        <div class="buttons">
+          <button class="button is-primary" @click="open = !open">Toggle Panel</button>
+          <button class="button is-link" @click="count++">Clicked {{ count }} times</button>
+        </div>
+        <article class="message is-info mt-2" x-show="open">
+          <div class="message-header">
+            <p>Peek-a-boo</p>
+          </div>
+          <div class="message-body">
+            This block is controlled with <strong>Alpine.js</strong> — no build step required.
+          </div>
+        </article>
+      </section>
+
+      <hr/>
+
+      <section id="table" class="mt-4">
+        <h2 class="title is-4">Tabulator Table (Editable + Export)</h2>
+        <div class="buttons">
+          <button id="download-csv" class="button is-light">Download CSV</button>
+          <button id="add-row" class="button is-light">Add Row</button>
+          <button id="clear" class="button is-danger is-light">Clear Data</button>
+        </div>
+        <div id="example-table"></div>
+        <p class="help mt-2">Edit cells inline, reorder columns, sort, and export.</p>
+      </section>
+
+      <hr/>
+
+      <section class="mt-4">
+        <h2 class="title is-4">Next steps</h2>
+        <ol>
+          <li>Open <code>index.html</code> in your browser.</li>
+          <li>Edit <code>assets/app.js</code> to change behavior or data.</li>
+          <li>Duplicate sections to build your pages.</li>
+        </ol>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer Include -->
+  <div id="footer-include"></div>
+
+  <!-- Alpine.js -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Tabulator JS (optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
+  <!-- App script -->
+  <script src="assets/app.js"></script>
+
+  <!-- Simple HTML include script for header and footer -->
+  <script>
+    function includeHTML(id, url) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById(id).innerHTML = html;
+          // Re-attach navbar burger event if header
+          if (id === 'header-include') {
+            const burger = document.querySelector('.navbar-burger');
+            const menu = document.getElementById(burger?.dataset.target || 'navMenu');
+            if (burger && menu) {
+              burger.addEventListener('click', () => {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+              });
+            }
+          }
+        });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      includeHTML('header-include', 'assets/header.html');
+      includeHTML('footer-include', 'assets/footer.html');
+    });
+  </script>
+
+</body>
+</html>

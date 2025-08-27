@@ -1,0 +1,58 @@
+/* InterTrak-AI Custom Color Scheme */
+:root {
+  --header-bg: #000000;
+  --header-text: #ffffff;
+  --header-link: #ffffff;
+  --header-link-hover: #80a2ff;
+  --navbar-brand-bg: transparent;
+  --footer-bg: #000000;
+  --footer-text: #ffffff;
+  --footer-link: #80a2ff;
+}
+
+.navbar.is-primary {
+  background-color: var(--header-bg) !important;
+  color: var(--header-text) !important;
+}
+
+.navbar.is-primary .navbar-brand {
+  color: var(--header-text) !important;
+  background: var(--navbar-brand-bg);
+  padding-left: 15px;
+}
+
+.navbar.is-primary .navbar-item {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.navbar.is-primary .navbar-item:hover {
+  color: var(--header-link-hover) !important;
+  background: rgb(0, 0, 0);
+}
+
+.navbar.is-primary .navbar-item {
+  color: var(--header-link) !important;
+}
+
+.navbar.is-primary .navbar-burger span {
+  background: var(--header-text) !important;
+}
+
+/* Logo image styling */
+.navbar-item img {
+  min-height: 40px;
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--footer-bg) !important;
+  color: var(--footer-text) !important;
+  padding: 2rem 1.5rem 2rem 1.5rem;
+}
+.footer a, .footer strong {
+  color: var(--footer-link);
+}
+.footer a:hover {
+  color: var(--header-link-hover);
+}

@@ -1,0 +1,67 @@
+:root {
+  --main-bg: #2f2f30;
+  --main-text: #ebebeb;
+  --box-bg: #fff;
+  --box-border: #e0e0e0;
+  --section-padding: 2rem;
+  --title-color: #2a2e38;
+  --subtitle-color: #555;
+}
+
+body {
+  background: var(--main-bg);
+  color: var(--main-text);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--section-padding);
+}
+
+.box {
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  padding: 1.5rem;
+}
+
+.title {
+  color: var(--title-color);
+}
+
+.subtitle {
+  color: var(--subtitle-color);
+}
+
+hr {
+  border-color: var(--box-border);
+}
+
+.section {
+  padding: var(--section-padding) 0;
+}
+
+.is-code {
+  background: #f3f3f3;
+  padding: 0.25em 0.5em;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .page {
+    padding: 1rem;
+  }
+  .box {
+    padding: 1rem;
+  }
+}
+/* Margin helpers and code font from index.html */
+.mt-2 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1.5rem; }
+.is-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
