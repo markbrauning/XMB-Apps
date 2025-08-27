@@ -39,12 +39,26 @@
 
           <div class="mt-5">
             <h2 class="title is-5">FancyTree Demo</h2>
-            <div id="fancytree-demo"></div>
+            <table id="fancytree-demo" class="table is-fullwidth">
+              <colgroup>
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr><th>Name</th><th>Info</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
           </div>
 
           <div class="mt-5">
-            <h2 class="title is-5">ag-Grid Tree Data Demo</h2>
-            <div id="aggrid-demo" style="height:300px;width:100%;" class="ag-theme-alpine"></div>
+            <h2 class="title is-5">PrimeVue TreeTable Demo</h2>
+            <div id="primevue-tree"></div>
+          </div>
+
+          <div class="mt-5">
+            <h2 class="title is-5">DevExtreme DataGrid Tree Demo</h2>
+            <div id="dxgrid-demo" style="height:300px;"></div>
           </div>
 
           <div class="mt-5">
@@ -83,11 +97,15 @@
   <div id="footer-include"></div>
   <!-- Tabulator JS (CDN, use https, must be before initialization) -->
   <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+  <!-- jQuery and jQuery UI -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.13.2/jquery-ui.min.js"></script>
   <!-- jsTree CSS & JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jstree@3.3.12/dist/themes/default/style.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/jstree@3.3.12/dist/jstree.min.js"></script>
   <!-- FancyTree CSS & JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.fancytree@2.38.2/dist/skin-win8/ui.fancytree.min.css" />
+
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.13.2/jquery-ui.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery.fancytree@2.38.2/dist/jquery.fancytree-all-deps.min.js"></script>

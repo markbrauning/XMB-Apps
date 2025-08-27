@@ -90,7 +90,7 @@ window.addEventListener('load', function(){
                   <Column field="label" header="Name" />
                 </TreeTable>`
     });
-    app.use(PrimeVue);
+    app.use(PrimeVue.default);
     app.component('TreeTable', PrimeVue.TreeTable);
     app.component('Column', PrimeVue.Column);
     app.mount('#primevue-tree');
@@ -108,6 +108,7 @@ window.addEventListener('load', function(){
       keyExpr: 'id',
       parentIdExpr: 'parentId',
       dataStructure: 'tree',
+      rootValue: 0,
       columns: ['name'],
       showBorders: true
     });
