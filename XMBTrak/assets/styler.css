@@ -1,3 +1,18 @@
+/* Sticky Footer Styles */
+html {
+  height: 100%;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main.section {
+  flex: 1;
+}
+#footer-include {
+  margin-top: auto;
+}
 :root {
   --main-bg: #2f2f30;
   --main-text: #ebebeb;
