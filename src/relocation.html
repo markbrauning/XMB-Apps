@@ -11,7 +11,15 @@
   <div class="container">
     <aside class="controls">
       <h2>Rank Characteristics</h2>
-      <ol id="criteria-list"></ol>
+      <label>Weather
+        <input type="range" min="0" max="10" value="5" id="weight-weather">
+      </label>
+      <label>Cost of Living
+        <input type="range" min="0" max="10" value="5" id="weight-col">
+      </label>
+      <label>Housing Costs
+        <input type="range" min="0" max="10" value="5" id="weight-housing">
+      </label>
       <button id="update">Update Ranking</button>
     </aside>
     <section class="results">
