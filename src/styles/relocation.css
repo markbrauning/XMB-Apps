@@ -1,0 +1,51 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+}
+
+.controls {
+  width: 250px;
+  padding: 1rem;
+  background: #f2f2f2;
+  overflow-y: auto;
+}
+#criteria-list {
+  list-style: decimal;
+  padding-left: 1rem;
+}
+
+#criteria-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+#criteria-list button {
+  margin-left: 0.25rem;
+}
+
+.results {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#map {
+  flex: 1;
+}
+
+#ranking {
+  margin: 0;
+  padding: 1rem;
+  list-style: decimal inside;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+}
