@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USA Location Finder</title>
+  <link rel="stylesheet" href="styles/relocation.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2OTIkkpFmPc35mL3Nf3Nt3KrawvBY9QV10BiChg=" crossorigin=""/>
+</head>
+<body>
+  <div class="container">
+    <aside class="controls">
+      <h2>Rank Characteristics</h2>
+      <label>Weather
+        <input type="range" min="0" max="10" value="5" id="weight-weather">
+      </label>
+      <label>Cost of Living
+        <input type="range" min="0" max="10" value="5" id="weight-col">
+      </label>
+      <label>Housing Costs
+        <input type="range" min="0" max="10" value="5" id="weight-housing">
+      </label>
+      <button id="update">Update Ranking</button>
+    </aside>
+    <section class="results">
+      <div id="map"></div>
+      <ol id="ranking"></ol>
+    </section>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1jN6RA2o54Camzatoorktr1cGukdxbYlRPhX2U9I=" crossorigin=""></script>
+  <script src="scripts/relocation.js"></script>
+</body>
+</html>
