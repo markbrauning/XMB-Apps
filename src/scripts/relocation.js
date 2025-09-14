@@ -10,12 +10,59 @@ const map = L.map('map').setView([39.5, -98.35], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
+const criteria = [
+  { key: 'weather', label: 'Weather' },
+  { key: 'col', label: 'Cost of Living' },
+  { key: 'housing', label: 'Housing Costs' },
+  { key: 'income', label: 'Median Income' },
+  { key: 'jobs', label: 'Job Opportunities' },
+  { key: 'crime', label: 'Crime Rate' },
+  { key: 'education', label: 'Education Quality' },
+  { key: 'health', label: 'Healthcare Access' },
+  { key: 'air', label: 'Air Quality' },
+  { key: 'commute', label: 'Commute Time' },
+  { key: 'transit', label: 'Public Transportation' },
+  { key: 'tax', label: 'Tax Rate' },
+  { key: 'parks', label: 'Parks & Recreation' },
+  { key: 'internet', label: 'Internet Access' },
+  { key: 'culture', label: 'Cultural Amenities' },
+  { key: 'growth', label: 'Population Growth' },
+  { key: 'disaster', label: 'Natural Disaster Risk' },
+  { key: 'diversity', label: 'Diversity' },
+  { key: 'food', label: 'Food Options' },
+  { key: 'nightlife', label: 'Nightlife' }
+];
 
-const weightInputs = {
-  weather: document.getElementById('weight-weather'),
-  col: document.getElementById('weight-col'),
-  housing: document.getElementById('weight-housing')
-};
+const criteriaList = document.getElementById('criteria-list');
+
+criteria.forEach(c => {
+  const li = document.createElement('li');
+  li.dataset.key = c.key;
+  const label = document.createElement('span');
+  label.textContent = c.label;
+  li.appendChild(label);
+  const controls = document.createElement('span');
+  const up = document.createElement('button');
+  up.textContent = '▲';
+  up.addEventListener('click', () => moveItem(li, -1));
+  const down = document.createElement('button');
+  down.textContent = '▼';
+  down.addEventListener('click', () => moveItem(li, 1));
+  controls.appendChild(up);
+  controls.appendChild(down);
+  li.appendChild(controls);
+  criteriaList.appendChild(li);
+});
+
+function moveItem(li, dir) {
+  const sibling = dir === -1 ? li.previousElementSibling : li.nextElementSibling;
+  if (!sibling) return;
+  if (dir === -1) {
+    criteriaList.insertBefore(li, sibling);
+  } else {
+    criteriaList.insertBefore(sibling, li);
+  }
+}
 
 document.getElementById('update').addEventListener('click', updateData);
 
@@ -62,12 +109,21 @@ function updateList(data) {
   });
 }
 
+function getWeights() {
+  const items = Array.from(criteriaList.querySelectorAll('li'));
+  const n = items.length;
+  const total = (n * (n + 1)) / 2;
+  const weights = {};
+  items.forEach((li, idx) => {
+    const key = li.dataset.key;
+    const weight = n - idx;
+    weights[key] = weight / total;
+  });
+  return weights;
+}
+
 async function updateData() {
-  const weights = {
-    weather: Number(weightInputs.weather.value),
-    col: Number(weightInputs.col.value),
-    housing: Number(weightInputs.housing.value)
-  };
+  const weights = getWeights();
 
   const data = await Promise.all(cities.map(fetchCityData));
 
@@ -80,7 +136,10 @@ async function updateData() {
   const housingScores = normalize(rents, true);
 
   data.forEach((c, i) => {
-    c.score = tempScores[i] * weights.weather + colScores[i] * weights.col + housingScores[i] * weights.housing;
+    const wWeather = weights.weather || 0;
+    const wCol = weights.col || 0;
+    const wHousing = weights.housing || 0;
+    c.score = tempScores[i] * wWeather + colScores[i] * wCol + housingScores[i] * wHousing;
   });
 
   data.sort((a, b) => b.score - a.score);
