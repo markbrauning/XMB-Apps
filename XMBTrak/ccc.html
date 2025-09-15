@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tabulator Tree Table</title>
+  <!-- Tabulator CSS -->
+  <link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; }
+    #example-table { width: 100%; }
+  </style>
+</head>
+<body>
+
+<h2>Tree-style Table with Tabulator</h2>
+<div id="example-table"></div>
+
+<!-- Tabulator JS -->
+<script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+<script>
+  // Sample hierarchical data
+  const tableData = [
+    {
+      expression: "Connections",
+      value: "",
+      type: "Connections/Connections",
+      _children: [
+        {
+          expression: "Application",
+          value: "",
+          type: "Application/Application",
+          _children: [
+            { expression: "ActiveCell", value: "", type: "Range/Range" },
+            { expression: "AddIndent", value: "False", type: "Variant/Boolean" },
+            {
+              expression: "Application",
+              value: "",
+              type: "Application/Application",
+              _children: [
+                { expression: "ActiveChart", value: "Nothing", type: "Chart" },
+                { expression: "ActivePrinter", value: "Microsoft Print to PDF on Ne01:", type: "String" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  // Build Tabulator
+  const table = new Tabulator("#example-table", {
+    data: tableData,
+    layout: "fitColumns",
+    dataTree: true,             // enable tree mode
+    dataTreeStartExpanded: true,// expand by default
+    columns: [
+      { title: "Expression", field: "expression", width: 300 },
+      { title: "Value", field: "value", widthGrow: 1 },
+      { title: "Type", field: "type", widthGrow: 1 }
+    ]
+  });
+</script>
+
+</body>
+</html>
