@@ -1,0 +1,32 @@
+<!-- Fragment: Header with its own CSS -->
+<style>
+  /* Header-specific styles; uses CSS vars from main page */
+  #site-header{
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(14,18,40,.85), rgba(14,18,40,.65));
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(6px);
+  }
+  #site-header .header-inner{
+    max-width: 1100px; margin: 0 auto; padding: 18px 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  #site-header .brand{ font-weight: 700; letter-spacing: .3px; }
+  #site-header nav{ margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; }
+  #site-header nav a{
+    color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 10px;
+  }
+  #site-header nav a:hover{ color: var(--fg); background: rgba(255,255,255,.06); }
+</style>
+
+<header id="site-header">
+  <div class="header-inner">
+    <div class="brand">My App</div>
+    <nav aria-label="Primary">
+      <a href="#hero1">Home</a>
+      <a href="#hero2">Actions</a>
+      <a href="#copy">About</a>
+    </nav>
+  </div>
+</header>

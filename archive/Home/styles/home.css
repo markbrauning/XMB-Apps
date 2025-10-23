@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* optional, hides scrollbars if canvas animates */
+}
+
+canvas {
+    position: fixed; /* stay fixed when scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* puts it behind all other content */
+    background: #000; /* fallback background color */
+}
+
+.content {
+    position: relative;
+    z-index: 1; /* ensures it appears above the canvas */
+    color: white;
+    text-align: center;
+    margin-top: 20%;
+    font-family: sans-serif;
+}

@@ -1,0 +1,95 @@
+:root {
+  --bg: #0b1020;
+  --fg: #e8edf5;
+  --muted: #9aa6b2;
+  --accent: #6aa9ff;
+  --accent-2: #9c6aff;
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--fg);
+  background: #080a14;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+/* Main area background and stacking (header/footer have their own CSS in fragments) */
+main {
+  position: relative;
+  flex: 1 0 auto;
+  isolation: isolate; /* create stacking context so foreground content is above the canvas */
+  background:
+    radial-gradient(1200px 700px at 20% 10%, #101735, transparent 60%),
+    radial-gradient(1200px 700px at 80% 0%, #131d40, transparent 60%),
+    var(--bg);
+  overflow: clip;
+}
+
+/* WebGL canvas behind content */
+#gl {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* keep UI clickable */
+  display: block;
+}
+
+/* Foreground content */
+.content { position: relative; z-index: 2; }
+
+/* Sections */
+.section { max-width: 1100px; margin: 0 auto; padding: 48px 20px; }
+
+.hero-1 h1{
+  font-size: clamp(32px, 4vw + 10px, 64px);
+  line-height: 1.05;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.2px;
+  text-shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+.hero-1 p { color: var(--muted); max-width: 60ch; margin: 0; font-size: 18px; }
+
+.hero-2{
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+.hero-button{
+  appearance: none;
+  border: 0;
+  padding: 16px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25), inset 0 0 0 1px rgba(255,255,255,.06);
+  color: var(--fg);
+  font-weight: 600;
+  text-align: left;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+  cursor: pointer;
+}
+.hero-button:focus{ outline: 2px solid rgba(255,255,255,.25); outline-offset: 2px; }
+.hero-button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .32), 0 0 0 1px rgba(255,255,255,.08) inset;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+}
+
+.copy p{ color: var(--muted); max-width: 72ch; }
+.tag{
+  color: #c8d2ff;
+  background: rgba(106,169,255,.12);
+  border: 1px solid rgba(106,169,255,.35);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: .4px;
+}
+
+/* Footer mount remains in normal flow; body flex pushes it to the bottom if content is short */
+#footer-mount { flex-shrink: 0; }

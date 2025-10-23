@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>USA Relocation Visualizer (ZIP-level)</title>
+  <style>
+    :root {
+      --bg: #0f172a;          /* slate-900 */
+      --panel: #111827;       /* gray-900 */
+      --muted: #1f2937;       /* gray-800 */
+      --text: #e5e7eb;        /* gray-200 */
+      --soft: #9ca3af;        /* gray-400 */
+      --accent: #22d3ee;      /* cyan-400 */
+      --accent-2: #a78bfa;    /* violet-400 */
+      --good: #34d399;        /* green-400 */
+      --bad: #f87171;         /* red-400 */
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+      Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(135deg, #0b132b, var(--bg)); color: var(--text);
+    }
+    header { padding: 16px 20px; border-bottom: 1px solid #1f2937; position: sticky; top: 0; backdrop-filter: blur(6px); background: rgba(15,23,42,0.8); z-index: 9; }
+    header h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
+    header small { color: var(--soft); }
+
+    .container { display: grid; grid-template-columns: 360px 1fr; gap: 16px; padding: 16px; }
+    .panel { background: var(--panel); border: 1px solid #1f2937; border-radius: 14px; overflow: hidden; }
+    .panel h2 { margin: 0; font-size: 16px; padding: 12px 14px; border-bottom: 1px solid #1f2937; background: #0b1220; }
+    .panel .content { padding: 12px 14px; max-height: 70vh; overflow: auto; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; margin-bottom: 10px; }
+
+    .criteria { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .criterion { background: var(--muted); border: 1px solid #374151; border-radius: 12px; padding: 10px; }
+    .criterion .top { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+    .criterion label { font-weight: 600; font-size: 13px; }
+    .criterion .dir { font-size: 11px; color: var(--soft); }
+    .criterion .sliders { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px; }
+    .criterion input[type="range"] { width: 100%; }
+    .criterion .caps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .criterion input[type="number"] { width: 100%; padding: 6px 8px; border-radius: 8px; border: 1px solid #374151; background: #0b1220; color: var(--text); }
+    .criterion .weight-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid #374151; color: var(--accent); }
+
+    .controls { display: grid; gap: 10px; }
+    .controls select, .controls input[type="text"], .controls input[type="number"], .controls button { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #374151; background: #0b1220; color: var(--text); }
+    .controls button.primary { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #0b1220; border: none; font-weight: 700; cursor: pointer; }
+    .controls button.subtle { background: #111827; cursor: pointer; }
+    .controls .inline { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .muted { color: var(--soft); font-size: 12px; }
+
+    .results { padding: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { position: sticky; top: 0; background: #0b1220; border-bottom: 1px solid #30363d; padding: 8px; text-align: left; font-size: 12px; }
+    tbody td { border-bottom: 1px solid #1f2937; padding: 8px; font-size: 13px; }
+    .score { font-weight: 700; }
+    .pill { padding: 2px 8px; border-radius: 999px; border: 1px solid #374151; font-size: 11px; }
+
+    .footer { padding: 10px 14px; display: flex; gap: 8px; align-items: center; justify-content: space-between; border-top: 1px solid #1f2937; background: #0b1220; }
+    .footer button { padding: 8px 12px; border-radius: 10px; border: 1px solid #374151; background: #111827; color: var(--text); cursor: pointer; }
+
+    .badge { background: #0b1220; border: 1px solid #374151; padding: 3px 6px; border-radius: 8px; font-size: 11px; color: var(--soft); }
+    .flex { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .hidden { display: none; }
+    .link { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>USA Relocation Visualizer <small>— ZIP-level scoring with weights, caps & filters</small></h1>
+  </header>
+
+  <div class="container">
+    <aside class="panel">
+      <h2>Data & Filters</h2>
+      <div class="content">
+        <div class="controls">
+          <div>
+            <label>Load Data (CSV)</label>
+            <input type="file" id="fileInput" accept=".csv" />
+            <div class="muted">Headers expected: <code>zip,state,city,lat,lon,</code> plus your criteria columns below.</div>
+          </div>
+          <button id="loadSample" class="subtle">Load Example Dataset (small)</button>
+
+          <div class="inline">
+            <div>
+              <label>Filter by State</label>
+              <select id="stateFilter"><option value="">All States</option></select>
+            </div>
+            <div>
+              <label>Limit Results</label>
+              <input id="limitResults" type="number" min="1" value="100" />
+            </div>
+          </div>
+
+          <div class="inline">
+            <div>
+              <label>Normalize By</label>
+              <select id="normalizeMode">
+                <option value="minmax">Min–Max (0–1)</option>
+                <option value="zscore">Z-Score</option>
+              </select>
+            </div>
+            <div>
+              <label>Missing Data</label>
+              <select id="missingMode">
+                <option value="skip">Skip criterion</option>
+                <option value="penalize">Penalize to 0</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="run" class="primary">Compute Rankings</button>
+          <button id="exportCsv" class="subtle">Export Results CSV</button>
+
+          <details>
+            <summary>Optional: Pull from Census API (advanced)</summary>
+            <p class="muted">This demo is optimized for offline CSVs. You can also fetch ACS5 variables by ZIP (ZCTA) if you provide an API key. Variables must be mapped to criteria names.</p>
+            <div class="controls">
+              <input type="text" id="censusKey" placeholder="Census API Key (optional)" />
+              <input type="text" id="censusVars" placeholder="Comma-separated ACS vars, e.g., B19013_001E as median_income" />
+              <button id="fetchCensus" class="subtle">Fetch From Census (ZCTA)</button>
+            </div>
+          </details>
+        </div>
+      </div>
+    </aside>
+
+    <main class="panel">
+      <h2>Criteria (weights & caps)</h2>
+      <div class="content">
+        <div id="criteria" class="criteria"></div>
+        <div class="flex" style="margin-top:8px;">
+          <span class="badge" id="totalWeight">Total weight: 0</span>
+          <button id="resetWeights" class="subtle">Reset Weights</button>
+          <button id="equalizeWeights" class="subtle">Equalize Weights</button>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="flex">
+          <span class="badge">Rows: <span id="rowCount">0</span></span>
+          <span class="badge">States: <span id="stateCount">0</span></span>
+        </div>
+        <div class="flex">
+          <a class="link" href="#" id="showHelp">Help</a>
+          <a class="link" href="#" id="showAbout">About</a>
+        </div>
+      </div>
+    </main>
+
+    <section class="panel" style="grid-column: 1 / span 2;">
+      <h2>Results</h2>
+      <div class="results">
+        <div class="flex" style="justify-content: space-between; margin-bottom:8px;">
+          <div class="flex">
+            <span class="badge">Sorted by composite score</span>
+            <span class="badge">Filter: <span id="activeFilter">None</span></span>
+          </div>
+          <div class="flex">
+            <span class="badge">Normalize: <span id="activeNorm">minmax</span></span>
+            <span class="badge">Missing: <span id="activeMissing">skip</span></span>
+          </div>
+        </div>
+        <div style="overflow:auto; max-height: 50vh; border: 1px solid #1f2937; border-radius: 12px;">
+          <table id="resultsTable">
+            <thead><tr id="resultsHead"></tr></thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <template id="criterionTpl">
+    <div class="criterion" data-key="">
+      <div class="top">
+        <div>
+          <label class="name"></label>
+          <div class="dir"></div>
+        </div>
+        <div class="weight-badge">w=<span class="wval">0</span></div>
+      </div>
+      <div class="sliders">
+        <div class="row">
+          <input type="range" class="weight" min="0" max="10" step="1" value="0" />
+          <span class="muted">0–10</span>
+        </div>
+        <div class="caps">
+          <input type="number" class="min" placeholder="min" />
+          <input type="number" class="max" placeholder="max" />
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <dialog id="modal">
+    <div class="panel" style="width: min(720px, 96vw);">
+      <h2 id="modalTitle">Help</h2>
+      <div class="content" id="modalBody"></div>
+      <div class="footer"><button id="modalClose">Close</button></div>
+    </div>
+  </dialog>
+
+  <script>
+    // -----------------------------
+    // Configuration
+    // -----------------------------
+    const CRITERIA = [
+      { key: 'median_income', name: 'Median Income ($)', higherIsBetter: true },
+      { key: 'crime_rate', name: 'Crime Rate (per 1k)', higherIsBetter: false },
+      { key: 'avg_temp', name: 'Avg Temp (°F)', higherIsBetter: true },
+      { key: 'cost_of_living', name: 'Cost of Living (idx)', higherIsBetter: false },
+      { key: 'unemployment_rate', name: 'Unemployment (%)', higherIsBetter: false },
+      { key: 'walk_score', name: 'Walk Score (0-100)', higherIsBetter: true },
+      { key: 'air_quality', name: 'Air Quality (AQI lower=better)', higherIsBetter: false },
+      { key: 'broadband', name: 'Broadband Availability (%)', higherIsBetter: true },
+      { key: 'school_quality', name: 'School Quality (0-10)', higherIsBetter: true },
+      { key: 'housing_cost', name: 'Median Home ($)', higherIsBetter: false },
+      { key: 'property_tax_rate', name: 'Property Tax Rate (%)', higherIsBetter: false },
+      { key: 'sales_tax_rate', name: 'Sales Tax Rate (%)', higherIsBetter: false },
+      { key: 'state_income_tax', name: 'State Income Tax (%)', higherIsBetter: false },
+      { key: 'healthcare_access', name: 'Healthcare Access (0-100)', higherIsBetter: true },
+      { key: 'commute_time', name: 'Commute Time (min)', higherIsBetter: false },
+      { key: 'parks_per_capita', name: 'Parks per 10k', higherIsBetter: true },
+      { key: 'diversity_index', name: 'Diversity Index (0-1)', higherIsBetter: true },
+      { key: 'natural_disaster_risk', name: 'Disaster Risk (idx)', higherIsBetter: false },
+      { key: 'sunshine_days', name: 'Sunny Days / yr', higherIsBetter: true },
+      { key: 'precip_days', name: 'Precipitation Days / yr', higherIsBetter: false },
+    ];
+
+    // Example CSV (tiny, illustrative). Replace with real data for production.
+    const SAMPLE_CSV = `zip,state,city,lat,lon,median_income,crime_rate,avg_temp,cost_of_living,unemployment_rate,walk_score,air_quality,broadband,school_quality,housing_cost,property_tax_rate,sales_tax_rate,state_income_tax,healthcare_access,commute_time,parks_per_capita,diversity_index,natural_disaster_risk,sunshine_days,precip_days\n
+11211,NY,Brooklyn,40.7146,-73.9566,82000,28,56,130,4.1,89,48,98,7.5,900000,1.2,8.88,6.5,85,38,3.7,0.82,3.1,220,110\n60657,IL,Chicago,41.94,-87.65,92000,32,52,115,3.8,93,42,97,8.1,520000,2.1,10.25,4.95,88,36,4.5,0.74,2.8,190,120\n73301,TX,Austin,30.27,-97.74,88000,24,70,102,3.2,70,35,96,7.6,450000,1.9,8.25,0,90,27,5.2,0.68,3.0,300,85\n85001,AZ,Phoenix,33.45,-112.07,68000,22,77,99,4.5,60,40,94,6.9,420000,0.6,8.6,2.59,80,28,5.0,0.58,3.5,305,20\n98101,WA,Seattle,47.61,-122.33,110000,30,55,140,3.5,99,38,99,8.5,800000,1.0,10.25,0,92,29,6.1,0.71,3.0,155,150\n30301,GA,Atlanta,33.75,-84.39,70000,35,64,98,4.2,55,45,92,6.2,350000,0.9,8.9,5.75,78,31,4.2,0.63,3.3,215,110\n80202,CO,Denver,39.75,-104.99,95000,25,50,115,2.9,88,33,97,8.0,600000,0.6,8.81,4.4,87,28,6.5,0.66,2.6,245,60\n90012,CA,Los Angeles,34.05,-118.24,78000,26,66,145,4.0,91,50,98,7.2,750000,0.8,9.5,9.3,86,31,3.2,0.79,3.2,284,35\n37203,TN,Nashville,36.15,-86.78,72000,29,61,96,3.6,65,46,95,7.1,420000,0.7,9.75,0,81,26,5.7,0.59,3.1,208,120\n64106,MO,Kansas City,39.10,-94.58,68000,31,56,92,3.9,72,44,94,6.8,300000,1.2,9.35,5.4,79,24,4.0,0.57,2.9,215,95`;
+
+    // -----------------------------
+    // Minimal CSV parser (no quotes handling for nested commas in this demo)
+    // -----------------------------
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows = lines.slice(1).map(line => {
+        // naive split; sufficient for this demo CSV
+        const cells = line.split(',');
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = cells[i] !== undefined ? cells[i] : '');
+        return obj;
+      });
+      return { headers, rows };
+    }
+
+    // -----------------------------
+    // State & Data
+    // -----------------------------
+    const state = {
+      raw: [],         // raw rows
+      criteria: {},    // { key: { weight, min, max, higherIsBetter } }
+      normalize: 'minmax',
+      missing: 'skip',
+    };
+
+    // initialize criteria UI
+    const critWrap = document.getElementById('criteria');
+    const tpl = document.getElementById('criterionTpl');
+    CRITERIA.forEach(c => {
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.dataset.key = c.key;
+      node.querySelector('.name').textContent = c.name;
+      node.querySelector('.dir').textContent = c.higherIsBetter ? 'Higher is better' : 'Lower is better';
+      node.querySelector('.weight').addEventListener('input', (e) => {
+        state.criteria[c.key].weight = +e.target.value;
+        node.querySelector('.wval').textContent = e.target.value;
+        updateTotalWeight();
+      });
+      node.querySelector('.min').addEventListener('change', (e) => state.criteria[c.key].min = e.target.value === '' ? null : +e.target.value);
+      node.querySelector('.max').addEventListener('change', (e) => state.criteria[c.key].max = e.target.value === '' ? null : +e.target.value);
+      critWrap.appendChild(node);
+      state.criteria[c.key] = { weight: 0, min: null, max: null, higherIsBetter: c.higherIsBetter };
+    });
+
+    function updateTotalWeight(){
+      const total = Object.values(state.criteria).reduce((s, c) => s + (c.weight||0), 0);
+      document.getElementById('totalWeight').textContent = `Total weight: ${total}`;
+    }
+
+    // Controls
+    const normalizeMode = document.getElementById('normalizeMode');
+    const missingMode = document.getElementById('missingMode');
+    normalizeMode.addEventListener('change', () => {
+      state.normalize = normalizeMode.value;
+    });
+    missingMode.addEventListener('change', () => {
+      state.missing = missingMode.value;
+    });
+
+    document.getElementById('resetWeights').addEventListener('click', () => {
+      document.querySelectorAll('.criterion .weight').forEach(inp => { inp.value = 0; inp.dispatchEvent(new Event('input')); });
+    });
+    document.getElementById('equalizeWeights').addEventListener('click', () => {
+      const equal = 10; // set all to 10 for quick tuning
+      document.querySelectorAll('.criterion .weight').forEach(inp => { inp.value = equal; inp.dispatchEvent(new Event('input')); });
+    });
+
+    // File loading & sample
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      loadData(text);
+    });
+    document.getElementById('loadSample').addEventListener('click', () => loadData(SAMPLE_CSV));
+
+    function loadData(csvText){
+      const { headers, rows } = parseCSV(csvText);
+      // coerce numeric columns for criteria
+      const numKeys = new Set(CRITERIA.map(c => c.key));
+      state.raw = rows.map(r => {
+        const o = { ...r };
+        // trim core fields
+        o.zip = String(o.zip).trim();
+        o.state = String(o.state).trim();
+        o.city = String(o.city||'').trim();
+        // numbers
+        for (const k of numKeys){
+          const v = r[k];
+          o[k] = v === '' || v == null ? null : +v;
+        }
+        o.lat = r.lat === '' ? null : +r.lat;
+        o.lon = r.lon === '' ? null : +r.lon;
+        return o;
+      });
+      // update UI counts and state list
+      document.getElementById('rowCount').textContent = state.raw.length;
+      const states = [...new Set(state.raw.map(r => r.state).filter(Boolean))].sort();
+      const sel = document.getElementById('stateFilter');
+      sel.innerHTML = '<option value="">All States</option>' + states.map(s => `<option value="${s}">${s}</option>`).join('');
+      document.getElementById('stateCount').textContent = states.length;
+    }
+
+    // Ranking logic
+    function compute(){
+      const limit = Math.max(1, +document.getElementById('limitResults').value || 100);
+      const fState = document.getElementById('stateFilter').value;
+      const rows = state.raw.filter(r => !fState || r.state === fState);
+
+      // bounds/caps filter per row
+      const activeCriteria = CRITERIA.filter(c => state.criteria[c.key].weight > 0);
+      const capsOk = rows.filter(r => {
+        for (const c of CRITERIA){
+          const cfg = state.criteria[c.key];
+          if (cfg.min != null && r[c.key] != null && r[c.key] < cfg.min) return false;
+          if (cfg.max != null && r[c.key] != null && r[c.key] > cfg.max) return false;
+        }
+        return true;
+      });
+
+      // Precompute stats per criterion for normalization
+      const stats = {};
+      for (const c of CRITERIA){
+        const vals = capsOk.map(r => r[c.key]).filter(v => v != null && Number.isFinite(v));
+        const min = Math.min(...vals);
+        const max = Math.max(...vals);
+        const mean = vals.reduce((a,b)=>a+b,0) / (vals.length||1);
+        const sd = Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0) / Math.max(1, vals.length-1));
+        stats[c.key] = { min, max, mean, sd };
+      }
+
+      const normMode = state.normalize; // 'minmax' | 'zscore'
+      const missing = state.missing;    // 'skip' | 'penalize'
+
+      const scored = capsOk.map(r => {
+        let scoreSum = 0; let weightSum = 0;
+        const details = {};
+        for (const c of activeCriteria){
+          const cfg = state.criteria[c.key];
+          const v = r[c.key];
+          let n;
+          if (v == null || !Number.isFinite(v)){
+            if (missing === 'skip') continue; else n = 0;
+          } else if (normMode === 'minmax'){
+            const {min, max} = stats[c.key];
+            if (!Number.isFinite(min) || !Number.isFinite(max) || max === min){ n = 0.5; }
+            else n = (v - min) / (max - min);
+          } else { // zscore
+            const {mean, sd} = stats[c.key];
+            n = sd === 0 ? 0 : (v - mean) / sd; // center
+            // squish to 0..1 via sigmoid-like transform
+            n = 1/(1 + Math.exp(-n));
+          }
+          if (!c.higherIsBetter) n = 1 - n;
+          const w = cfg.weight;
+          details[c.key] = { raw: v, norm: n, weight: w, contribution: n * w };
+          scoreSum += n * w;
+          weightSum += w;
+        }
+        const composite = weightSum > 0 ? scoreSum / weightSum : 0;
+        return { ...r, __score: composite, __details: details };
+      }).sort((a,b) => b.__score - a.__score).slice(0, limit);
+
+      // Render
+      renderResults(scored, activeCriteria.map(c=>c.key));
+      // update badges
+      document.getElementById('activeFilter').textContent = fState || 'None';
+      document.getElementById('activeNorm').textContent = normMode;
+      document.getElementById('activeMissing').textContent = missing;
+      window.__lastResults = scored; // for export
+    }
+
+    function renderResults(rows, keys){
+      const head = document.getElementById('resultsHead');
+      const body = document.getElementById('resultsBody');
+      head.innerHTML = '';
+      body.innerHTML = '';
+      const cols = ['rank','zip','city','state','__score', ...keys];
+      const labels = { rank: '#', zip: 'ZIP', city: 'City', state: 'State', __score: 'Score' };
+      head.innerHTML = cols.map(c => `<th>${labels[c] || c}</th>`).join('');
+      rows.forEach((r, i) => {
+        const tds = [];
+        tds.push(`<td>${i+1}</td>`);
+        tds.push(`<td><span class="pill">${r.zip}</span></td>`);
+        tds.push(`<td>${r.city||''}</td>`);
+        tds.push(`<td>${r.state||''}</td>`);
+        tds.push(`<td class="score">${r.__score.toFixed(3)}</td>`);
+        for (const k of keys){
+          const d = r.__details[k];
+          if (!d) { tds.push('<td class="muted">—</td>'); continue; }
+          tds.push(`<td title="raw=${d.raw}; norm=${d.norm.toFixed(3)}; w=${d.weight}; contrib=${d.contribution.toFixed(3)}">${d.raw}</td>`);
+        }
+        body.insertAdjacentHTML('beforeend', `<tr>${tds.join('')}</tr>`);
+      });
+    }
+
+    // Export last results to CSV
+    function exportResults(){
+      const rows = window.__lastResults || [];
+      if (!rows.length) { alert('No results to export. Run the ranking first.'); return; }
+      const header = Object.keys(rows[0]).filter(k => !k.startsWith('__'));
+      const csv = [header.join(',')].concat(rows.map(r => header.map(h => r[h]).join(','))).join('\n');
+      const blob = new Blob([csv], {type: 'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'relocation_results.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Optional Census fetch (basic ACS5 by ZCTA). Users must map variables manually.
+    async function fetchFromCensus(){
+      const key = document.getElementById('censusKey').value.trim();
+      const varsRaw = document.getElementById('censusVars').value.trim();
+      if (!key || !varsRaw){
+        alert('Provide an API key and variable mappings, e.g.: B19013_001E as median_income, B01002_001E as median_age');
+        return;
+      }
+      // Example: B19013_001E as median_income, B28002_013E as broadband
+      const mappings = varsRaw.split(',').map(s => s.trim()).filter(Boolean).map(pair => {
+        const m = pair.match(/^(\w+)\s+as\s+(\w+)$/i); if (!m) return null; return { var: m[1], key: m[2] };
+      }).filter(Boolean);
+      const varList = mappings.map(m => m.var).join(',');
+      // ACS5 ZCTA endpoint
+      const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${varList}&for=zip%20code%20tabulation%20area:*&key=${encodeURIComponent(key)}`;
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
+        const headers = json[0];
+        const data = json.slice(1);
+        const hdrIdx = Object.fromEntries(headers.map((h,i)=>[h,i]));
+        const rows = data.map(arr => {
+          const zip = arr[hdrIdx['zip code tabulation area']];
+          const name = arr[hdrIdx['NAME']];
+          const o = { zip, city: name.replace(/ZCTA5 /,'').trim(), state: '', lat:'', lon:'' };
+          for (const m of mappings){
+            const val = arr[hdrIdx[m.var]];
+            o[m.key] = val === null || val === undefined || val === '' ? null : +val;
+          }
+          return o;
+        });
+        state.raw = rows;
+        document.getElementById('rowCount').textContent = state.raw.length;
+        const sel = document.getElementById('stateFilter');
+        sel.innerHTML = '<option value="">All States</option>'; // ZCTA endpoint lacks state; consider merging with crosswalk externally
+        document.getElementById('stateCount').textContent = 0;
+        alert(`Loaded ${rows.length} rows from Census ACS5 ZCTA endpoint. Note: state filter unavailable without a crosswalk.`);
+      } catch(err){
+        console.error(err);
+        alert('Failed to fetch from Census. See console for details.');
+      }
+    }
+
+    // Help/About modal
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    document.getElementById('modalClose').addEventListener('click', ()=> modal.close());
+    document.getElementById('showHelp').addEventListener('click', (e)=>{
+      e.preventDefault();
+      modalTitle.textContent = 'How to use this tool';
+      modalBody.innerHTML = `
+        <ol>
+          <li><b>Load data</b>: Upload a CSV (or click <i>Load Example Dataset</i>).</li>
+          <li><b>Adjust weights</b>: For each criterion, set a weight 0–10. Higher weight = more importance.</li>
+          <li><b>Set caps</b>: Optionally require each criterion to be within min/max bounds. Rows outside are filtered out.</li>
+          <li><b>Filter by state</b>: Limit results to a specific state.</li>
+          <li><b>Choose normalization</b>: Min–Max (0–1) or Z‑score (sigmoid to 0–1).</li>
+          <li><b>Handle missing data</b>: Skip that criterion, or penalize to 0 for that row.</li>
+          <li><b>Compute</b>: Click <i>Compute Rankings</i> and review the table. Hover cells to see contributions.</li>
+          <li><b>Export</b>: Save the currently displayed results to CSV.</li>
+        </ol>
+        <p class="muted">CSV headers required: <code>zip,state,city,lat,lon</code> plus any subset of the 20 criteria keys shown in this app. Extra columns are ignored. Missing criteria just won\'t contribute unless you choose <i>penalize</i>.</p>
+      `;
+      modal.showModal();
+    });
+    document.getElementById('showAbout').addEventListener('click', (e)=>{
+      e.preventDefault();
+      modalTitle.textContent = 'About';
+      modalBody.innerHTML = `
+        <p>This standalone HTML app helps you score and compare potential relocation ZIP codes across up to 20 criteria. It supports per‑criterion weights, min/max caps, and a state filter.</p>
+        <p><b>Data sources:</b> Load your own CSV or pull selected variables from the U.S. Census ACS5 ZCTA endpoint (requires API key). For state filtering with Census data, merge a ZCTA→State crosswalk offline and include a <code>state</code> column in your CSV.</p>
+        <p><b>Tip:</b> Start by clicking <i>Equalize Weights</i> then nudge up the 4–6 criteria that matter most.</p>
+      `;
+      modal.showModal();
+    });
+
+    // Wire buttons
+    document.getElementById('run').addEventListener('click', compute);
+    document.getElementById('exportCsv').addEventListener('click', exportResults);
+    document.getElementById('fetchCensus').addEventListener('click', fetchFromCensus);
+
+    // Auto-load the sample on first open for convenience
+    loadData(SAMPLE_CSV);
+  </script>
+</body>
+</html>

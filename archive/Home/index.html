@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interactive Fluid Wake Page</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <!-- Header fragment mounts here -->
+  <div id="header-mount"></div>
+
+  <main id="main">
+    <!-- WebGL background canvas -->
+    <canvas id="gl" aria-hidden="true"></canvas>
+
+    <!-- Foreground content -->
+    <div class="content">
+      <!-- Hero 1 -->
+      <section id="hero1" class="section hero-1">
+        <span class="tag">Hero Section 1</span>
+        <h1>Title Goes Here</h1>
+        <p>
+          This hero sits on top of an interactive background that leaves a fluid-like wake
+          as your cursor moves anywhere within the main area—even beneath foreground content.
+        </p>
+      </section>
+
+      <!-- Hero 2: Grid of 12 buttons -->
+      <section id="hero2" class="section">
+        <span class="tag">Hero Section 2</span>
+        <div class="hero-2" role="group" aria-label="Primary actions">
+          <button class="hero-button">Action 1</button>
+          <button class="hero-button">Action 2</button>
+          <button class="hero-button">Action 3</button>
+          <button class="hero-button">Action 4</button>
+          <button class="hero-button">Action 5</button>
+          <button class="hero-button">Action 6</button>
+          <button class="hero-button">Action 7</button>
+          <button class="hero-button">Action 8</button>
+          <button class="hero-button">Action 9</button>
+          <button class="hero-button">Action 10</button>
+          <button class="hero-button">Action 11</button>
+          <button class="hero-button">Action 12</button>
+        </div>
+      </section>
+
+      <!-- Copy Section -->
+      <section id="copy" class="section copy">
+        <span class="tag">Section</span>
+        <h2>Some Informative Text</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies libero id
+          nisl iaculis, sit amet iaculis nisl aliquet. Maecenas sodales, augue in auctor dictum,
+          ligula neque laoreet lectus, vitae luctus nisl nibh sed nunc. Donec mattis ligula sed
+          commodo sollicitudin. Curabitur luctus mauris sit amet nibh mattis, vitae maximus velit
+          ultrices.
+        </p>
+        <p>
+          Vivamus quis urna a nisl tempus viverra. Aliquam faucibus nisi nec ipsum dignissim, in
+          fermentum dui faucibus. Donec at nibh et ipsum gravida convallis.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Settings fragment mounts here -->
+  <div id="settings-mount"></div>
+
+  <!-- Footer fragment mounts here -->
+  <div id="footer-mount"></div>
+
+  <script src="scripts/app.js"></script>
+  <script src="scripts/bg.js"></script>
+</body>
+</html>

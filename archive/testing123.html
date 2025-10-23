@@ -29,47 +29,38 @@
 
     <!-- Top title bar -->
     <section class="hero">
-
+      <h2>Misc. Collection of WebApps</h2>
     </section>
 
     <!-- Apps Grid -->
-    <div class="app-grid">
-      <a class="app-card" href="../XMBTrak/index.html">
-        <h3>XMBTrak</h3>
-      </a>
-      <a class="app-card" href="../Product-Config/main.html">
-        <h3>Product Configurator</h3>
-      </a>
-      <a class="app-card" href="../HexaPod-Sim/index.html">
-        <h3>Hexapod Simulator</h3>
-      </a>
-      <a class="app-card" href="../PhotographyWeb/test.html">
-        <h3>Photography Web</h3>
-      </a>
-      <a class="app-card" href="../Node_App/main.html">
-        <h3>Node App</h3>
-      </a>
-    </div>
-
-    <!-- Settings Panel -->
-    <div> 
-      <button id="panelToggle" class="panel-toggle">Background Settings</button>
-    </div>
-
-
+    <section class="app-grid-section">
+      <div class="app-grid">
+        <a class="app-card" href="../XMBTrak/index.html">
+          <h3>XMBTrak</h3>
+        </a>
+        <a class="app-card" href="../Product-Config/main.html">
+          <h3>Product Configurator</h3>
+        </a>
+        <a class="app-card" href="../HexaPod-Sim/index.html">
+          <h3>Hexapod Simulator</h3>
+        </a>
+        <a class="app-card" href="../PhotographyWeb/test.html">
+          <h3>Photography Web</h3>
+        </a>
+        <a class="app-card" href="../Node_App/main.html">
+          <h3>Node App</h3>
+        </a>
+      </div>
+    </section>
 
     
-<!-- Settings Modal -->
-<div id="settingsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-  <div class="modal-dialog" role="document" tabindex="-1">
-    <div class="modal-header">
-      <div>
-        <div class="title" id="settingsTitle">Fluid Background</div>
-        <div class="sub">Warpy, reactive field</div>
-      </div>
-      <button id="modalClose" class="modal-close" aria-label="Close settings">&times;</button>
+
+    <!-- Settings Panel -->
+    <div class="btns"> 
+      <button id="panelToggle" class="panel-toggle">Hide settings</button>
     </div>
-    <div class="modal-body">
+
+    <aside class="panel" id="panel" aria-label="Fluid settings" aria-hidden="false" >
       <div class="hdr">
         <div>
           <div class="title">Fluid Background</div>
@@ -118,11 +109,8 @@
         <button id="pauseBtn" aria-pressed="false">Pause</button>
         <button id="resetBtn">Reset</button>
       </div>
-    </div>
-  </div>
-</div>
-<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
 
+    </aside>
     
   </main>
   <!-- Footer -->

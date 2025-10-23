@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Industrial Cable Schedule Builder</title>
+  <!-- TailwindCSS via CDN for quick, clean styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Print-friendly table */
+    @media print {
+      #app header, #toolbar, #importSection, #controls, #footer, .no-print { display: none !important; }
+      table { font-size: 11px; }
+      thead { position: sticky; top: 0; }
+    }
+    /* Simple modal backdrop */
+    .backdrop { background: rgba(0,0,0,0.5); }
+    /* Nice focus ring for inputs */
+    input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.35); }
+    /* Narrow number inputs on small screens */
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Sticky table header */
+    thead th { position: sticky; top: 0; background: #f8fafc; z-index: 1; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <div id="app" class="max-w-7xl mx-auto p-4">
+    <header class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Industrial Cable Schedule Builder</h1>
+        <p class="text-slate-500">Plan, organize, and export cable schedules for control panels & field wiring.</p>
+      </div>
+      <div id="stats" class="flex gap-3 text-sm mt-2 md:mt-0">
+        <div class="bg-white border rounded-xl px-3 py-2 shadow-sm"><span class="font-semibold" id="statCount">0</span> cables</div>
+        <div class="bg-white border rounded-xl px-3 py-2 shadow-sm">Total length: <span class="font-semibold" id="statTotal">0</span> ft</div>
+        <div class="bg-white border rounded-xl px-3 py-2 shadow-sm">Last saved: <span id="statSaved">—</span></div>
+      </div>
+    </header>
+
+    <!-- Toolbar -->
+    <section id="toolbar" class="mt-4 flex flex-wrap gap-2 items-center">
+      <button id="btnAdd" class="no-print inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        New cable
+      </button>
+      <button id="btnDuplicate" class="no-print inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 text-white hover:bg-black shadow-sm" title="Duplicate selected rows">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        Duplicate
+      </button>
+      <button id="btnDelete" class="no-print inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 shadow-sm" title="Delete selected rows">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Delete
+      </button>
+      <div class="grow"></div>
+      <div class="no-print flex items-center gap-2">
+        <input id="search" type="search" class="w-56 md:w-72 px-3 py-2 rounded-xl border bg-white shadow-sm" placeholder="Search all fields…" />
+        <button id="btnClearFilters" class="px-3 py-2 rounded-xl border bg-white hover:bg-slate-100">Clear Filters</button>
+        <button id="btnImport" class="px-3 py-2 rounded-xl border bg-white hover:bg-slate-100">Import</button>
+        <button id="btnExport" class="px-3 py-2 rounded-xl border bg-white hover:bg-slate-100">Export</button>
+        <button id="btnPrint" class="px-3 py-2 rounded-xl border bg-white hover:bg-slate-100">Print</button>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section id="controls" class="no-print mt-3 grid grid-cols-1 md:grid-cols-5 gap-2">
+      <select id="fltType" class="px-3 py-2 rounded-xl border bg-white shadow-sm"><option value="">Type (all)</option><option>Control</option><option>Power</option><option>Instrumentation</option><option>Ethernet</option><option>Fiber</option></select>
+      <select id="fltShield" class="px-3 py-2 rounded-xl border bg-white shadow-sm"><option value="">Shield (all)</option><option>Yes</option><option>No</option></select>
+      <select id="fltJacket" class="px-3 py-2 rounded-xl border bg-white shadow-sm"><option value="">Jacket (all)</option><option>PVC</option><option>XLPE</option><option>CSAT/Tray</option><option>Outdoor</option></select>
+      <input id="fltFrom" class="px-3 py-2 rounded-xl border bg-white shadow-sm" placeholder="From contains…" />
+      <input id="fltTo" class="px-3 py-2 rounded-xl border bg-white shadow-sm" placeholder="To contains…" />
+    </section>
+
+    <!-- Table -->
+    <div class="mt-4 overflow-auto rounded-2xl border bg-white shadow-sm">
+      <table id="grid" class="min-w-full text-sm">
+        <thead class="text-left text-slate-600">
+          <tr>
+            <th class="w-10 px-3 py-2"><input type="checkbox" id="chkAll"/></th>
+            <th class="px-3 py-2 cursor-pointer" data-col="cableId">Cable ID</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="from">From</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="to">To</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="type">Type</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="conductors">Conds</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="gauge">AWG</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="length">Length (ft)</th>
+            <th class="px-3 py-2" data-col="route">Route</th>
+            <th class="px-3 py-2" data-col="termFrom">Term @ From</th>
+            <th class="px-3 py-2" data-col="termTo">Term @ To</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="shield">Shield</th>
+            <th class="px-3 py-2 cursor-pointer" data-col="jacket">Jacket</th>
+            <th class="px-3 py-2" data-col="voltage">Voltage</th>
+            <th class="px-3 py-2" data-col="notes">Notes</th>
+            <th class="px-3 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="gridBody" class="divide-y">
+          <!-- rows injected here -->
+        </tbody>
+      </table>
+    </div>
+
+    <footer id="footer" class="text-xs text-slate-500 mt-3 flex items-center justify-between">
+      <div>
+        <span class="font-medium">Tips:</span> Click column headers to sort. Double‑click a cell to quick‑edit. Data persists locally.
+      </div>
+      <button id="btnReset" class="no-print text-rose-600 hover:underline" title="Clear schedule and load sample data">Reset & Load Sample</button>
+    </footer>
+  </div>
+
+  <!-- Hidden file input for import -->
+  <input id="fileInput" type="file" accept=".csv,.json" class="hidden" />
+
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 flex items-center justify-center z-50">
+    <div class="absolute inset-0 backdrop"></div>
+    <div class="relative bg-white w-[95vw] max-w-3xl rounded-2xl shadow-xl border">
+      <div class="px-5 py-4 border-b flex items-center justify-between">
+        <h2 id="modalTitle" class="text-lg font-semibold">New Cable</h2>
+        <button id="modalClose" class="p-2 rounded-lg hover:bg-slate-100" aria-label="Close">✕</button>
+      </div>
+      <form id="cableForm" class="p-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-slate-500">Cable ID</label>
+          <input name="cableId" required class="w-full px-3 py-2 rounded-xl border">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Type</label>
+          <select name="type" class="w-full px-3 py-2 rounded-xl border">
+            <option>Control</option><option>Power</option><option>Instrumentation</option><option>Ethernet</option><option>Fiber</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">From</label>
+          <input name="from" class="w-full px-3 py-2 rounded-xl border" placeholder="Panel P1 TB3-12">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">To</label>
+          <input name="to" class="w-full px-3 py-2 rounded-xl border" placeholder="MCC-1 VFD-07">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Conductors</label>
+          <input name="conductors" type="number" min="1" step="1" class="w-full px-3 py-2 rounded-xl border">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Gauge (AWG)</label>
+          <input name="gauge" type="text" class="w-full px-3 py-2 rounded-xl border" placeholder="18, 12, 4/0">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Length (ft)</label>
+          <input name="length" type="number" min="0" step="0.01" class="w-full px-3 py-2 rounded-xl border">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Route</label>
+          <input name="route" class="w-full px-3 py-2 rounded-xl border" placeholder="Tray A1 → JBX‑02 → P1">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Termination @ From</label>
+          <input name="termFrom" class="w-full px-3 py-2 rounded-xl border" placeholder="TB3-12 Ferrule #12">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Termination @ To</label>
+          <input name="termTo" class="w-full px-3 py-2 rounded-xl border" placeholder="X1-4 Ring M4">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Shield</label>
+          <select name="shield" class="w-full px-3 py-2 rounded-xl border"><option>Yes</option><option>No</option></select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Jacket</label>
+          <select name="jacket" class="w-full px-3 py-2 rounded-xl border"><option>PVC</option><option>XLPE</option><option>CSAT/Tray</option><option>Outdoor</option></select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500">Voltage</label>
+          <input name="voltage" class="w-full px-3 py-2 rounded-xl border" placeholder="24 VDC, 120 VAC, 480 VAC">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-xs text-slate-500">Notes</label>
+          <textarea name="notes" rows="2" class="w-full px-3 py-2 rounded-xl border" placeholder="Any installation notes, colors, tray fill considerations, etc."></textarea>
+        </div>
+        <input type="hidden" name="_rowIndex" />
+        <div class="md:col-span-2 flex justify-end gap-2 pt-1">
+          <button type="button" id="btnCancel" class="px-3 py-2 rounded-xl border bg-white hover:bg-slate-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  // ====== Cable Schedule Builder (Vanilla JS) ======
+  const STORAGE_KEY = 'cableSchedule.v1';
+
+  /** Cable model */
+  function createCable(partial = {}) {
+    return {
+      cableId: partial.cableId ?? '',
+      from: partial.from ?? '',
+      to: partial.to ?? '',
+      type: partial.type ?? 'Control',
+      conductors: Number(partial.conductors ?? 2) || 0,
+      gauge: partial.gauge ?? '18',
+      length: Number(partial.length ?? 0) || 0,
+      route: partial.route ?? '',
+      termFrom: partial.termFrom ?? '',
+      termTo: partial.termTo ?? '',
+      shield: partial.shield ?? 'No',
+      jacket: partial.jacket ?? 'PVC',
+      voltage: partial.voltage ?? '',
+      notes: partial.notes ?? ''
+    };
+  }
+
+  const appState = {
+    data: [],
+    sort: { key: 'cableId', dir: 'asc' },
+    filters: { q: '', type: '', shield: '', jacket: '', from: '', to: '' }
+  };
+
+  // ====== DOM helpers ======
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  // ====== Persistence ======
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data));
+    $('#statSaved').textContent = new Date().toLocaleString();
+  }
+  function load() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+
+  // ====== Sample Data ======
+  function sampleData() {
+    return [
+      createCable({cableId:'C-001', from:'P1 TB3-12', to:'VFD-07', type:'Control', conductors:8, gauge:'18', length:86, route:'Tray A1 → JBX‑02 → MCC', termFrom:'Ferrules', termTo:'VFD Ctrl TB', shield:'Yes', jacket:'CSAT/Tray', voltage:'24 VDC', notes:'Pair twist for AI'}),
+      createCable({cableId:'C-002', from:'P1 TB4-01', to:'LT-102', type:'Instrumentation', conductors:2, gauge:'22', length:140, route:'JB-12 → Tray B2 → Field', termFrom:'Ferrules', termTo:'Term block', shield:'Yes', jacket:'XLPE', voltage:'24 VDC', notes:'IS loop'}),
+      createCable({cableId:'P-003', from:'MCC-1', to:'P-102', type:'Power', conductors:3, gauge:'12', length:65, route:'Tray C → Conduit', termFrom:'Lugs', termTo:'Lugs', shield:'No', jacket:'PVC', voltage:'480 VAC', notes:'THHN in conduit'}),
+      createCable({cableId:'NET-004', from:'SW-01', to:'PLC-01', type:'Ethernet', conductors:4, gauge:'24', length:30, route:'Tray D → Cabinet', termFrom:'RJ45', termTo:'RJ45', shield:'Yes', jacket:'Outdoor', voltage:'—', notes:'Cat6 STP'})
+    ];
+  }
+
+  // ====== Rendering ======
+  function render() {
+    // Apply filters
+    let rows = appState.data.filter(r => applyFilters(r));
+    // Sort
+    const { key, dir } = appState.sort;
+    rows.sort((a,b) => {
+      const va = (a[key] ?? '').toString().toLowerCase();
+      const vb = (b[key] ?? '').toString().toLowerCase();
+      if (!isNaN(Number(a[key])) && !isNaN(Number(b[key]))) {
+        return dir === 'asc' ? (Number(a[key]) - Number(b[key])) : (Number(b[key]) - Number(a[key]));
+      }
+      return dir === 'asc' ? va.localeCompare(vb, undefined, { numeric: true }) : vb.localeCompare(va, undefined, { numeric: true });
+    });
+
+    const tbody = $('#gridBody');
+    tbody.innerHTML = '';
+    for (const [i,row] of rows.entries()) {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50';
+      tr.dataset.index = appState.data.indexOf(row);
+      tr.innerHTML = `
+        <td class="px-3 py-2"><input type="checkbox" class="rowChk"></td>
+        <td class="px-3 py-2"><span class="cell" data-key="cableId">${escapeHtml(row.cableId)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="from">${escapeHtml(row.from)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="to">${escapeHtml(row.to)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="type">${escapeHtml(row.type)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="conductors">${escapeHtml(row.conductors)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="gauge">${escapeHtml(row.gauge)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="length">${escapeHtml(row.length)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="route">${escapeHtml(row.route)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="termFrom">${escapeHtml(row.termFrom)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="termTo">${escapeHtml(row.termTo)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="shield">${escapeHtml(row.shield)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="jacket">${escapeHtml(row.jacket)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="voltage">${escapeHtml(row.voltage)}</span></td>
+        <td class="px-3 py-2"><span class="cell" data-key="notes">${escapeHtml(row.notes)}</span></td>
+        <td class="px-3 py-2">
+          <button class="text-blue-600 hover:underline btnEdit">Edit</button>
+        </td>`;
+      tbody.appendChild(tr);
+    }
+
+    // Stats
+    $('#statCount').textContent = rows.length;
+    const total = rows.reduce((acc,r) => acc + (Number(r.length)||0), 0);
+    $('#statTotal').textContent = Number(total.toFixed(2));
+
+    // Header checkbox state
+    $('#chkAll').checked = false;
+    save();
+  }
+
+  function applyFilters(r) {
+    const f = appState.filters;
+    const hay = (Object.values(r).join(' ') + '').toLowerCase();
+    if (f.q && !hay.includes(f.q.toLowerCase())) return false;
+    if (f.type && r.type !== f.type) return false;
+    if (f.shield && r.shield !== f.shield) return false;
+    if (f.jacket && r.jacket !== f.jacket) return false;
+    if (f.from && !r.from.toLowerCase().includes(f.from.toLowerCase())) return false;
+    if (f.to && !r.to.toLowerCase().includes(f.to.toLowerCase())) return false;
+    return true;
+  }
+
+  function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+
+  // ====== Modal & Form ======
+  const modal = $('#modal');
+  const form = $('#cableForm');
+  function openModal(title, init = null, rowIndex = null) {
+    $('#modalTitle').textContent = title;
+    form.reset();
+    if (init) for (const [k,v] of Object.entries(init)) { if (form[k]) form[k].value = v; }
+    if (rowIndex !== null) form._rowIndex.value = rowIndex; else form._rowIndex.value = '';
+    modal.classList.remove('hidden');
+    modal.querySelector('input[name="cableId"]').focus();
+  }
+  function closeModal() { modal.classList.add('hidden'); }
+
+  // ====== Event Wiring ======
+  function wireEvents() {
+    // New cable
+    $('#btnAdd').addEventListener('click', () => {
+      const nextId = suggestNextId();
+      openModal('New Cable', { cableId: nextId });
+    });
+
+    // Duplicate
+    $('#btnDuplicate').addEventListener('click', () => {
+      const idxs = selectedRowIndexes();
+      if (!idxs.length) return alert('Select at least one row to duplicate.');
+      for (const idx of idxs) {
+        const base = appState.data[idx];
+        const dup = createCable({...base});
+        dup.cableId = suggestNextId(base.cableId);
+        appState.data.splice(idx+1, 0, dup);
+      }
+      render();
+    });
+
+    // Delete
+    $('#btnDelete').addEventListener('click', () => {
+      const idxs = selectedRowIndexes();
+      if (!idxs.length) return alert('Select at least one row to delete.');
+      if (!confirm(`Delete ${idxs.length} row(s)?`)) return;
+      // remove from highest index to lowest
+      idxs.sort((a,b)=>b-a).forEach(i => appState.data.splice(i,1));
+      render();
+    });
+
+    // Print
+    $('#btnPrint').addEventListener('click', () => window.print());
+
+    // Import/Export
+    $('#btnExport').addEventListener('click', doExport);
+    $('#btnImport').addEventListener('click', () => $('#fileInput').click());
+    $('#fileInput').addEventListener('change', handleImport);
+
+    // Search + filters
+    $('#search').addEventListener('input', e => { appState.filters.q = e.target.value; render(); });
+    $('#fltType').addEventListener('change', e => { appState.filters.type = e.target.value; render(); });
+    $('#fltShield').addEventListener('change', e => { appState.filters.shield = e.target.value; render(); });
+    $('#fltJacket').addEventListener('change', e => { appState.filters.jacket = e.target.value; render(); });
+    $('#fltFrom').addEventListener('input', e => { appState.filters.from = e.target.value; render(); });
+    $('#fltTo').addEventListener('input', e => { appState.filters.to = e.target.value; render(); });
+
+    $('#btnClearFilters').addEventListener('click', () => {
+      appState.filters = { q:'', type:'', shield:'', jacket:'', from:'', to:'' };
+      $('#search').value = '';
+      $('#fltType').value = '';
+      $('#fltShield').value = '';
+      $('#fltJacket').value = '';
+      $('#fltFrom').value = '';
+      $('#fltTo').value = '';
+      render();
+    });
+
+    // Sort on header click
+    $$('#grid thead th[data-col]').forEach(th => th.addEventListener('click', () => {
+      const key = th.dataset.col;
+      if (appState.sort.key === key) appState.sort.dir = appState.sort.dir === 'asc' ? 'desc' : 'asc';
+      else { appState.sort.key = key; appState.sort.dir = 'asc'; }
+      render();
+    }));
+
+    // Header checkbox
+    $('#chkAll').addEventListener('change', (e) => {
+      $$('#gridBody .rowChk').forEach(chk => chk.checked = e.target.checked);
+    });
+
+    // Row actions (edit & quick edit)
+    $('#gridBody').addEventListener('click', (e) => {
+      const btn = e.target.closest('.btnEdit');
+      if (btn) {
+        const tr = e.target.closest('tr');
+        const idx = Number(tr.dataset.index);
+        openModal('Edit Cable', appState.data[idx], idx);
+      }
+    });
+    // Double‑click quick edit on cell
+    $('#gridBody').addEventListener('dblclick', (e) => {
+      const cell = e.target.closest('.cell');
+      if (!cell) return;
+      const tr = e.target.closest('tr');
+      const idx = Number(tr.dataset.index);
+      const key = cell.dataset.key;
+      const oldVal = appState.data[idx][key] ?? '';
+      const input = document.createElement(key === 'notes' ? 'textarea' : 'input');
+      input.className = 'w-full px-1 py-0.5 border rounded';
+      input.value = oldVal;
+      cell.replaceChildren(input);
+      input.focus();
+      input.addEventListener('keydown', ev => { if (ev.key === 'Enter' && !(ev.shiftKey && key==='notes')) input.blur(); });
+      input.addEventListener('blur', () => {
+        let val = input.value;
+        if (key === 'conductors' || key === 'length') val = Number(val) || 0;
+        appState.data[idx][key] = val;
+        render();
+      });
+    });
+
+    // Modal buttons
+    $('#modalClose').addEventListener('click', closeModal);
+    $('#btnCancel').addEventListener('click', closeModal);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const obj = Object.fromEntries(formData.entries());
+      const row = createCable(obj);
+
+      // Validation: cableId uniqueness (case-insensitive)
+      const conflictIndex = appState.data.findIndex((r,i) => r.cableId.trim().toLowerCase() === row.cableId.trim().toLowerCase() && String(i) !== obj._rowIndex);
+      if (conflictIndex >= 0) {
+        alert('Cable ID must be unique.');
+        return;
+      }
+
+      if (obj._rowIndex !== '') {
+        // update
+        const idx = Number(obj._rowIndex);
+        appState.data[idx] = row;
+      } else {
+        // insert
+        appState.data.push(row);
+      }
+      closeModal();
+      render();
+    });
+
+    // Reset sample
+    $('#btnReset').addEventListener('click', () => {
+      if (!confirm('This will replace your schedule with sample data. Continue?')) return;
+      appState.data = sampleData();
+      render();
+    });
+
+    // Drag & drop import (CSV/JSON)
+    document.addEventListener('dragover', (e) => { e.preventDefault(); });
+    document.addEventListener('drop', (e) => {
+      if (!e.dataTransfer || !e.dataTransfer.files?.length) return;
+      e.preventDefault();
+      doImport(e.dataTransfer.files[0]);
+    });
+  }
+
+  function selectedRowIndexes() {
+    const idxs = [];
+    $$('#gridBody tr').forEach(tr => {
+      const chk = tr.querySelector('.rowChk');
+      if (chk && chk.checked) idxs.push(Number(tr.dataset.index));
+    });
+    return idxs;
+  }
+
+  function suggestNextId(base = '') {
+    // If base like C-001 -> increment numeric part; else find max numeric suffix among all
+    const ids = appState.data.map(r => r.cableId);
+    const m = base.match(/^(.*?)(\d+)$/);
+    if (m) {
+      const prefix = m[1];
+      const num = String(parseInt(m[2],10) + 1).padStart(m[2].length, '0');
+      const candidate = prefix + num;
+      if (!ids.map(s=>s.toLowerCase()).includes(candidate.toLowerCase())) return candidate;
+    }
+    // fallback: find highest number in similar pattern like C-###
+    const patterns = [/(\d+)$/];
+    let best = { id: 'C-001', n: 0, width: 3, pref: 'C-' };
+    for (const id of ids) {
+      for (const p of patterns) {
+        const mm = id.match(p);
+        if (mm) {
+          const n = parseInt(mm[1],10);
+          if (n > best.n) {
+            best = { id, n, width: mm[1].length, pref: id.slice(0, id.length - mm[1].length) };
+          }
+        }
+      }
+    }
+    return best.pref + String(best.n + 1).padStart(best.width, '0');
+  }
+
+  // ====== Import/Export ======
+  function doExport() {
+    const data = appState.data;
+    const headers = Object.keys(createCable({}));
+    const asCsv = [headers.join(',')].concat(
+      data.map(r => headers.map(h => csvEscape(r[h])).join(','))
+    ).join('\n');
+    const blob = new Blob([asCsv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cable_schedule.csv';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  function csvEscape(v) {
+    if (v === null || v === undefined) return '';
+    const s = String(v);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  }
+
+  async function handleImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    await doImport(file);
+    e.target.value = '';
+  }
+
+  async function doImport(file) {
+    const text = await file.text();
+    try {
+      let rows = [];
+      if (file.name.toLowerCase().endsWith('.json')) {
+        const raw = JSON.parse(text);
+        if (Array.isArray(raw)) rows = raw; else if (raw.data) rows = raw.data; else throw new Error('JSON must be an array or {data:[…]}');
+      } else {
+        rows = parseCSV(text);
+      }
+      // Normalize
+      const normalized = rows.map(r => createCable(r));
+      if (!normalized.length) throw new Error('No rows found.');
+      if (!confirm(`Import ${normalized.length} row(s) and replace current schedule?`)) return;
+      appState.data = normalized;
+      render();
+      alert('Import complete.');
+    } catch (err) {
+      alert('Import failed: ' + err.message);
+    }
+  }
+
+  function parseCSV(text) {
+    const lines = text.replace(/\r\n?/g,'\n').split('\n').filter(Boolean);
+    if (!lines.length) return [];
+    const headers = splitCsvLine(lines[0]).map(h => h.trim());
+    const out = [];
+    for (let i=1;i<lines.length;i++) {
+      const vals = splitCsvLine(lines[i]);
+      const row = {};
+      headers.forEach((h,idx) => row[h] = vals[idx] ?? '');
+      out.push(row);
+    }
+    return out;
+  }
+  function splitCsvLine(line) {
+    const out = []; let cur = ''; let inQ = false;
+    for (let i=0;i<line.length;i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (ch === ',' && !inQ) { out.push(cur); cur=''; }
+      else cur += ch;
+    }
+    out.push(cur);
+    return out;
+  }
+
+  // ====== Init ======
+  function init() {
+    wireEvents();
+    const stored = load();
+    if (stored && Array.isArray(stored)) appState.data = stored.map(r => createCable(r));
+    else appState.data = sampleData();
+    const savedAt = localStorage.getItem(STORAGE_KEY) ? new Date().toLocaleString() : '—';
+    $('#statSaved').textContent = savedAt;
+    render();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

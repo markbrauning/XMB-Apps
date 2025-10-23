@@ -1,83 +1,59 @@
+:root {
+    --bar-w: 300px;
+    --bar-bg: rgba(0, 0, 0, 0.65);
+    --bar-border: rgba(255,255,255,0.12);
+    --txt: #e8e8ef;
+    --muted: #a9adc1;
+    --accent: #7aa2ff;
+    --tab-bg: #0f172a;         /* slate-900 */
+    --tab-fg: #ffffff;
+    --tab-bg-hover: #1e293b;   /* slate-800 */
+    --tab-shadow: 0 4px 16px rgba(0,0,0,.25);
+    --tab-radius: 12px;
+    }
+
 body {
+    background-color: var(--bar-bg);
+    
+    min-height: 100vh;
+    height: 100%;
+    margin: 0;
+    padding: 0px 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+
     font-family: 'Montserrat', sans-serif;
     font-size: 18pt;
     font-weight: 700;
     letter-spacing: 0px;
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-    display: flex;
-    flex-direction: column;
-    color: #ffffff;
+}
+
+main {
+    background-color: var(--bar-bg);
+    flex: 1;
     overflow: hidden;
-}
-
-header {
-    background-color: #000000;
-    color: #ffffff;
-    padding: 0;
-    text-align: center;
-    position: relative;
-    min-height: 56px;
-    width: 100%;
-    z-index: 20;
-    transition: opacity .5s, padding-left .125s;
-}
-
-header .container {
-    display: flex;
-    align-items: center;
-    margin-left: 0;
-    padding-left: 0;
-    width: 98%;
-    justify-content: space-between;
-    vertical-align: middle;
-}
-
-header .titlelogo {
-    display: flex;
-    align-items: center;
-    padding-left: 28px;
-    cursor: pointer;
-    min-height: 56px;
-}
-
-header .logo {
-    display: inline-block;
-    max-height: 40px;
-    max-width: 225px;
-    vertical-align: middle;
-}
-
-header .site-name {
-    font-size: 18pt;
-    letter-spacing: 0px;
-    color: rgba(255, 255, 255, 1);
-    padding-left: 15px;
-}
-
-header .app-name {
-    font-family: 'Montserrat', sans-serif;
     margin: 0;
-    font-size: 15pt;
-    text-decoration: none;
-    font-weight: 500;
-    letter-spacing: 0px;
-    color: rgba(255, 255, 255, 1);
-    text-align: right;
+    position: relative;
+    z-index: 1;
 }
 
-.header-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
+canvas {
+      position: fixed; /* stay fixed when scrolling */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2; /* puts it behind all other content */
+      background: #000; /* fallback background color */
 }
 
 .hero {
-    background: linear-gradient(135deg, #ffffff, #d3d3d3);
+    background: linear-gradient(135deg, #afc3df, #d6d5ff);
     color: #000000;
     text-align: center;
-    padding: 60px 20px;
+    padding: 40px 20px;
+    margin: 0;
 }
 
 .hero h2 {
@@ -86,92 +62,289 @@ header .app-name {
     font-weight: 500;
 }
 
-main {
-    flex: 1;
-    padding: 40px 20px;
-    background-color: #afc2eba2;
-    min-height: 500px;
-    position: relative;
-    overflow: hidden;
-}
-
+/* App cards grid */
 .app-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
-    max-width: 1000px;
+    max-width: 800px;
+    padding: 20px 20px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    
 }
 
+/* App cards */
 .app-card {
-    background: #ffffff;
+    background: rgba(172, 176, 185, 0.7); /* same color, 50% opacity */
     border-radius: 8px;
-    padding: 40px 20px;
+    padding: 20px;
     text-align: center;
     text-decoration: none;
     color: #1a1a1a;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* Maintain a 2:1 width-to-height ratio */
+    aspect-ratio: 2 / 1;
+
+    /* Optional: Prevent content overflow */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.app-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.app-card h3 {
-    margin: 0;
-    font-size: 1.25rem;
-}
-
-footer {
-    width: 100%;
-    color: #ffffff;
-    text-align: center;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    min-height: 92px;
-}
-
-footer .container {
-    max-width: inherit;
-    padding: 35px;
-    margin: 0 auto;
-}
-
-footer p {
-    margin: 0;
-    font-size: 0.9rem;
-    font: 0.7em sans-serif;
-}
-
-/* Click effect graphics */
-@keyframes fadeOut {
-    to {
-        opacity: 0;
+    .app-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
+
+    .app-card h3 {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+/* Background Click effect graphics */
+    @keyframes fadeOut {
+        from {
+            opacity: 0.2;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    .segment {
+        position: absolute;
+        height: 4px;
+        width: 0;
+        background-color: #ffffff;
+        transform-origin: 0 50%;
+        pointer-events: none;
+        transition: width 0.3s ease;
+        animation: fadeOut 3.5s forwards;
+        z-index: 0;
+    }
+
+    .circle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: fadeOut 3.5s forwards;
+        z-index: 0;
+    }
+
+
+/* Fluid Background effect Settings Panel*/
+    .panel {
+        background-color: var(--bar-bg);
+        border: 3px solid var(--bar-border);
+        backdrop-filter: blur(8px) saturate(1.1);
+        -webkit-backdrop-filter: blur(8px) saturate(1.1);
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+        display: flex; flex-direction: column; gap: 12px; padding: 18px 16px 70px;
+        overflow: visible;
+    }
+    .hdr {
+        color: var(--txt);
+        font-size: 20px;
+    }
+        .badge {
+        background: rgba(122,162,255,0.14);
+        color: var(--accent);
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(122,162,255,0.25);
+        font-size: 11px;
+    }
+
+    .sub {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .row {
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+        padding:8px 0;
+    }
+
+    .row label {
+        font-size: 12px;
+        color: var(--muted);
+        display:flex;
+        justify-content:space-between;
+    }
+
+    .row input[type="range"] {
+        width: 100%;
+    }
+
+    .num { color: var(--txt);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .btns {
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:10px;
+        margin-top:6px;
+    }
+
+    button { 
+        background: rgba(255,255,255,0.06);
+        color: var(--txt);
+        border: 1px solid var(--bar-border);
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        letter-spacing:.2px;
+        cursor: pointer;
+        transition: transform .06s ease, background .2s ease, box-shadow .2s ease; 
+    }
+
+    button:hover {
+        background: rgba(255,255,255,0.12);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    button:active {
+        transform: translateY(1px) scale(0.99);
+    }
+
+
+
+/* --- Modal Styles for Settings --- */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal.open { display: flex; }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.segment {
-    position: absolute;
-    height: 4px;
-    width: 0;
-    background-color: #ffffff;
-    transform-origin: 0 50%;
-    pointer-events: none;
-    transition: width 0.3s ease;
-    animation: fadeOut 3.5s forwards;
-    z-index: 0;
+.modal-dialog {
+  background: var(--bar-bg);
+  border: 1px solid var(--bar-border);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+  border-radius: 16px;
+  width: min(720px, 92vw);
+  max-height: 88vh;
+  overflow: auto;
+  padding: 16px;
+  backdrop-filter: blur(8px) saturate(1.1);
+  -webkit-backdrop-filter: blur(8px) saturate(1.1);
 }
 
-.circle {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: fadeOut 3.5s forwards;
-    z-index: 0;
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--txt);
+  margin-bottom: 8px;
+}
+
+.modal-body {
+  color: var(--txt);
+}
+
+.modal-close {
+  background: rgba(255,255,255,0.06);
+  color: var(--txt);
+  border: 1px solid var(--bar-border);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* Keep existing control styles working inside the modal */
+.modal .hdr { margin-bottom: 8px; }
+
+
+.panel-toggle {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 9999;
+
+  background: var(--tab-bg);
+  color: var(--tab-fg);
+  border: none;
+  border-top-left-radius: var(--tab-radius);
+  border-bottom-left-radius: var(--tab-radius);
+  box-shadow: var(--tab-shadow);
+
+  padding: .75rem 1rem;
+  min-height: 3rem;
+  font: 600 0.95rem/1 system-ui, sans-serif;
+  letter-spacing: .2px;
+
+  /* Vertical tab look */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+
+  /* Fixed position, no motion */
+  transform: translateY(-50%);
+  translate: 6px -50%; /* stays “peeking” from edge */
+  transform-origin: center right;
+
+  /* Disable any translation on interactions */
+  transition: background .2s ease, filter .1s ease;
+}
+
+.panel-toggle:hover,
+.panel-toggle:focus-visible {
+  background: var(--tab-bg-hover);
+  filter: brightness(1.05);
+  outline: none;
+}
+
+/* Explicitly prevent any positional change on active */
+.panel-toggle:active {
+  translate: 6px -50%;
+  transform: translateY(-50%);
+  filter: brightness(1.1);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .panel-toggle {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-toggle {
+    top: 55%;
+    min-height: 2.75rem;
+    padding: .5rem .75rem;
+  }
 }

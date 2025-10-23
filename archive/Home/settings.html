@@ -1,0 +1,94 @@
+<!-- Fragment: Settings Tab + Modal (self-contained CSS & JS) -->
+<style>
+  /* Uses global CSS vars for colors; everything else is self-contained */
+  #settings-tab{
+    position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 50;
+    padding: 10px 12px; border-top-left-radius: 10px; border-bottom-left-radius: 10px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(6px); color: var(--fg); cursor: pointer;
+    writing-mode: vertical-rl; text-orientation: mixed; font-weight: 600;
+  }
+  #settings-tab:hover{ background: rgba(255,255,255,.18); }
+
+  #settings-modal{ position: fixed; inset: 0; z-index: 60; display: none; }
+  #settings-modal.open{ display: block; }
+  #settings-modal .backdrop{ position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+  #settings-modal .panel{
+    position: absolute; right: 24px; top: 24px; bottom: 24px; width: min(380px, 92vw);
+    background: rgba(20,24,44,.96); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  #settings-modal header{
+    padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content: space-between;
+  }
+  #settings-modal h3{ margin:0; font-size: 18px; }
+  #settings-modal .body{ padding: 14px 16px; overflow: auto; gap: 12px; display: grid; grid-template-columns: 1fr; }
+
+  .setting{ display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+  .setting label{ font-size: 13px; color: var(--muted); }
+  .setting output{ font-variant-numeric: tabular-nums; }
+  .setting input[type=range]{ width: 100%; }
+
+  #settings-modal footer{ padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.08); display: flex; gap: 8px; justify-content: flex-end; }
+  .btn{
+    appearance: none; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06);
+    color: var(--fg); border-radius: 10px; padding: 8px 12px; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover{ background: rgba(255,255,255,.1); }
+  .select{ width: 100%; }
+
+  @media (max-width: 480px){
+    #settings-tab{ top: auto; bottom: 16px; transform:none; writing-mode: horizontal-tb; border-radius: 12px 0 0 12px; }
+    #settings-modal .panel{ right: 12px; left: 12px; top: 12px; bottom: 12px; width: auto; }
+  }
+</style>
+
+<!-- Trigger tab + modal markup -->
+<button id="settings-tab" aria-controls="settings-modal" aria-expanded="false" title="Background Settings">Settings</button>
+<div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="backdrop" data-close></div>
+  <div class="panel" role="document">
+    <header>
+      <h3 id="settings-title">Background Settings</h3>
+      <button class="btn" id="settings-close" aria-label="Close">✕</button>
+    </header>
+    <div class="body">
+      <div class="setting"><label for="visc">Viscosity</label><input id="visc" type="range" min="0.0" max="2.0" step="0.01" value="0.8"><output id="vVal">0.80</output></div>
+      <div class="setting"><label for="speed">Speed (Force)</label><input id="speed" type="range" min="0.0" max="6.0" step="0.05" value="2.2"><output id="sVal">2.20</output></div>
+      <div class="setting"><label for="swirl">Swirl</label><input id="swirl" type="range" min="0.0" max="3.0" step="0.05" value="0.8"><output id="wVal">0.80</output></div>
+      <div class="setting"><label for="diss">Dissipation</label><input id="diss" type="range" min="0.000" max="0.050" step="0.001" value="0.008"><output id="dVal">0.008</output></div>
+      <div class="setting"><label for="kappa">Displacement (κ)</label><input id="kappa" type="range" min="-1.0" max="1.0" step="0.01" value="0.35"><output id="kVal">0.35</output></div>
+      <div class="setting"><label for="iters">Iterations</label><input id="iters" type="range" min="1" max="10" step="1" value="2"><output id="iVal">2</output></div>
+      <div class="setting"><label for="res">Internal Resolution</label><input id="res" type="range" min="0.25" max="1.0" step="0.05" value="0.8"><output id="rVal">0.80×</output></div>
+      <div class="setting"><label for="spacing">Dot Spacing (mm)</label><input id="spacing" type="range" min="0.5" max="6.0" step="0.1" value="2.4"><output id="spVal">2.4</output></div>
+      <div class="setting"><label for="dot">Dot Radius (mm)</label><input id="dot" type="range" min="0.05" max="2.0" step="0.05" value="0.35"><output id="dotVal">0.35</output></div>
+    </div>
+    <footer>
+      <button class="btn" id="pauseBtn" aria-pressed="false">Pause</button>
+      <button class="btn" id="resetBtn">Reset</button>
+      <button class="btn" id="settings-done">Done</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+  // Local: open/close behavior; WebGL and slider bindings handled by main.js after load
+  (function(){
+    const tab = document.getElementById('settings-tab');
+    const modal = document.getElementById('settings-modal');
+    const closeBtn = document.getElementById('settings-close');
+    const doneBtn = document.getElementById('settings-done');
+    const backdrop = modal.querySelector('[data-close]');
+
+    function open(){ modal.classList.add('open'); tab.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+    function close(){ modal.classList.remove('open'); tab.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+
+    tab.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    doneBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.classList.contains('open')) close(); });
+  })();
+</script>
