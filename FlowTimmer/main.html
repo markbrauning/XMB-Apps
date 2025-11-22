@@ -651,19 +651,19 @@
           <label>Job site
             <input type="text" id="project-site" placeholder="E.g. Sioux Center Plant 3">
           </label>
-          <label>Workflow diagram
-            <select id="project-diagram">
-              <option value="">(no workflow yet)</option>
-            </select>
-          </label>
           <div>
             <button type="button" class="primary" id="add-project-btn">Add project</button>
           </div>
         </div>
-        <p class="hint">Note: All data lives only in this browser tab for now – database/SQLite wiring will come later.</p>
+        <p class="hint">Assign workflows later from the projects list. All data lives only in this browser tab for now – database/SQLite wiring will come later.</p>
       </div>
       <div class="panel">
         <h2>Projects list</h2>
+        <div class="form-grid" style="margin-bottom:0.5rem;">
+          <label>Filter projects
+            <input type="text" id="projects-filter" placeholder="Search by customer, job #, name or site">
+          </label>
+        </div>
         <table class="data-table" id="projects-table">
           <thead>
             <tr>
@@ -671,7 +671,7 @@
               <th>Job #</th>
               <th>Project</th>
               <th>Job site</th>
-              <th>Workflow</th>
+              <th>Workflows</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -812,6 +812,7 @@
       diagrams: [],
       selectedDiagramId: null,
       selectedShapeId: null,
+      projectFilter: '',
       followerState: {}
     };
 
@@ -854,7 +855,7 @@
       dom.projectJob = document.getElementById('project-job');
       dom.projectName = document.getElementById('project-name');
       dom.projectSite = document.getElementById('project-site');
-      dom.projectDiagram = document.getElementById('project-diagram');
+      dom.projectsFilter = document.getElementById('projects-filter');
       dom.addProjectBtn = document.getElementById('add-project-btn');
       dom.projectsTableBody = document.querySelector('#projects-table tbody');
 
@@ -983,23 +984,38 @@
     function setupProjectsUI() {
       dom.addProjectBtn.addEventListener('click', addProjectFromForm);
 
+      if (dom.projectsFilter) {
+        dom.projectsFilter.addEventListener('input', function (event) {
+          state.projectFilter = event.target.value.toLowerCase();
+          renderProjectsTable();
+        });
+      }
+
       dom.projectsTableBody.addEventListener('click', function (event) {
         const deleteBtn = event.target.closest('.project-delete-btn');
         if (deleteBtn) {
           const projectId = deleteBtn.dataset.projectId;
-          state.projects = state.projects.filter(function (p) { return p.id !== projectId; });
-          renderProjectsTable();
-          refreshRunnerSelectors();
+          const project = state.projects.find(function (p) { return p.id === projectId; });
+          const label = project && (project.name || project.jobNumber || project.customer) ?
+            (project.name || project.jobNumber || project.customer) : 'this project';
+          const confirmed = window.confirm('Remove ' + label + ' from the list?');
+          if (confirmed) {
+            state.projects = state.projects.filter(function (p) { return p.id !== projectId; });
+            renderProjectsTable();
+            refreshRunnerSelectors();
+          }
         }
       });
 
       dom.projectsTableBody.addEventListener('change', function (event) {
         if (event.target.classList.contains('project-diagram-select')) {
           const projectId = event.target.dataset.projectId;
-          const diagramId = event.target.value || null;
+          const diagramIds = Array.from(event.target.selectedOptions)
+            .map(function (opt) { return opt.value; })
+            .filter(Boolean);
           const project = state.projects.find(function (p) { return p.id === projectId; });
           if (project) {
-            project.diagramId = diagramId;
+            project.diagramIds = diagramIds;
           }
           refreshRunnerSelectors();
         }
@@ -1011,7 +1027,6 @@
       const jobNumber = dom.projectJob.value.trim();
       const name = dom.projectName.value.trim();
       const site = dom.projectSite.value.trim();
-      const diagramId = dom.projectDiagram.value || null;
 
       if (!name && !jobNumber) {
         window.alert('Please enter at least a project name or job number.');
@@ -1024,7 +1039,7 @@
         jobNumber: jobNumber,
         name: name,
         site: site,
-        diagramId: diagramId
+        diagramIds: []
       };
       state.projects.push(project);
       clearProjectForm();
@@ -1037,23 +1052,28 @@
       dom.projectJob.value = '';
       dom.projectName.value = '';
       dom.projectSite.value = '';
-      dom.projectDiagram.value = '';
     }
 
     function renderProjectsTable() {
       const tbody = dom.projectsTableBody;
       tbody.innerHTML = '';
-      if (!state.projects.length) {
+      const filtered = state.projectFilter ? state.projects.filter(function (project) {
+        const q = state.projectFilter;
+        return [project.customer, project.jobNumber, project.name, project.site]
+          .some(function (field) { return (field || '').toLowerCase().includes(q); });
+      }) : state.projects;
+
+      if (!filtered.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
         td.colSpan = 6;
-        td.textContent = 'No projects yet. Add one using the form above.';
+        td.textContent = state.projectFilter ? 'No projects match your filter.' : 'No projects yet. Add one using the form above.';
         td.className = 'empty-row';
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
       }
-      state.projects.forEach(function (project) {
+      filtered.forEach(function (project) {
         const tr = document.createElement('tr');
 
         const tdCustomer = document.createElement('td');
@@ -1075,18 +1095,22 @@
         const tdDiagram = document.createElement('td');
         const select = document.createElement('select');
         select.className = 'project-diagram-select';
+        select.multiple = true;
+        select.size = 3;
         select.dataset.projectId = project.id;
-        const optNone = document.createElement('option');
-        optNone.value = '';
-        optNone.textContent = 'None';
-        select.appendChild(optNone);
         state.diagrams.forEach(function (diagram) {
           const opt = document.createElement('option');
           opt.value = diagram.id;
           opt.textContent = diagram.name;
+          opt.selected = Array.isArray(project.diagramIds) && project.diagramIds.includes(diagram.id);
           select.appendChild(opt);
         });
-        select.value = project.diagramId || '';
+        if (!state.diagrams.length) {
+          const optEmpty = document.createElement('option');
+          optEmpty.value = '';
+          optEmpty.textContent = 'No workflows available';
+          select.appendChild(optEmpty);
+        }
         tdDiagram.appendChild(select);
         tr.appendChild(tdDiagram);
 
@@ -1565,15 +1589,19 @@
       const diagramPrev = dom.runnerDiagramSelect.value;
       dom.runnerDiagramSelect.innerHTML = '<option value="">Select workflow</option>';
       const selectedProject = state.projects.find(function (p) { return p.id === dom.runnerProjectSelect.value; });
-      const available = state.diagrams.slice();
+      const available = selectedProject && Array.isArray(selectedProject.diagramIds) && selectedProject.diagramIds.length
+        ? state.diagrams.filter(function (d) { return selectedProject.diagramIds.includes(d.id); })
+        : state.diagrams.slice();
       available.forEach(function (diagram) {
         const opt = document.createElement('option');
         opt.value = diagram.id;
         opt.textContent = diagram.name;
         dom.runnerDiagramSelect.appendChild(opt);
       });
-      if (selectedProject && selectedProject.diagramId) {
-        dom.runnerDiagramSelect.value = selectedProject.diagramId;
+      const assigned = selectedProject && Array.isArray(selectedProject.diagramIds) ? selectedProject.diagramIds : [];
+      if (assigned.length && assigned.some(function (id) { return available.some(function (d) { return d.id === id; }); })) {
+        const preferred = diagramPrev && assigned.includes(diagramPrev) ? diagramPrev : assigned[0];
+        dom.runnerDiagramSelect.value = preferred;
       } else if (diagramPrev && state.diagrams.some(function (d) { return d.id === diagramPrev; })) {
         dom.runnerDiagramSelect.value = diagramPrev;
       }
