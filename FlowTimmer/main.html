@@ -1241,4 +1241,504 @@
       dom.featureLinksConfig.addEventListener('click', function () { openFeatureConfigModalBuilder('links'); });
       dom.featureExtraConfig.addEventListener('click', function () { openFeatureConfigModalBuilder('extra'); });
 
-      dom.decisionPathsInput.addEventListener('inpu
+      dom.decisionPathsInput.addEventListener('input', function () {
+        const shape = getCurrentShape();
+        if (!shape) return;
+        normalizeShapeFeatures(shape);
+        shape.decisionPaths = dom.decisionPathsInput.value
+          .split('\n')
+          .map(function (p) { return p.trim(); })
+          .filter(Boolean);
+        renderBuilderCanvas();
+      });
+    }
+
+    function refreshBuilderSelectors() {
+      const select = dom.builderDiagramSelect;
+      const currentId = state.selectedDiagramId;
+      select.innerHTML = '';
+      state.diagrams.forEach(function (diagram) {
+        const opt = document.createElement('option');
+        opt.value = diagram.id;
+        opt.textContent = diagram.name;
+        select.appendChild(opt);
+      });
+      if (state.diagrams.length && !currentId) {
+        state.selectedDiagramId = state.diagrams[0].id;
+      }
+      select.value = state.selectedDiagramId || '';
+      const current = getCurrentDiagram();
+      dom.builderDiagramName.value = current ? current.name : '';
+    }
+
+    function addShapeToCurrentDiagram(type) {
+      const diagram = getCurrentDiagram();
+      if (!diagram) return;
+      const shape = {
+        id: 'shape-' + Date.now() + '-' + Math.random().toString(16).slice(2),
+        type: type,
+        text: makeDefaultShapeText(type),
+        x: 60 + Math.random() * 200,
+        y: 60 + Math.random() * 200,
+        features: {},
+        decisionPaths: type === 'decision' ? ['Yes', 'No'] : []
+      };
+      normalizeShapeFeatures(shape);
+      diagram.shapes.push(shape);
+      state.selectedShapeId = shape.id;
+      renderBuilderCanvas();
+      updateShapePropertiesPanel(shape);
+    }
+
+    function makeDefaultShapeText(type) {
+      switch (type) {
+        case 'terminal': return 'Start / End';
+        case 'process': return 'Process step';
+        case 'decision': return 'Decision?';
+        case 'io': return 'Input / Output';
+        case 'predefined': return 'Predefined process';
+        case 'flowline': return 'Flowline note';
+        default: return 'Step';
+      }
+    }
+
+    function renderBuilderCanvas() {
+      const canvas = dom.builderCanvas;
+      canvas.innerHTML = '';
+      const diagram = getCurrentDiagram();
+      if (!diagram || !diagram.shapes.length) {
+        const hint = document.createElement('div');
+        hint.className = 'canvas-hint';
+        hint.textContent = 'Select or create a workflow diagram, then add shapes from the palette to design your process.';
+        canvas.appendChild(hint);
+        dom.shapeProperties.classList.add('hidden');
+        dom.shapePropertiesEmpty.classList.remove('hidden');
+        return;
+      }
+
+      diagram.shapes.forEach(function (shape) {
+        normalizeShapeFeatures(shape);
+        const el = buildShapeElement(shape, 'builder');
+        canvas.appendChild(el);
+      });
+
+      selectShape(state.selectedShapeId);
+    }
+
+    function buildShapeElement(shape, mode) {
+      const el = document.createElement('div');
+      el.className = 'shape shape-' + shape.type;
+      if (mode === 'runner') el.classList.add('runner-shape');
+      el.dataset.shapeId = shape.id;
+      el.style.left = (shape.x || 30) + 'px';
+      el.style.top = (shape.y || 30) + 'px';
+
+      const label = document.createElement('div');
+      label.className = 'shape-label';
+      label.textContent = shape.text || '(no text yet)';
+      el.appendChild(label);
+
+      if (shape.type === 'decision' && shape.decisionPaths && shape.decisionPaths.length) {
+        const preview = document.createElement('div');
+        preview.className = 'decision-paths-preview';
+        preview.textContent = 'Paths: ' + shape.decisionPaths.join(' / ');
+        el.appendChild(preview);
+      }
+
+      const icons = document.createElement('div');
+      icons.className = 'shape-icons';
+      const features = [
+        { key: 'time', enabled: shape.features.timeTracking.enabled, symbol: '⏱', title: 'Time tracking' },
+        { key: 'links', enabled: shape.features.linkTree.enabled, symbol: '📚', title: 'Supporting documents' },
+        { key: 'status', enabled: shape.features.status.enabled, symbol: '⚑', title: 'Status tracking' },
+        { key: 'extra', enabled: shape.features.extraInfo.enabled, symbol: 'ⓘ', title: 'Extra information' },
+      ];
+
+      features.forEach(function (feat) {
+        if (!feat.enabled && mode === 'runner') return;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'shape-icon';
+        btn.dataset.feature = feat.key;
+        btn.title = feat.title;
+        btn.textContent = feat.symbol;
+        if (feat.enabled) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.add('placeholder');
+          btn.disabled = true;
+        }
+        icons.appendChild(btn);
+      });
+
+      if (mode === 'builder') {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'shape-icon placeholder';
+        placeholder.textContent = '+';
+        placeholder.title = 'Reserved for future features';
+        icons.appendChild(placeholder);
+      }
+
+      el.appendChild(icons);
+      return el;
+    }
+
+    function selectShape(shapeId) {
+      const diagram = getCurrentDiagram();
+      if (!diagram) return;
+      const shape = diagram.shapes.find(function (s) { return s.id === shapeId; }) || null;
+      state.selectedShapeId = shape ? shape.id : null;
+      dom.builderCanvas.querySelectorAll('.shape').forEach(function (el) {
+        el.classList.toggle('selected', el.dataset.shapeId === state.selectedShapeId);
+      });
+      updateShapePropertiesPanel(shape);
+    }
+
+    function updateShapePropertiesPanel(shape) {
+      if (!shape) {
+        dom.shapeProperties.classList.add('hidden');
+        dom.shapePropertiesEmpty.classList.remove('hidden');
+        return;
+      }
+      normalizeShapeFeatures(shape);
+      dom.shapeProperties.classList.remove('hidden');
+      dom.shapePropertiesEmpty.classList.add('hidden');
+      dom.shapeTextInput.value = shape.text || '';
+      dom.featureTimeToggle.checked = !!shape.features.timeTracking.enabled;
+      dom.featureLinksToggle.checked = !!shape.features.linkTree.enabled;
+      dom.featureStatusToggle.checked = !!shape.features.status.enabled;
+      dom.featureExtraToggle.checked = !!shape.features.extraInfo.enabled;
+      if (shape.type === 'decision') {
+        dom.decisionPathsWrapper.classList.remove('hidden');
+        dom.decisionPathsInput.value = (shape.decisionPaths || []).join('\n');
+      } else {
+        dom.decisionPathsWrapper.classList.add('hidden');
+        dom.decisionPathsInput.value = '';
+      }
+    }
+
+    function onBuilderCanvasClick(event) {
+      const shapeEl = event.target.closest('.shape');
+      if (shapeEl && dom.builderCanvas.contains(shapeEl)) {
+        selectShape(shapeEl.dataset.shapeId);
+      } else {
+        selectShape(null);
+      }
+    }
+
+    function onBuilderCanvasMouseDown(event) {
+      const shapeEl = event.target.closest('.shape');
+      if (!shapeEl || !dom.builderCanvas.contains(shapeEl)) return;
+      const shapeId = shapeEl.dataset.shapeId;
+      selectShape(shapeId);
+      dragState = {
+        shapeId: shapeId,
+        startX: event.clientX,
+        startY: event.clientY,
+        origX: parseFloat(shapeEl.style.left) || 0,
+        origY: parseFloat(shapeEl.style.top) || 0
+      };
+      document.addEventListener('mousemove', onBuilderCanvasMouseMove);
+      document.addEventListener('mouseup', onBuilderCanvasMouseUp);
+    }
+
+    function onBuilderCanvasMouseMove(event) {
+      if (!dragState) return;
+      const diagram = getCurrentDiagram();
+      if (!diagram) return;
+      const shape = diagram.shapes.find(function (s) { return s.id === dragState.shapeId; });
+      if (!shape) return;
+      const dx = event.clientX - dragState.startX;
+      const dy = event.clientY - dragState.startY;
+      shape.x = dragState.origX + dx;
+      shape.y = dragState.origY + dy;
+      const el = dom.builderCanvas.querySelector('.shape[data-shape-id="' + shape.id + '"]');
+      if (el) {
+        el.style.left = shape.x + 'px';
+        el.style.top = shape.y + 'px';
+      }
+    }
+
+    function onBuilderCanvasMouseUp() {
+      dragState = null;
+      document.removeEventListener('mousemove', onBuilderCanvasMouseMove);
+      document.removeEventListener('mouseup', onBuilderCanvasMouseUp);
+    }
+
+    function openFeatureConfigModalBuilder(type) {
+      const shape = getCurrentShape();
+      if (!shape) return;
+      normalizeShapeFeatures(shape);
+      if (type === 'time') {
+        openModal({
+          title: 'Configure time tracking',
+          bodyHTML:
+            '<div class="form-grid">' +
+            '<label>Time estimate (hours)<input id="modal-estimate" type="number" step="0.25" min="0" value="' + (shape.features.timeTracking.estimateHours || '') + '"></label>' +
+            '<label>Phase code<input id="modal-phase" type="text" value="' + (shape.features.timeTracking.phaseCode || '') + '"></label>' +
+            '</div>',
+          onSave: function () {
+            shape.features.timeTracking.enabled = true;
+            shape.features.timeTracking.estimateHours = document.getElementById('modal-estimate').value;
+            shape.features.timeTracking.phaseCode = document.getElementById('modal-phase').value.trim();
+            dom.featureTimeToggle.checked = true;
+            renderBuilderCanvas();
+          }
+        });
+      } else if (type === 'links') {
+        const links = shape.features.linkTree.links || [];
+        const rows = links.map(function (link, idx) {
+          return '<div class="form-grid" data-link-idx="' + idx + '">' +
+            '<label>Title<input type="text" class="modal-link-title" value="' + (link.title || '') + '"></label>' +
+            '<label>Description<input type="text" class="modal-link-desc" value="' + (link.description || '') + '"></label>' +
+            '<label>URL<input type="text" class="modal-link-url" value="' + (link.url || '') + '"></label>' +
+            '</div>';
+        }).join('');
+        openModal({
+          title: 'Supporting documents',
+          bodyHTML:
+            '<div id="modal-links-container">' + rows + '</div>' +
+            '<button type="button" id="modal-add-link" class="secondary" style="margin-top:0.5rem;">Add link</button>',
+          onSave: function () {
+            const titles = Array.from(dom.modalBody.querySelectorAll('.modal-link-title')).map(function (i) { return i.value.trim(); });
+            const descs = Array.from(dom.modalBody.querySelectorAll('.modal-link-desc')).map(function (i) { return i.value.trim(); });
+            const urls = Array.from(dom.modalBody.querySelectorAll('.modal-link-url')).map(function (i) { return i.value.trim(); });
+            const newLinks = urls.map(function (url, idx) {
+              return { title: titles[idx] || 'Link', description: descs[idx] || '', url: url };
+            }).filter(function (l) { return l.url; });
+            shape.features.linkTree.enabled = newLinks.length > 0;
+            shape.features.linkTree.links = newLinks;
+            dom.featureLinksToggle.checked = shape.features.linkTree.enabled;
+            renderBuilderCanvas();
+          }
+        });
+        dom.modalBody.addEventListener('click', function handler(event) {
+          if (event.target.id === 'modal-add-link') {
+            const container = dom.modalBody.querySelector('#modal-links-container');
+            const idx = container.querySelectorAll('.form-grid').length;
+            const div = document.createElement('div');
+            div.className = 'form-grid';
+            div.dataset.linkIdx = idx;
+            div.innerHTML = '<label>Title<input type="text" class="modal-link-title" value=""></label>' +
+              '<label>Description<input type="text" class="modal-link-desc" value=""></label>' +
+              '<label>URL<input type="text" class="modal-link-url" value=""></label>';
+            container.appendChild(div);
+          }
+        }, { once: true });
+      } else if (type === 'extra') {
+        openModal({
+          title: 'Extra information',
+          bodyHTML: '<label style="display:block;font-size:0.85rem;">Details<textarea id="modal-extra" rows="6">' + (shape.features.extraInfo.content || '') + '</textarea></label>',
+          onSave: function () {
+            shape.features.extraInfo.enabled = true;
+            shape.features.extraInfo.content = document.getElementById('modal-extra').value;
+            dom.featureExtraToggle.checked = true;
+            renderBuilderCanvas();
+          }
+        });
+      }
+    }
+
+    /* ---------- Mode 3: Runner UI ---------- */
+
+    function setupRunnerUI() {
+      dom.runnerProjectSelect.addEventListener('change', function () {
+        refreshRunnerSelectors();
+        renderRunnerDiagram();
+      });
+      dom.runnerDiagramSelect.addEventListener('change', renderRunnerDiagram);
+    }
+
+    function refreshRunnerSelectors() {
+      const projectPrev = dom.runnerProjectSelect.value;
+      dom.runnerProjectSelect.innerHTML = '<option value="">Select project</option>';
+      state.projects.forEach(function (project) {
+        const opt = document.createElement('option');
+        opt.value = project.id;
+        opt.textContent = project.name || project.jobNumber || 'Untitled project';
+        dom.runnerProjectSelect.appendChild(opt);
+      });
+      if (projectPrev && state.projects.some(function (p) { return p.id === projectPrev; })) {
+        dom.runnerProjectSelect.value = projectPrev;
+      }
+
+      const diagramPrev = dom.runnerDiagramSelect.value;
+      dom.runnerDiagramSelect.innerHTML = '<option value="">Select workflow</option>';
+      const selectedProject = state.projects.find(function (p) { return p.id === dom.runnerProjectSelect.value; });
+      const available = state.diagrams.slice();
+      available.forEach(function (diagram) {
+        const opt = document.createElement('option');
+        opt.value = diagram.id;
+        opt.textContent = diagram.name;
+        dom.runnerDiagramSelect.appendChild(opt);
+      });
+      if (selectedProject && selectedProject.diagramId) {
+        dom.runnerDiagramSelect.value = selectedProject.diagramId;
+      } else if (diagramPrev && state.diagrams.some(function (d) { return d.id === diagramPrev; })) {
+        dom.runnerDiagramSelect.value = diagramPrev;
+      }
+    }
+
+    function renderRunnerDiagram() {
+      const projectId = dom.runnerProjectSelect.value;
+      const diagramId = dom.runnerDiagramSelect.value;
+      const project = state.projects.find(function (p) { return p.id === projectId; }) || null;
+      const diagram = state.diagrams.find(function (d) { return d.id === diagramId; }) || null;
+
+      if (!project || !diagram) {
+        dom.runnerEmpty.classList.remove('hidden');
+        dom.runnerCanvasWrapper.classList.add('hidden');
+        dom.runnerCanvas.innerHTML = '';
+        return;
+      }
+
+      dom.runnerEmpty.classList.add('hidden');
+      dom.runnerCanvasWrapper.classList.remove('hidden');
+      dom.runnerCanvas.innerHTML = '';
+
+      diagram.shapes.forEach(function (shape) {
+        normalizeShapeFeatures(shape);
+        const el = buildShapeElement(shape, 'runner');
+        const status = state.followerState[shape.id] && state.followerState[shape.id].status;
+        if (status) {
+          el.classList.add('status-' + status);
+          const icon = el.querySelector('.shape-icon[data-feature="status"]');
+          if (icon) icon.classList.add('status-' + status);
+        }
+
+        el.querySelectorAll('.shape-icon').forEach(function (icon) {
+          icon.addEventListener('click', function (event) {
+            event.stopPropagation();
+            handleRunnerFeatureClick(shape, icon.dataset.feature, el);
+          });
+        });
+        dom.runnerCanvas.appendChild(el);
+      });
+    }
+
+    function handleRunnerFeatureClick(shape, feature, shapeEl) {
+      if (feature === 'time' && shape.features.timeTracking.enabled) {
+        openRunnerTimeModal(shape);
+      } else if (feature === 'links' && shape.features.linkTree.enabled) {
+        openRunnerLinksModal(shape);
+      } else if (feature === 'status' && shape.features.status.enabled) {
+        openRunnerStatusModal(shape, shapeEl);
+      } else if (feature === 'extra' && shape.features.extraInfo.enabled) {
+        openRunnerExtraModal(shape);
+      }
+    }
+
+    function openRunnerTimeModal(shape) {
+      let elapsed = 0;
+      const body = document.createElement('div');
+      body.innerHTML = '<p class="hint">Use the stopwatch while you work on this step.</p>' +
+        '<div style="font-size:2rem;font-weight:600;" id="stopwatch-display">00:00:00</div>' +
+        '<div style="margin-top:0.5rem;display:flex;gap:0.35rem;">' +
+        '<button type="button" class="primary" id="stopwatch-start">Start</button>' +
+        '<button type="button" class="secondary" id="stopwatch-stop">Stop</button>' +
+        '<button type="button" class="secondary" id="stopwatch-reset">Reset</button>' +
+        '</div>';
+      openModal({
+        title: 'Track time for "' + (shape.text || 'Step') + '"',
+        bodyHTML: body.innerHTML,
+        showSave: false
+      });
+      const display = document.getElementById('stopwatch-display');
+      const startBtn = document.getElementById('stopwatch-start');
+      const stopBtn = document.getElementById('stopwatch-stop');
+      const resetBtn = document.getElementById('stopwatch-reset');
+
+      startBtn.addEventListener('click', function () {
+        if (stopwatchInterval) return;
+        const startTime = Date.now() - elapsed;
+        stopwatchInterval = setInterval(function () {
+          elapsed = Date.now() - startTime;
+          display.textContent = formatDuration(elapsed);
+        }, 250);
+      });
+      stopBtn.addEventListener('click', function () {
+        if (stopwatchInterval) {
+          clearInterval(stopwatchInterval);
+          stopwatchInterval = null;
+        }
+      });
+      resetBtn.addEventListener('click', function () {
+        elapsed = 0;
+        display.textContent = '00:00:00';
+      });
+    }
+
+    function formatDuration(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+      return hours + ':' + minutes + ':' + seconds;
+    }
+
+    function openRunnerLinksModal(shape) {
+      const links = shape.features.linkTree.links || [];
+      const list = links.map(function (link) {
+        const desc = link.description ? '<div class="hint">' + link.description + '</div>' : '';
+        return '<li style="margin-bottom:0.35rem;">' +
+          '<div><a href="' + link.url + '" target="_blank" rel="noopener">' + (link.title || link.url) + '</a></div>' +
+          desc + '</li>';
+      }).join('') || '<li class="hint">No links configured.</li>';
+      openModal({
+        title: 'Supporting documents',
+        bodyHTML: '<ul style="padding-left:1rem;font-size:0.9rem;">' + list + '</ul>',
+        showSave: false
+      });
+    }
+
+    function openRunnerStatusModal(shape, shapeEl) {
+      const bodyHTML = '<div style="display:grid;gap:0.35rem;">' +
+        statusOptionButton('in-progress', 'In progress', '#eab308') +
+        statusOptionButton('done', 'Done', '#22c55e') +
+        statusOptionButton('not-needed', 'Not needed', '#6b7280') +
+        statusOptionButton('blocked', 'Blocked', '#ef4444') +
+        '</div>';
+      openModal({
+        title: 'Update step status',
+        bodyHTML: bodyHTML,
+        showSave: false
+      });
+      dom.modalBody.querySelectorAll('button[data-status]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const status = btn.dataset.status;
+          state.followerState[shape.id] = state.followerState[shape.id] || {};
+          state.followerState[shape.id].status = status;
+          closeModal();
+          renderRunnerDiagram();
+        });
+      });
+    }
+
+    function statusOptionButton(key, label, color) {
+      return '<button type="button" data-status="' + key + '" class="secondary" style="border-color:' + color + ';color:' + color + ';justify-content:flex-start;">' + label + '</button>';
+    }
+
+    function openRunnerExtraModal(shape) {
+      openModal({
+        title: 'Extra info',
+        bodyHTML: '<div style="white-space:pre-wrap;">' + (shape.features.extraInfo.content || 'No extra info yet.') + '</div>',
+        showSave: false
+      });
+    }
+
+    /* ---------- Inline smoke tests ---------- */
+
+    function runInlineTests() {
+      console.assert(typeof createNewDiagram === 'function', 'createNewDiagram should exist');
+      const prevSelected = state.selectedDiagramId;
+      const testDiagram = createNewDiagram('Test');
+      state.diagrams.pop(); // cleanup
+      state.selectedDiagramId = prevSelected || (state.diagrams[0] && state.diagrams[0].id) || null;
+      console.assert(!!testDiagram.id, 'diagram gets an id');
+      console.log('Inline smoke tests executed.');
+    }
+
+  })();
+  </script>
+</body>
+</html>
