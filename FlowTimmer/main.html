@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Workflow Assistant – Wireframe Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      color-scheme: light;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      line-height: 1.5;
+    }
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .logo-title h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+    }
+    .logo-title .subtitle {
+      display: block;
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.15rem;
+    }
+    .mode-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .mode-btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      background: #e5e7eb;
+      color: #111827;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+    }
+    .mode-btn span.idx {
+      background: #111827;
+      color: #f9fafb;
+      border-radius: 999px;
+      width: 1.2rem;
+      height: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .mode-btn.active {
+      background: #2563eb;
+      color: #f9fafb;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.4);
+    }
+    .mode-btn:active { transform: translateY(1px); }
+
+    .app-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 2rem;
+    }
+    .mode-section {
+      display: none;
+      margin-top: 1rem;
+    }
+    .mode-section.visible {
+      display: block;
+    }
+
+    .panel {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+    }
+    .panel h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+    .panel h3 {
+      margin-top: 0;
+      font-size: 0.9rem;
+    }
+    .hint {
+      font-size: 0.78rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.5rem 0.75rem;
+      align-items: flex-end;
+    }
+    .form-grid label {
+      font-size: 0.8rem;
+      color: #4b5563;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    input[type="text"], input[type="number"], select, textarea {
+      padding: 0.4rem 0.5rem;
+      border-radius: 0.45rem;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      font-size: 0.82rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.35);
+      background: #ffffff;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 4rem;
+    }
+
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+    }
+    button:hover {
+      background: #d1d5db;
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    button.primary {
+      background: #2563eb;
+      border-color: #1d4ed8;
+      color: #f9fafb;
+    }
+    button.primary:hover {
+      background: #1d4ed8;
+    }
+    button.secondary {
+      background: #ffffff;
+      border-color: #d1d5db;
+    }
+    button.secondary:hover {
+      background: #f3f4f6;
+    }
+    button.icon-button {
+      width: 1.9rem;
+      height: 1.9rem;
+      padding: 0;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+    button.icon-button.small {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.75rem;
+    }
+    button.link-button {
+      background: transparent;
+      border: none;
+      color: #2563eb;
+      padding: 0;
+      border-radius: 0;
+    }
+    button.link-button:hover {
+      background: transparent;
+      text-decoration: underline;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+    }
+    .data-table th, .data-table td {
+      padding: 0.35rem 0.4rem;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    .data-table th {
+      font-weight: 600;
+      color: #4b5563;
+      background: #f9fafb;
+    }
+    .data-table tr:nth-child(even) td {
+      background: #fafafa;
+    }
+    .data-table .empty-row {
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .builder-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .builder-diagram-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .builder-diagram-controls label {
+      font-size: 0.8rem;
+      color: #4b5563;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .builder-diagram-controls input[type="text"] {
+      min-width: 200px;
+    }
+
+    .builder-body {
+      display: grid;
+      grid-template-columns: 230px minmax(320px, 1fr) 260px;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    .builder-palette .shape-palette-btn {
+      width: 100%;
+      justify-content: flex-start;
+      margin-bottom: 0.25rem;
+    }
+    .builder-palette .note {
+      margin-top: 0.5rem;
+    }
+    .builder-canvas-wrapper {
+      background: #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 0.25rem;
+      border: 1px solid #d1d5db;
+    }
+    .builder-canvas {
+      position: relative;
+      height: 480px;
+      background-image: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+      border-radius: 0.65rem;
+      overflow: hidden;
+    }
+    .canvas-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      pointer-events: none;
+      text-align: center;
+      padding: 0 1rem;
+    }
+    .builder-properties {
+      font-size: 0.8rem;
+    }
+    .feature-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+    .feature-note {
+      font-size: 0.76rem;
+      color: #6b7280;
+    }
+    #shape-properties textarea {
+      width: 100%;
+    }
+    #decision-paths-wrapper {
+      margin-top: 0.5rem;
+    }
+
+    .shape {
+      position: absolute;
+      min-width: 140px;
+      min-height: 60px;
+      padding: 0.45rem 0.5rem 0.3rem;
+      background: #f9fafb;
+      border: 2px solid #9ca3af;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.08);
+      cursor: move;
+      box-sizing: border-box;
+    }
+    .runner-shape {
+      cursor: default;
+    }
+    .shape-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #111827;
+      margin-bottom: 0.25rem;
+      word-wrap: break-word;
+    }
+    .shape-icons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.15rem;
+      justify-content: flex-end;
+      margin-top: 0.15rem;
+    }
+    .shape-icon {
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: rgba(15,23,42,0.03);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      padding: 0;
+      cursor: pointer;
+    }
+    .shape-icon.placeholder {
+      cursor: default;
+      opacity: 0.4;
+    }
+    .shape-icon[disabled] {
+      cursor: not-allowed;
+      opacity: 0.35;
+    }
+    .shape.selected {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.35);
+    }
+    .shape-terminal {
+      border-radius: 999px;
+      background: #eff6ff;
+    }
+    .shape-process {
+      background: #ecfdf3;
+    }
+    .shape-decision {
+      background: #fff7ed;
+      border-style: dashed;
+    }
+    .shape-io {
+      background: #f5f3ff;
+    }
+    .shape-predefined {
+      border-style: double;
+      background: #f9fafb;
+    }
+    .shape-flowline {
+      min-height: 40px;
+      background: #ffffff;
+      border-style: dotted;
+      font-size: 0.75rem;
+    }
+    .decision-paths-preview {
+      margin-top: 0.2rem;
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .shape.status-in-progress {
+      border-color: #eab308;
+      box-shadow: 0 0 0 2px rgba(234,179,8,0.4);
+    }
+    .shape.status-done {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34,197,94,0.4);
+    }
+    .shape.status-not-needed {
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 2px rgba(148,163,184,0.6);
+      opacity: 0.9;
+    }
+    .shape.status-blocked {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 2px rgba(239,68,68,0.4);
+    }
+    .shape-icon.status-in-progress { color: #eab308; }
+    .shape-icon.status-done { color: #22c55e; }
+    .shape-icon.status-not-needed { color: #6b7280; }
+    .shape-icon.status-blocked { color: #ef4444; }
+
+    .status-indicator {
+      display: inline-block;
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 999px;
+      margin-right: 0.3rem;
+    }
+    .status-indicator.status-in-progress { background: #eab308; }
+    .status-indicator.status-done { background: #22c55e; }
+    .status-indicator.status-not-needed { background: #9ca3af; }
+    .status-indicator.status-blocked { background: #ef4444; }
+    .runner-legend ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 0.78rem;
+    }
+    .runner-legend li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.15rem;
+    }
+    .runner-legend h3 {
+      font-size: 0.86rem;
+      margin: 0 0 0.35rem;
+    }
+
+    .runner-canvas-wrapper {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-top: 0.5rem;
+    }
+    .runner-canvas {
+      position: relative;
+      flex: 1;
+      min-height: 380px;
+      border-radius: 0.65rem;
+      background-image: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+      border: 1px solid #d1d5db;
+      overflow: hidden;
+    }
+    .runner-legend {
+      width: 180px;
+      font-size: 0.76rem;
+      color: #4b5563;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+    .modal-overlay.hidden {
+      display: none;
+    }
+    .modal {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(15,23,42,0.35);
+      padding: 0.75rem 0.9rem 0.9rem;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .modal-header h2 {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+    .modal-body {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      max-height: 60vh;
+      overflow: auto;
+    }
+    .modal-footer {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.4rem;
+    }
+    .modal-body .form-grid {
+      margin-top: 0.25rem;
+    }
+    .modal-body textarea {
+      width: 100%;
+      min-height: 6rem;
+    }
+
+    .link-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .link-list li {
+      margin-bottom: 0.4rem;
+    }
+    .link-list a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .link-list a:hover {
+      text-decoration: underline;
+    }
+    .link-desc {
+      font-size: 0.76rem;
+      color: #4b5563;
+      margin-top: 0.1rem;
+    }
+
+    .stopwatch {
+      text-align: center;
+    }
+    .stopwatch-display {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 1.4rem;
+      margin: 0.4rem 0 0.6rem;
+    }
+    .stopwatch-controls {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .status-picker {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+    }
+    .status-choice {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      width: 100%;
+      justify-content: flex-start;
+      font-size: 0.8rem;
+    }
+
+    .decision-path-picker {
+      margin-top: 0.25rem;
+    }
+    .decision-path-option {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-bottom: 0.2rem;
+      font-size: 0.8rem;
+    }
+
+    .extra-info-content {
+      font-size: 0.8rem;
+      color: #111827;
+    }
+    .extra-info-content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 0.25rem;
+      border-radius: 0.4rem;
+    }
+
+    #shape-properties.hidden,
+    #shape-properties-empty.hidden,
+    #runner-canvas-wrapper.hidden {
+      display: none;
+    }
+
+    @media (max-width: 960px) {
+      .app-main {
+        padding: 0.75rem 0.75rem 1.5rem;
+      }
+      .builder-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .builder-canvas {
+        height: 360px;
+      }
+      .runner-canvas-wrapper {
+        flex-direction: column;
+      }
+      .runner-legend {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo-title">
+      <h1>Local Workflow Assistant</h1>
+      <span class="subtitle">Wireframe prototype – all-in-one HTML (no database yet)</span>
+    </div>
+    <nav class="mode-nav">
+      <button type="button" class="mode-btn active" data-mode="projects"><span class="idx">1</span> Projects</button>
+      <button type="button" class="mode-btn" data-mode="builder"><span class="idx">2</span> Build workflows</button>
+      <button type="button" class="mode-btn" data-mode="runner"><span class="idx">3</span> Follow workflows</button>
+    </nav>
+  </header>
+
+  <main class="app-main">
+    <!-- MODE 1: PROJECT MANAGEMENT -->
+    <section id="mode-projects" class="mode-section visible">
+      <div class="panel">
+        <h2>Project management</h2>
+        <p class="hint">Define projects and optionally assign reusable workflow diagrams (built in Mode 2).</p>
+        <div class="form-grid" style="margin-top:0.5rem;">
+          <label>Customer
+            <input type="text" id="project-customer" placeholder="Customer name">
+          </label>
+          <label>Job #
+            <input type="text" id="project-job" placeholder="E.g. 24-00123">
+          </label>
+          <label>Project name
+            <input type="text" id="project-name" placeholder="E.g. MCC replacement">
+          </label>
+          <label>Job site
+            <input type="text" id="project-site" placeholder="E.g. Sioux Center Plant 3">
+          </label>
+          <label>Workflow diagram
+            <select id="project-diagram">
+              <option value="">(no workflow yet)</option>
+            </select>
+          </label>
+          <div>
+            <button type="button" class="primary" id="add-project-btn">Add project</button>
+          </div>
+        </div>
+        <p class="hint">Note: All data lives only in this browser tab for now – database/SQLite wiring will come later.</p>
+      </div>
+      <div class="panel">
+        <h2>Projects list</h2>
+        <table class="data-table" id="projects-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Job #</th>
+              <th>Project</th>
+              <th>Job site</th>
+              <th>Workflow</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MODE 2: WORKFLOW BUILDER -->
+    <section id="mode-builder" class="mode-section">
+      <div class="panel">
+        <div class="builder-header">
+          <h2>Workflow builder</h2>
+          <div class="builder-diagram-controls">
+            <label>Diagram
+              <select id="builder-diagram-select"></select>
+            </label>
+            <button type="button" class="secondary" id="builder-new-diagram-btn">New diagram</button>
+            <input type="text" id="builder-diagram-name" placeholder="Diagram title (e.g. Panel build workflow)">
+            <button type="button" class="primary" id="builder-save-diagram-btn">Save diagram</button>
+          </div>
+          <p class="hint">Drag common ISO/ANSI-style shapes onto the canvas. Toggle feature icons per step to configure time tracking, links, status tracking and extra info.</p>
+        </div>
+        <div class="builder-body">
+          <aside class="builder-palette panel">
+            <h3>Shape palette</h3>
+            <button type="button" class="shape-palette-btn" data-shape-type="terminal">Terminal (start / end)</button>
+            <button type="button" class="shape-palette-btn" data-shape-type="process">Process</button>
+            <button type="button" class="shape-palette-btn" data-shape-type="decision">Decision</button>
+            <button type="button" class="shape-palette-btn" data-shape-type="io">Input / Output</button>
+            <button type="button" class="shape-palette-btn" data-shape-type="predefined">Predefined process</button>
+            <button type="button" class="shape-palette-btn" data-shape-type="flowline">Flowline (label only in this prototype)</button>
+            <p class="note hint">Flowlines here are textual placeholders – full line-drawing & snapping can be layered in on a later iteration.</p>
+          </aside>
+
+          <section class="builder-canvas-wrapper">
+            <div id="builder-canvas" class="builder-canvas">
+              <div class="canvas-hint">Select or create a workflow diagram, then add shapes from the palette to design your process.</div>
+            </div>
+          </section>
+
+          <aside class="builder-properties panel">
+            <h3>Step properties</h3>
+            <div id="shape-properties-empty" class="hint">Select a step shape on the canvas to edit its text and features.</div>
+            <div id="shape-properties" class="hidden">
+              <label>Title / descriptive text
+                <textarea id="shape-text-input" rows="3" placeholder="Describe what happens in this step."></textarea>
+              </label>
+              <div class="feature-toggle-row">
+                <label><input type="checkbox" id="feature-time-toggle"> Time tracking</label>
+                <button type="button" id="feature-time-config" class="icon-button small" title="Configure time tracking">⏱</button>
+              </div>
+              <div class="feature-toggle-row">
+                <label><input type="checkbox" id="feature-links-toggle"> Supporting documents</label>
+                <button type="button" id="feature-links-config" class="icon-button small" title="Configure supporting documents">📚</button>
+              </div>
+              <div class="feature-toggle-row">
+                <label><input type="checkbox" id="feature-status-toggle"> Status tracking</label>
+                <span class="feature-note">Status is set by end users when following the workflow.</span>
+              </div>
+              <div class="feature-toggle-row">
+                <label><input type="checkbox" id="feature-extra-toggle"> Extra information</label>
+                <button type="button" id="feature-extra-config" class="icon-button small" title="Configure extra information">ⓘ</button>
+              </div>
+              <div id="decision-paths-wrapper" class="hidden">
+                <label>Decision paths (one per line)
+                  <textarea id="decision-paths-input" rows="3" placeholder="Yes&#10;No"></textarea>
+                </label>
+              </div>
+              <div class="feature-toggle-row">
+                <span class="feature-note">Additional feature icons can be added later – shapes reserve visual space along their edge.</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODE 3: WORKFLOW FOLLOWER -->
+    <section id="mode-runner" class="mode-section">
+      <div class="panel">
+        <h2>Workflow follower</h2>
+        <p class="hint">Pick a project and workflow diagram. Steps become read-only, but their feature icons stay interactive for executing the work.</p>
+        <div class="form-grid" style="margin-top:0.5rem;">
+          <label>Project
+            <select id="runner-project-select">
+              <option value="">Select project</option>
+            </select>
+          </label>
+          <label>Workflow
+            <select id="runner-diagram-select">
+              <option value="">Select workflow</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Active workflow</h2>
+        <div id="runner-empty" class="hint">Select a project with an assigned workflow to begin following a diagram.</div>
+        <div id="runner-canvas-wrapper" class="runner-canvas-wrapper hidden">
+          <div id="runner-canvas" class="runner-canvas"></div>
+          <aside class="runner-legend">
+            <h3>Status legend</h3>
+            <ul>
+              <li><span class="status-indicator status-in-progress"></span>In progress</li>
+              <li><span class="status-indicator status-done"></span>Done</li>
+              <li><span class="status-indicator status-not-needed"></span>Not needed</li>
+              <li><span class="status-indicator status-blocked"></span>Blocked</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Generic modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <header class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button type="button" id="modal-close" class="icon-button" aria-label="Close modal">✕</button>
+      </header>
+      <div id="modal-body" class="modal-body"></div>
+      <footer class="modal-footer">
+        <button type="button" id="modal-cancel-btn" class="secondary">Close</button>
+        <button type="button" id="modal-save-btn" class="primary">Save</button>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const state = {
+      mode: 'projects',
+      projects: [],
+      diagrams: [],
+      selectedDiagramId: null,
+      selectedShapeId: null,
+      followerState: {}
+    };
+
+    const dom = {};
+    const modalState = { saveHandler: null, cancelHandler: null };
+    let dragState = null;
+    let stopwatchInterval = null;
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+      cacheDom();
+      setupModal();
+      setupModeNavigation();
+      setupProjectsUI();
+      setupBuilderUI();
+      setupRunnerUI();
+
+      // Starter example diagram so the UI isn't empty
+      createNewDiagram('Example workflow');
+      refreshBuilderSelectors();
+      renderBuilderCanvas();
+      refreshDiagramOptionsEverywhere();
+      refreshRunnerSelectors();
+
+      // Minimal tests for utilities
+      runInlineTests();
+    }
+
+    function cacheDom() {
+      dom.modeButtons = document.querySelectorAll('.mode-btn');
+      dom.modeSections = {
+        projects: document.getElementById('mode-projects'),
+        builder: document.getElementById('mode-builder'),
+        runner: document.getElementById('mode-runner')
+      };
+
+      // Projects
+      dom.projectCustomer = document.getElementById('project-customer');
+      dom.projectJob = document.getElementById('project-job');
+      dom.projectName = document.getElementById('project-name');
+      dom.projectSite = document.getElementById('project-site');
+      dom.projectDiagram = document.getElementById('project-diagram');
+      dom.addProjectBtn = document.getElementById('add-project-btn');
+      dom.projectsTableBody = document.querySelector('#projects-table tbody');
+
+      // Builder
+      dom.builderDiagramSelect = document.getElementById('builder-diagram-select');
+      dom.builderNewDiagramBtn = document.getElementById('builder-new-diagram-btn');
+      dom.builderDiagramName = document.getElementById('builder-diagram-name');
+      dom.builderSaveDiagramBtn = document.getElementById('builder-save-diagram-btn');
+      dom.builderCanvas = document.getElementById('builder-canvas');
+      dom.shapePropertiesEmpty = document.getElementById('shape-properties-empty');
+      dom.shapeProperties = document.getElementById('shape-properties');
+      dom.shapeTextInput = document.getElementById('shape-text-input');
+      dom.featureTimeToggle = document.getElementById('feature-time-toggle');
+      dom.featureTimeConfig = document.getElementById('feature-time-config');
+      dom.featureLinksToggle = document.getElementById('feature-links-toggle');
+      dom.featureLinksConfig = document.getElementById('feature-links-config');
+      dom.featureStatusToggle = document.getElementById('feature-status-toggle');
+      dom.featureExtraToggle = document.getElementById('feature-extra-toggle');
+      dom.featureExtraConfig = document.getElementById('feature-extra-config');
+      dom.decisionPathsWrapper = document.getElementById('decision-paths-wrapper');
+      dom.decisionPathsInput = document.getElementById('decision-paths-input');
+      dom.shapePaletteButtons = document.querySelectorAll('.shape-palette-btn');
+
+      // Runner
+      dom.runnerProjectSelect = document.getElementById('runner-project-select');
+      dom.runnerDiagramSelect = document.getElementById('runner-diagram-select');
+      dom.runnerEmpty = document.getElementById('runner-empty');
+      dom.runnerCanvasWrapper = document.getElementById('runner-canvas-wrapper');
+      dom.runnerCanvas = document.getElementById('runner-canvas');
+
+      // Modal
+      dom.modalOverlay = document.getElementById('modal-overlay');
+      dom.modal = dom.modalOverlay.querySelector('.modal');
+      dom.modalTitle = document.getElementById('modal-title');
+      dom.modalBody = document.getElementById('modal-body');
+      dom.modalClose = document.getElementById('modal-close');
+      dom.modalCancelBtn = document.getElementById('modal-cancel-btn');
+      dom.modalSaveBtn = document.getElementById('modal-save-btn');
+    }
+
+    /* ---------- Modal helpers ---------- */
+
+    function setupModal() {
+      dom.modalSaveBtn.addEventListener('click', function () {
+        if (modalState.saveHandler) {
+          const result = modalState.saveHandler();
+          if (result === false) return;
+        }
+        closeModal();
+      });
+      dom.modalCancelBtn.addEventListener('click', function () {
+        if (modalState.cancelHandler) modalState.cancelHandler();
+        closeModal();
+      });
+      dom.modalClose.addEventListener('click', function () {
+        if (modalState.cancelHandler) modalState.cancelHandler();
+        closeModal();
+      });
+      dom.modalOverlay.addEventListener('click', function (event) {
+        if (event.target === dom.modalOverlay) {
+          if (modalState.cancelHandler) modalState.cancelHandler();
+          closeModal();
+        }
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !dom.modalOverlay.classList.contains('hidden')) {
+          if (modalState.cancelHandler) modalState.cancelHandler();
+          closeModal();
+        }
+      });
+    }
+
+    function openModal(options) {
+      modalState.saveHandler = options.onSave || null;
+      modalState.cancelHandler = options.onCancel || null;
+      dom.modalTitle.textContent = options.title || '';
+      dom.modalBody.innerHTML = options.bodyHTML || '';
+      dom.modalSaveBtn.style.display = options.showSave === false ? 'none' : 'inline-flex';
+      dom.modalOverlay.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      dom.modalOverlay.classList.add('hidden');
+      dom.modalBody.innerHTML = '';
+      modalState.saveHandler = null;
+      modalState.cancelHandler = null;
+      if (stopwatchInterval) {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+      }
+    }
+
+    /* ---------- Mode navigation ---------- */
+
+    function setupModeNavigation() {
+      dom.modeButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const mode = btn.dataset.mode;
+          switchMode(mode);
+        });
+      });
+      switchMode(state.mode);
+    }
+
+    function switchMode(mode) {
+      state.mode = mode;
+      dom.modeButtons.forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      Object.keys(dom.modeSections).forEach(function (key) {
+        const section = dom.modeSections[key];
+        if (!section) return;
+        section.classList.toggle('visible', key === mode);
+      });
+      if (mode === 'builder') {
+        refreshBuilderSelectors();
+        renderBuilderCanvas();
+      } else if (mode === 'runner') {
+        refreshRunnerSelectors();
+        renderRunnerDiagram();
+      }
+    }
+
+    /* ---------- Mode 1: Projects ---------- */
+
+    function setupProjectsUI() {
+      dom.addProjectBtn.addEventListener('click', addProjectFromForm);
+
+      dom.projectsTableBody.addEventListener('click', function (event) {
+        const deleteBtn = event.target.closest('.project-delete-btn');
+        if (deleteBtn) {
+          const projectId = deleteBtn.dataset.projectId;
+          state.projects = state.projects.filter(function (p) { return p.id !== projectId; });
+          renderProjectsTable();
+          refreshRunnerSelectors();
+        }
+      });
+
+      dom.projectsTableBody.addEventListener('change', function (event) {
+        if (event.target.classList.contains('project-diagram-select')) {
+          const projectId = event.target.dataset.projectId;
+          const diagramId = event.target.value || null;
+          const project = state.projects.find(function (p) { return p.id === projectId; });
+          if (project) {
+            project.diagramId = diagramId;
+          }
+          refreshRunnerSelectors();
+        }
+      });
+    }
+
+    function addProjectFromForm() {
+      const customer = dom.projectCustomer.value.trim();
+      const jobNumber = dom.projectJob.value.trim();
+      const name = dom.projectName.value.trim();
+      const site = dom.projectSite.value.trim();
+      const diagramId = dom.projectDiagram.value || null;
+
+      if (!name && !jobNumber) {
+        window.alert('Please enter at least a project name or job number.');
+        return;
+      }
+
+      const project = {
+        id: 'proj-' + Date.now() + '-' + Math.random().toString(16).slice(2),
+        customer: customer,
+        jobNumber: jobNumber,
+        name: name,
+        site: site,
+        diagramId: diagramId
+      };
+      state.projects.push(project);
+      clearProjectForm();
+      renderProjectsTable();
+      refreshRunnerSelectors();
+    }
+
+    function clearProjectForm() {
+      dom.projectCustomer.value = '';
+      dom.projectJob.value = '';
+      dom.projectName.value = '';
+      dom.projectSite.value = '';
+      dom.projectDiagram.value = '';
+    }
+
+    function renderProjectsTable() {
+      const tbody = dom.projectsTableBody;
+      tbody.innerHTML = '';
+      if (!state.projects.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 6;
+        td.textContent = 'No projects yet. Add one using the form above.';
+        td.className = 'empty-row';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      state.projects.forEach(function (project) {
+        const tr = document.createElement('tr');
+
+        const tdCustomer = document.createElement('td');
+        tdCustomer.textContent = project.customer || '—';
+        tr.appendChild(tdCustomer);
+
+        const tdJob = document.createElement('td');
+        tdJob.textContent = project.jobNumber || '—';
+        tr.appendChild(tdJob);
+
+        const tdName = document.createElement('td');
+        tdName.textContent = project.name || '—';
+        tr.appendChild(tdName);
+
+        const tdSite = document.createElement('td');
+        tdSite.textContent = project.site || '—';
+        tr.appendChild(tdSite);
+
+        const tdDiagram = document.createElement('td');
+        const select = document.createElement('select');
+        select.className = 'project-diagram-select';
+        select.dataset.projectId = project.id;
+        const optNone = document.createElement('option');
+        optNone.value = '';
+        optNone.textContent = 'None';
+        select.appendChild(optNone);
+        state.diagrams.forEach(function (diagram) {
+          const opt = document.createElement('option');
+          opt.value = diagram.id;
+          opt.textContent = diagram.name;
+          select.appendChild(opt);
+        });
+        select.value = project.diagramId || '';
+        tdDiagram.appendChild(select);
+        tr.appendChild(tdDiagram);
+
+        const tdActions = document.createElement('td');
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'link-button project-delete-btn';
+        delBtn.dataset.projectId = project.id;
+        delBtn.textContent = 'Remove';
+        tdActions.appendChild(delBtn);
+        tr.appendChild(tdActions);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function refreshDiagramOptionsEverywhere() {
+      // Project assign dropdown
+      if (dom.projectDiagram) {
+        const prev = dom.projectDiagram.value;
+        dom.projectDiagram.innerHTML = '';
+        const optNone = document.createElement('option');
+        optNone.value = '';
+        optNone.textContent = '(no workflow yet)';
+        dom.projectDiagram.appendChild(optNone);
+        state.diagrams.forEach(function (diagram) {
+          const opt = document.createElement('option');
+          opt.value = diagram.id;
+          opt.textContent = diagram.name;
+          dom.projectDiagram.appendChild(opt);
+        });
+        if (prev && state.diagrams.some(function (d) { return d.id === prev; })) {
+          dom.projectDiagram.value = prev;
+        }
+      }
+      renderProjectsTable();
+    }
+
+    /* ---------- Diagrams & shapes ---------- */
+
+    function createNewDiagram(name) {
+      const id = 'wf-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+      const diagram = { id: id, name: name || 'Untitled workflow', description: '', shapes: [] };
+      state.diagrams.push(diagram);
+      state.selectedDiagramId = id;
+      return diagram;
+    }
+
+    function getCurrentDiagram() {
+      if (!state.diagrams.length) return null;
+      if (state.selectedDiagramId) {
+        const existing = state.diagrams.find(function (d) { return d.id === state.selectedDiagramId; });
+        if (existing) return existing;
+      }
+      return state.diagrams[0];
+    }
+
+    function getCurrentShape() {
+      const diagram = getCurrentDiagram();
+      if (!diagram || !state.selectedShapeId) return null;
+      return diagram.shapes.find(function (s) { return s.id === state.selectedShapeId; }) || null;
+    }
+
+    function normalizeShapeFeatures(shape) {
+      if (!shape.features) shape.features = {};
+      if (!shape.features.timeTracking) shape.features.timeTracking = { enabled: false, estimateHours: '', phaseCode: '' };
+      if (!shape.features.linkTree) shape.features.linkTree = { enabled: false, links: [] };
+      if (!shape.features.status) shape.features.status = { enabled: false };
+      if (!shape.features.extraInfo) shape.features.extraInfo = { enabled: false, content: '' };
+      if (!Array.isArray(shape.decisionPaths)) {
+        shape.decisionPaths = shape.type === 'decision' ? ['Yes', 'No'] : [];
+      }
+    }
+
+    /* ---------- Mode 2: Builder UI ---------- */
+
+    function setupBuilderUI() {
+      dom.builderNewDiagramBtn.addEventListener('click', function () {
+        const name = window.prompt('Name for the new workflow diagram:', 'New workflow');
+        createNewDiagram(name || 'New workflow');
+        refreshBuilderSelectors();
+        renderBuilderCanvas();
+        refreshDiagramOptionsEverywhere();
+        refreshRunnerSelectors();
+      });
+
+      dom.builderDiagramSelect.addEventListener('change', function () {
+        const id = dom.builderDiagramSelect.value || null;
+        state.selectedDiagramId = id;
+        const current = getCurrentDiagram();
+        dom.builderDiagramName.value = current ? current.name : '';
+        renderBuilderCanvas();
+      });
+
+      dom.builderSaveDiagramBtn.addEventListener('click', function () {
+        const diagram = getCurrentDiagram();
+        if (!diagram) return;
+        diagram.name = dom.builderDiagramName.value.trim() || 'Untitled workflow';
+        refreshBuilderSelectors();
+        refreshDiagramOptionsEverywhere();
+        refreshRunnerSelectors();
+      });
+
+      dom.shapePaletteButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const type = btn.dataset.shapeType;
+          addShapeToCurrentDiagram(type);
+        });
+      });
+
+      dom.builderCanvas.addEventListener('mousedown', onBuilderCanvasMouseDown);
+      dom.builderCanvas.addEventListener('click', onBuilderCanvasClick);
+
+      dom.shapeTextInput.addEventListener('input', function () {
+        const shape = getCurrentShape();
+        if (!shape) return;
+        shape.text = dom.shapeTextInput.value;
+        const label = dom.builderCanvas.querySelector('.shape[data-shape-id="' + shape.id + '"] .shape-label');
+        if (label) label.textContent = shape.text || '(no text yet)';
+      });
+
+      dom.featureTimeToggle.addEventListener('change', function () {
+        const shape = getCurrentShape();
+        if (!shape) return;
+        normalizeShapeFeatures(shape);
+        shape.features.timeTracking.enabled = dom.featureTimeToggle.checked;
+        renderBuilderCanvas();
+      });
+      dom.featureLinksToggle.addEventListener('change', function () {
+        const shape = getCurrentShape();
+        if (!shape) return;
+        normalizeShapeFeatures(shape);
+        shape.features.linkTree.enabled = dom.featureLinksToggle.checked;
+        renderBuilderCanvas();
+      });
+      dom.featureStatusToggle.addEventListener('change', function () {
+        const shape = getCurrentShape();
+        if (!shape) return;
+        normalizeShapeFeatures(shape);
+        shape.features.status.enabled = dom.featureStatusToggle.checked;
+        renderBuilderCanvas();
+      });
+      dom.featureExtraToggle.addEventListener('change', function () {
+        const shape = getCurrentShape();
+        if (!shape) return;
+        normalizeShapeFeatures(shape);
+        shape.features.extraInfo.enabled = dom.featureExtraToggle.checked;
+        renderBuilderCanvas();
+      });
+
+      dom.featureTimeConfig.addEventListener('click', function () { openFeatureConfigModalBuilder('time'); });
+      dom.featureLinksConfig.addEventListener('click', function () { openFeatureConfigModalBuilder('links'); });
+      dom.featureExtraConfig.addEventListener('click', function () { openFeatureConfigModalBuilder('extra'); });
+
+      dom.decisionPathsInput.addEventListener('inpu

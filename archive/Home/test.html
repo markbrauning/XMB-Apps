@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dots Global Wireframe Background</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-color: #020515;
+      --dot-color: #4fd5ff;
+      --line-color: #2ea7ff;
+      --glow-color: #4fd5ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 15%, #041b3a 0, #020515 55%, #000000 100%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(79,213,255,0.18) 0, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(0,150,255,0.18) 0, transparent 55%);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Optional overlay for subtle scanlines + vignette */
+    .overlay {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0, transparent 45%, rgba(0,0,0,0.6) 80%),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.025),
+          rgba(255,255,255,0.025) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      mix-blend-mode: screen;
+      opacity: 0.4;
+    }
+
+    /* Optional subtle title text so you can see it as a background */
+    .title {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 4vh;
+      color: #9fe3ff;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: clamp(0.65rem, 1.2vw, 1rem);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="globe"></canvas>
+    <div class="overlay"></div>
+    <div class="title">Global Network</div>
+  </div>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById("globe");
+      const ctx = canvas.getContext("2d");
+
+      let width, height, dpr, cx, cy;
+      let points = [];
+      let connections = [];
+      let rotation = 0;
+      let lastTime = 0;
+
+      const NUM_POINTS = 800;        // number of dot “nodes”
+      const RADIUS = 260;           // base sphere radius in px (scaled later)
+      const ROTATION_SPEED = 0.00025; // radians per ms
+      const FOV = 800;              // pseudo camera distance
+      const MAX_CONNECTION_DIST = 90; // max 3D distance for a line
+      const MAX_LINES_PER_POINT = 6;  // to avoid over-draw
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        cx = width / 2;
+        cy = height / 2;
+
+        generatePoints();
+        generateConnections();
+      }
+
+      function randomOnSphere() {
+        // Uniform random point on a sphere
+        const u = Math.random();
+        const v = Math.random();
+        const theta = 2 * Math.PI * u;
+        const phi = Math.acos(2 * v - 1);
+        const x = Math.sin(phi) * Math.cos(theta);
+        const y = Math.cos(phi);
+        const z = Math.sin(phi) * Math.sin(theta);
+        return { x, y, z };
+      }
+
+      // Very rough approximation of “continents” by biasing longitude/latitude ranges
+      function isLandHint(theta, phi) {
+        // theta: -PI..PI (lon), phi: 0..PI (lat from north to south)
+        const lon = theta;
+        const lat = Math.PI / 2 - phi; // convert phi to standard lat
+
+        // Just a few heuristic blobs: “Americas”, “Euro/Africa”, “Asia-Pacific”
+        const regions = [
+          // Americas
+          { lat: 0.1, lon: -1.7, latR: 0.65, lonR: 0.7 },
+          // Europe/Africa
+          { lat: 0.5, lon: 0.1, latR: 0.8, lonR: 0.7 },
+          // Asia
+          { lat: 0.3, lon: 1.7, latR: 0.6, lonR: 0.9 },
+          // Australia-ish
+          { lat: -0.7, lon: 2.3, latR: 0.4, lonR: 0.5 },
+        ];
+
+        for (const r of regions) {
+          const dLat = (lat - r.lat) / r.latR;
+          let dLon = (lon - r.lon) / r.lonR;
+          // wrap longitude
+          if (dLon > Math.PI) dLon -= 2 * Math.PI;
+          if (dLon < -Math.PI) dLon += 2 * Math.PI;
+          const dist2 = dLat * dLat + dLon * dLon;
+          if (dist2 < 1) {
+            // fade out at edges
+            const w = 1 - dist2;
+            if (Math.random() < w) return true;
+          }
+        }
+        return false;
+      }
+
+      function generatePoints() {
+        points = [];
+        const radius = Math.min(width, height) * 0.35;
+
+        let attempts = 0;
+        while (points.length < NUM_POINTS && attempts < NUM_POINTS * 10) {
+          attempts++;
+          const u = Math.random();
+          const v = Math.random();
+          const theta = 2 * Math.PI * u;
+          const phi = Math.acos(2 * v - 1);
+
+          const land = isLandHint(theta - Math.PI, phi); // shift lon for visual center
+
+          // We create more points on “land” regions, fewer over ocean.
+          const oceanBias = land ? 0.75 : 0.15;
+          if (Math.random() > oceanBias) continue;
+
+          const x = Math.sin(phi) * Math.cos(theta);
+          const y = Math.cos(phi);
+          const z = Math.sin(phi) * Math.sin(theta);
+
+          points.push({
+            x, y, z,
+            radius,
+            size: land ? 2.0 + Math.random() * 1.2 : 1.4 + Math.random() * 0.8,
+            glow: land ? 1 : 0,
+          });
+        }
+      }
+
+      function generateConnections() {
+        connections = [];
+        // Simple O(N^2) neighbor selection, but capped per point
+        const maxDist = (MAX_CONNECTION_DIST / RADIUS);
+
+        for (let i = 0; i < points.length; i++) {
+          const p = points[i];
+          let count = 0;
+          for (let j = i + 1; j < points.length && count < MAX_LINES_PER_POINT; j++) {
+            const q = points[j];
+            const dx = p.x - q.x;
+            const dy = p.y - q.y;
+            const dz = p.z - q.z;
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist < maxDist) {
+              connections.push({
+                a: i,
+                b: j,
+                dist
+              });
+              count++;
+            }
+          }
+        }
+      }
+
+      function project(point) {
+        // Rotate around Y axis
+        const cosR = Math.cos(rotation);
+        const sinR = Math.sin(rotation);
+        const x = point.x * cosR + point.z * sinR;
+        const z = -point.x * sinR + point.z * cosR;
+        const y = point.y;
+
+        const radius = point.radius;
+        const scale = FOV / (FOV + z * radius * 1.2);
+        const screenX = cx + x * radius * scale;
+        const screenY = cy + y * radius * scale;
+
+        return { x: screenX, y: screenY, z, scale };
+      }
+
+      function draw(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = timestamp - lastTime;
+        lastTime = timestamp;
+
+        rotation += ROTATION_SPEED * dt;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Subtle background glow behind planet
+        const grd = ctx.createRadialGradient(
+          cx, cy, Math.min(width, height) * 0.05,
+          cx, cy, Math.min(width, height) * 0.6
+        );
+        grd.addColorStop(0, "rgba(0, 150, 255, 0.08)");
+        grd.addColorStop(0.5, "rgba(0, 60, 120, 0.15)");
+        grd.addColorStop(1, "rgba(0, 0, 0, 0.0)");
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(cx, cy, Math.min(width, height) * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Project all points first
+        const projected = points.map(p => project(p));
+
+        // Draw connections (back-to-front based on avg z)
+        connections.sort((c1, c2) => {
+          const z1 = (points[c1.a].z + points[c1.b].z) * 0.5;
+          const z2 = (points[c2.a].z + points[c2.b].z) * 0.5;
+          return z1 - z2;
+        });
+
+        ctx.lineWidth = 0.7;
+        for (const c of connections) {
+          const pa = projected[c.a];
+          const pb = projected[c.b];
+
+          // Skip if behind camera
+          if (pa.z < -1.2 || pb.z < -1.2) continue;
+
+          const dist2D = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+          if (dist2D > MAX_CONNECTION_DIST * 1.5) continue;
+
+          const alpha = Math.max(0, 0.4 - c.dist * 1.5);
+          ctx.strokeStyle = `rgba(46, 167, 255, ${alpha})`;
+
+          ctx.beginPath();
+          ctx.moveTo(pa.x, pa.y);
+          ctx.lineTo(pb.x, pb.y);
+          ctx.stroke();
+        }
+
+        // Draw points (front-to-back)
+        const indices = projected.map((_, i) => i);
+        indices.sort((a, b) => projected[a].z - projected[b].z);
+
+        for (const i of indices) {
+          const p = points[i];
+          const pr = projected[i];
+
+          // Hide far back points
+          if (pr.z < -1.2) continue;
+
+          const depth = (pr.z + 1) / 2; // -1..1 -> 0..1
+          const alpha = 0.35 + (1 - depth) * 0.65;
+          const size = p.size * (0.4 + pr.scale * 0.9);
+
+          // Outer glow
+          if (p.glow) {
+            const glowAlpha = alpha * 0.6;
+            const glowRadius = size * 4;
+            const g = ctx.createRadialGradient(
+              pr.x, pr.y, 0,
+              pr.x, pr.y, glowRadius
+            );
+            g.addColorStop(0, `rgba(79, 213, 255, ${glowAlpha})`);
+            g.addColorStop(1, "rgba(79, 213, 255, 0)");
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(pr.x, pr.y, glowRadius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Core dot
+          ctx.fillStyle = `rgba(159, 227, 255, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(pr.x, pr.y, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+      requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>
